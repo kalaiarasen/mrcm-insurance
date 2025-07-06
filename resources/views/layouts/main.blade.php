@@ -23,10 +23,14 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/slick-theme.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/scrollbar.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/prism.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/animate.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/jquery.dataTables.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/select.bootstrap5.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/bootstrap.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
         <link id="color" rel="stylesheet" href="{{ asset('assets/css/color-1.css') }}" media="screen">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
+        @yield('css')
     </head>
 @switch(Route::currentRouteName())
     @case('box_layout')

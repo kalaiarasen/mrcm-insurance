@@ -24,7 +24,7 @@
                     </li>
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="https://larathemes.pixelstrap.com/cuba/admin/default-dashboard" target="_blank">
+                        <a class="sidebar-link sidebar-title link-nav active" href="{{ route('dashboard') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                             </svg>

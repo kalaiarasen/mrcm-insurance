@@ -5,13 +5,20 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 
+Route::view('layout-light', 'starter_kit.color_version.layout_light')->name('layout_light');
+Route::view('layout-dark', 'starter_kit.color_version.layout_dark')->name('layout_dark');
+Route::view('box-layout', 'starter_kit.page_layout.box_layout')->name('box_layout');
+Route::view('rtl-layout', 'starter_kit.page_layout.rtl_layout')->name('rtl_layout');
+Route::view('hide-menu-on-scroll', 'starter_kit.hide_menu_on_scroll')->name('hide_menu_on_scroll');
+Route::view('footer-light', 'starter_kit.footers.footer_light')->name('footer_light');
+Route::view('footer-dark', 'starter_kit.footers.footer_dark')->name('footer_dark');
+Route::view('footer-fixed', 'starter_kit.footers.footer_fixed')->name('footer_fixed');
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::view('dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
