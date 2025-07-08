@@ -102,10 +102,10 @@
                                     <div class="widget-content">
                                         <div class="widget-round success">
                                             <div class="bg-round"><svg>
-                                                    <use href="https://laravel.pixelstrap.com/cuba/assets/svg/icon-sprite.svg#c-customer">
+                                                    <use href="{{ asset('assets/svg/icon-sprite.svg#c-customer') }}">
                                                     </use>
                                                 </svg><svg class="half-circle svg-fill">
-                                                    <use href="https://laravel.pixelstrap.com/cuba/assets/svg/icon-sprite.svg#halfcircle">
+                                                    <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}">
                                                     </use>
                                                 </svg></div>
                                         </div>
@@ -130,9 +130,9 @@
                                 <div class="widget-content">
                                     <div class="widget-round warning">
                                         <div class="bg-round"><svg>
-                                                <use href="https://laravel.pixelstrap.com/cuba/assets/svg/icon-sprite.svg#c-profit"> </use>
+                                                <use href="{{ asset('assets/svg/icon-sprite.svg#c-profit') }}"> </use>
                                             </svg><svg class="half-circle svg-fill">
-                                                <use href="https://laravel.pixelstrap.com/cuba/assets/svg/icon-sprite.svg#halfcircle"></use>
+                                                <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}"></use>
                                             </svg></div>
                                     </div>
                                     <div>
@@ -150,10 +150,10 @@
                                     <div class="widget-content">
                                         <div class="widget-round primary">
                                             <div class="bg-round"><svg class="fill-primary">
-                                                    <use href="https://laravel.pixelstrap.com/cuba/assets/svg/icon-sprite.svg#c-invoice">
+                                                    <use href="{{ asset('assets/svg/icon-sprite.svg#c-invoice') }}">
                                                     </use>
                                                 </svg><svg class="half-circle svg-fill">
-                                                    <use href="https://laravel.pixelstrap.com/cuba/assets/svg/icon-sprite.svg#halfcircle">
+                                                    <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}">
                                                     </use>
                                                 </svg></div>
                                         </div>
@@ -231,10 +231,10 @@
                                         <td> </td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/user/2.jpg"
+                                                    src="{{ asset('assets/images/dashboard/user/2.jpg') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Jane Cooper</a>
+                                                        href="admin/list-products">Jane Cooper</a>
                                                     <p class="mb-0 f-light">#452140</p>
                                                 </div>
                                             </div>
@@ -246,10 +246,10 @@
                                         <td></td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/user/3.jpg"
+                                                    src="{{ asset('assets/images/dashboard/user/3.jpg') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Wade Warren</a>
+                                                        href="admin/list-products">Wade Warren</a>
                                                     <p class="mb-0 f-light">#844967</p>
                                                 </div>
                                             </div>
@@ -261,10 +261,10 @@
                                         <td> </td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/user/4.jpg"
+                                                    src="{{ asset('assets/images/dashboard/user/4.jpg') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Guy Hawkins</a>
+                                                        href="admin/list-products">Guy Hawkins</a>
                                                     <p class="mb-0 f-light">#321489</p>
                                                 </div>
                                             </div>
@@ -276,10 +276,10 @@
                                         <td> </td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/user/5.jpg"
+                                                    src="{{ asset('assets/images/dashboard/user/5.jpg') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Jake Spy</a>
+                                                        href="admin/list-products">Jake Spy</a>
                                                     <p class="mb-0 f-light">#954687</p>
                                                 </div>
                                             </div>
@@ -291,10 +291,10 @@
                                         <td> </td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-9/user/1.png"
+                                                    src="{{ asset('assets/images/dashboard-9/user/1.png') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Devin Jake</a>
+                                                        href="admin/list-products">Devin Jake</a>
                                                     <p class="mb-0 f-light">#562778</p>
                                                 </div>
                                             </div>
@@ -306,10 +306,10 @@
                                         <td> </td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-9/user/2.png"
+                                                    src="{{ asset('assets/images/dashboard-9/user/2.png') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Jacob Jones</a>
+                                                        href="admin/list-products">Jacob Jones</a>
                                                     <p class="mb-0 f-light">#589356</p>
                                                 </div>
                                             </div>
@@ -321,10 +321,10 @@
                                         <td> </td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-9/user/5.png"
+                                                    src="{{ asset('assets/images/dashboard-9/user/5.png') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Jams Bone</a>
+                                                        href="admin/list-products">Jams Bone</a>
                                                     <p class="mb-0 f-light">#589657</p>
                                                 </div>
                                             </div>
@@ -336,10 +336,10 @@
                                         <td> </td>
                                         <td>
                                             <div class="d-flex"><img class="img-fluid img-40 rounded-circle me-2"
-                                                    src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-9/user/3.png"
+                                                    src="{{ asset('assets/images/dashboard-9/user/3.png') }}"
                                                     alt="user">
                                                 <div class="img-content-box"><a class="f-w-500"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/list-products">Mili Pais</a>
+                                                        href="admin/list-products">Mili Pais</a>
                                                     <p class="mb-0 f-light">#589654</p>
                                                 </div>
                                             </div>
@@ -485,11 +485,11 @@
                                     </div>
                                     <p class="mb-0 f-light pb-1">Food Delivery App figma &amp; Ai...</p>
                                     <ul class="common-flex pb-1">
-                                        <li><img class="img-fluid" src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/bg-1.png"
+                                        <li><img class="img-fluid" src="{{ asset('assets/images/dashboard/bg-1.png') }}"
                                                 alt="background"></li>
-                                        <li><img class="img-fluid" src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/bg-2.png"
+                                        <li><img class="img-fluid" src="{{ asset('assets/images/dashboard/bg-2.png') }}"
                                                 alt="background"></li>
-                                        <li><img class="img-fluid" src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/bg-3.png"
+                                        <li><img class="img-fluid" src="{{ asset('assets/images/dashboard/bg-3.png') }}"
                                                 alt="background"></li>
                                     </ul>
                                     <p class="date-content p-0">15 Feb 2024</p>
@@ -550,11 +550,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/16.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/16.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">Bag</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#452140 </p>
+                                                        href="admin/products-details">Bag</a>
+                                                    <p class="c-o-light" href="admin/checkout">#452140 </p>
                                                 </div>
                                             </div>
                                         </td>
@@ -571,11 +571,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/25.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/25.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">Sofa</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#844967</p>
+                                                        href="admin/products-details">Sofa</a>
+                                                    <p class="c-o-light" href="admin/checkout">#844967</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -591,11 +591,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/26.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/26.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">Lamp</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#321489</p>
+                                                        href="admin/products-details">Lamp</a>
+                                                    <p class="c-o-light" href="admin/checkout">#321489</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -611,11 +611,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/24.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/24.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">Watch</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#954687</p>
+                                                        href="admin/products-details">Watch</a>
+                                                    <p class="c-o-light" href="admin/checkout">#954687</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -631,11 +631,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/6.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/6.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">Football</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#896748</p>
+                                                        href="admin/products-details">Football</a>
+                                                    <p class="c-o-light" href="admin/checkout">#896748</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -651,11 +651,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/10.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/10.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">T-shirt</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#321489</p>
+                                                        href="admin/products-details">T-shirt</a>
+                                                    <p class="c-o-light" href="admin/checkout">#321489</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -671,11 +671,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/11.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/11.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">Sleeper</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#452140 </p>
+                                                        href="admin/products-details">Sleeper</a>
+                                                    <p class="c-o-light" href="admin/checkout">#452140 </p>
                                                 </div>
                                             </div>
                                         </td>
@@ -692,11 +692,11 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="currency-icon warning"><img class="img-fluid"
-                                                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard-2/order/sub-product/14.png"
+                                                        src="{{ asset('assets/images/dashboard-2/order/sub-product/14.png') }}"
                                                         alt=""></div>
                                                 <div> <a class="f-14 mb-0 f-w-500 c-light"
-                                                        href="https://laravel.pixelstrap.com/cuba/admin/products-details">Shoes</a>
-                                                    <p class="c-o-light" href="https://laravel.pixelstrap.com/cuba/admin/checkout">#844967</p>
+                                                        href="admin/products-details">Shoes</a>
+                                                    <p class="c-o-light" href="admin/checkout">#844967</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -715,7 +715,7 @@
             </div>
             <div class="col-xxl-3 col-lg-4 col-sm-6 box-col-4 ord-xl-7 ord-md-2 box-ord-7">
                 <div class="card buy-card"><img class="img-fluid"
-                        src="https://laravel.pixelstrap.com/cuba/assets/images/dashboard/purchase1.png" alt="vector mens with laptop">
+                        src="{{ asset('assets/images/dashboard/purchase1.png') }}" alt="vector mens with laptop">
                     <div class="card-body">
                         <h6 class="mb-3">Buy <a class="txt-info" href="#!">Pro Account </a>to Explore
                             Premium Features</h6><a class="purchase-btn btn btn-primary btn-hover-effect f-w-500"
