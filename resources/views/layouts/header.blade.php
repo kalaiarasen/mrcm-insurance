@@ -28,37 +28,10 @@
                     <h6 class="mb-0 f-w-400"><span class="font-primary">Don't Miss Out! </span><span class="f-light"> Out new update has been release.</span></h6>
                     <i class="icon-arrow-top-right f-light"></i>
                 </div>
-                <div class="d-flex h-100">
-                    <img src="{{ asset('assets/images/giftools.gif') }}" alt="gif" />
-                    <h6 class="mb-0 f-w-400"><span class="f-light">Something you love is now on sale! </span></h6>
-                    <a class="ms-1" href="https://1.envato.market/3GVzd" target="_blank">Buy now !</a>
-                </div>
             </div>
         </div>
         <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
             <ul class="nav-menus">
-                <li class="language-nav">
-                    <div class="translate_wrapper">
-                        <div class="current_lang">
-                            <div class="lang"><i class="flag-icon flag-icon-us"></i><span class="lang-txt">EN </span></div>
-                        </div>
-                        <div class="more_lang">
-                            <div class="lang selected" data-value="en">
-                                <i class="flag-icon flag-icon-us"></i><span class="lang-txt">English<span> (US)</span></span>
-                            </div>
-                            <div class="lang" data-value="de"><i class="flag-icon flag-icon-de"></i><span class="lang-txt">Deutsch</span></div>
-                            <div class="lang" data-value="es"><i class="flag-icon flag-icon-es"></i><span class="lang-txt">Español</span></div>
-                            <div class="lang" data-value="fr"><i class="flag-icon flag-icon-fr"></i><span class="lang-txt">Français</span></div>
-                            <div class="lang" data-value="pt">
-                                <i class="flag-icon flag-icon-pt"></i><span class="lang-txt">Português<span> (BR)</span></span>
-                            </div>
-                            <div class="lang" data-value="cn"><i class="flag-icon flag-icon-cn"></i><span class="lang-txt">简体中文</span></div>
-                            <div class="lang" data-value="ae">
-                                <i class="flag-icon flag-icon-ae"></i><span class="lang-txt">لعربية <span> (ae)</span></span>
-                            </div>
-                        </div>
-                    </div>
-                </li>
                 <li class="fullscreen-body">
                     <span>
                         <svg id="maximize-screen">
@@ -67,123 +40,10 @@
                     </span>
                 </li>
                 <li>
-                    <span class="header-search">
-                        <svg>
-                            <use href="{{ asset('assets/svg/icon-sprite.svg#search') }}"></use>
-                        </svg>
-                    </span>
-                </li>
-                <li class="onhover-dropdown">
-                    <svg>
-                        <use href="{{ asset('assets/svg/icon-sprite.svg#star') }}"></use>
-                    </svg>
-                    <div class="onhover-show-div bookmark-flip">
-                        <div class="flip-card">
-                            <div class="flip-card-inner">
-                                <div class="front">
-                                    <h6 class="f-18 mb-0 dropdown-title">Bookmark</h6>
-                                    <ul class="bookmark-dropdown">
-                                        <li>
-                                            <div class="row">
-                                                <div class="col-4 text-center">
-                                                    <div class="bookmark-content">
-                                                        <div class="bookmark-icon"><i data-feather="file-text"></i></div>
-                                                        <span>Forms</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-center">
-                                                    <div class="bookmark-content">
-                                                        <div class="bookmark-icon"><i data-feather="user"></i></div>
-                                                        <span>Profile</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-center">
-                                                    <div class="bookmark-content">
-                                                        <div class="bookmark-icon"><i data-feather="server"></i></div>
-                                                        <span>Tables</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="text-center"><a class="flip-btn f-w-700 btn btn-primary w-100" id="flip-btn" href="#!">Add Bookmark</a></li>
-                                    </ul>
-                                </div>
-                                <div class="back">
-                                    <ul>
-                                        <li>
-                                            <div class="bookmark-dropdown flip-back-content">
-                                                <input type="text" placeholder="Search..." />
-                                            </div>
-                                        </li>
-                                        <li><a class="f-w-700 d-block flip-back btn btn-primary w-100" id="flip-back" href="#!">Back</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
                     <div class="mode">
                         <svg>
                             <use href="{{ asset('assets/svg/icon-sprite.svg#moon') }}"></use>
                         </svg>
-                    </div>
-                </li>
-                <li class="cart-nav onhover-dropdown">
-                    <div class="cart-box">
-                        <svg>
-                            <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
-                        </svg>
-                        <span class="badge rounded-pill badge-danger">2</span>
-                    </div>
-                    <div class="cart-dropdown onhover-show-div">
-                        <h6 class="f-18 mb-0 dropdown-title">Cart</h6>
-                        <ul>
-                            <li>
-                                <div class="d-flex">
-                                    <img class="img-fluid b-r-5 me-3 img-60" src="{{ asset('assets/images/other-images/cart-img.jpg') }}" alt="" />
-                                    <div class="flex-grow-1">
-                                        <span>Furniture Chair for Home</span>
-                                        <div class="qty-box">
-                                            <div class="input-group">
-                                                <span class="input-group-prepend"> <button class="btn quantity-left-minus" type="button" data-type="minus" data-field="">-</button></span>
-                                                <input class="form-control input-number" type="text" name="quantity" value="1" />
-                                                <span class="input-group-prepend"> <button class="btn quantity-right-plus" type="button" data-type="plus" data-field="">+</button></span>
-                                            </div>
-                                        </div>
-                                        <h6 class="font-primary">$12.45</h6>
-                                    </div>
-                                    <div class="close-circle">
-                                        <a class="bg-danger" href="#"><i data-feather="x"></i></a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex">
-                                    <img class="img-fluid b-r-5 me-3 img-60" src="{{ asset('assets/images/other-images/cart-img1.jpg') }}" alt="" />
-                                    <div class="flex-grow-1">
-                                        <span>Rest Well Chair</span>
-                                        <div class="qty-box">
-                                            <div class="input-group">
-                                                <span class="input-group-prepend"> <button class="btn quantity-left-minus" type="button" data-type="minus" data-field="">-</button></span>
-                                                <input class="form-control input-number" type="text" name="quantity" value="1" />
-                                                <span class="input-group-prepend"> <button class="btn quantity-right-plus" type="button" data-type="plus" data-field="">+</button></span>
-                                            </div>
-                                        </div>
-                                        <h6 class="font-primary">$49.00</h6>
-                                    </div>
-                                    <div class="close-circle">
-                                        <a class="bg-danger" href="#"><i data-feather="x"></i></a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="total">
-                                <h6 class="mb-0">Order Total : <span class="f-right">$1000.00</span></h6>
-                            </li>
-                            <li class="text-center">
-                                <a class="d-block view-cart f-w-700 btn btn-primary w-100" href="javascript:void(0)">View Cart</a><a class="btn btn-primary view-checkout btn btn-primary w-100 f-w-700" href="javascript:void(0)">Checkout</a>
-                            </li>
-                        </ul>
                     </div>
                 </li>
                 <li class="onhover-dropdown">
@@ -235,7 +95,7 @@
                     <div class="d-flex profile-media">
                         <img class="b-r-10" src="{{ asset('assets/images/dashboard/profile.png') }}" alt="" />
                         <div class="flex-grow-1">
-                            <span>Emay Walter</span>
+                            <span>{{ Auth::user()->name }}</span>
                             <p class="mb-0">Admin <i class="middle fa-solid fa-angle-down"></i></p>
                         </div>
                     </div>
@@ -244,16 +104,13 @@
                             <a href="javascript:void(0)"><i data-feather="user"></i><span>Account </span></a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)"><i data-feather="mail"></i><span>Inbox</span></a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)"><i data-feather="file-text"></i><span>Taskboard</span></a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)"><i data-feather="settings"></i><span>Settings</span></a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)"><i data-feather="log-in"> </i><span>Log out</span></a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <i data-feather="log-out"></i>
+                                    <span>Log out</span>
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </li>

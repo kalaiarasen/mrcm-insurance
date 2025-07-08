@@ -19,6 +19,11 @@ Route::get('/', function () {
 })->name('home');
 
 Route::view('dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
+Route::view('for-your-action', 'pages.your-action.index')->middleware(['auth', 'verified'])->name('for-your-action');
+Route::view('policy-holders', 'pages.policy-holder.index')->middleware(['auth', 'verified'])->name('policy-holder');
+Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->name('claim');
+Route::view('announcements', 'pages.announcement.index')->middleware(['auth', 'verified'])->name('announcement');
+Route::view('user', 'pages.user.index')->middleware(['auth', 'verified'])->name('user');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
