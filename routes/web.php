@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -22,7 +23,7 @@ Route::view('dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('d
 Route::view('for-your-action', 'pages.your-action.index')->middleware(['auth', 'verified'])->name('for-your-action');
 Route::view('policy-holders', 'pages.policy-holder.index')->middleware(['auth', 'verified'])->name('policy-holder');
 Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->name('claim');
-Route::view('announcements', 'pages.announcement.index')->middleware(['auth', 'verified'])->name('announcement');
+Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);
 Route::view('user', 'pages.user.index')->middleware(['auth', 'verified'])->name('user');
 
 Route::middleware(['auth'])->group(function () {
