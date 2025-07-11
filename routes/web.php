@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
@@ -26,6 +27,7 @@ Route::view('policy-holders', 'pages.policy-holder.index')->middleware(['auth', 
 Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->name('claim');
 Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);
 Route::resource('users', UserController::class)->middleware(['auth', 'verified']);
+Route::resource('roles', RoleController::class)->middleware(['auth', 'verified']);
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

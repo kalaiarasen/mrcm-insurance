@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -15,7 +16,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::whereNot('id', auth()->id())->get();
+        // Exclude Super Admin users from the list
+        $users = User::with('roles')
+            ->whereNot('id', Auth::id())
+            ->whereDoesntHave('roles', function($query) {
+                $query->where('name', 'Super Admin');
+            })
+            ->get();
         return view('pages.user.index', compact('users'));
     }
 
@@ -36,10 +43,16 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Assign Admin role to users created by Super Admin (not Super Admin role itself)
+        $currentUser = Auth::user();
+        if ($currentUser && $currentUser->hasRole('Super Admin')) {
+            $user->assignRole('Admin');
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'User created successfully!',
-            'data' => $user
+            'data' => $user->load('roles')
         ]);
     }
 
@@ -76,11 +89,11 @@ class UserController extends Controller
             'email' => $request->email,
         ];
 
-        // Only update password if provided
         if ($request->filled('password')) {
             $updateData['password'] = Hash::make($request->password);
         }
 
+        $user->assignRole('Super Admin');
         $user->update($updateData);
 
         return response()->json([

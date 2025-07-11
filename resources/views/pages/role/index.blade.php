@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Users')
+@section('title', 'Roles & Permissions')
 
 @section('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/jquery.dataTables.css') }}">
@@ -57,6 +57,24 @@
             background-color: #dc3545;
             color: white;
         }
+
+        .permission-grid {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+        }
+
+        .permission-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
     </style>
 @endsection
 
@@ -65,7 +83,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3>Users</h3>
+                    <h3>Roles & Permissions</h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb">
@@ -77,7 +95,7 @@
                             </a>
                         </li>
                         <li class="breadcrumb-item">Dashboard</li>
-                        <li class="breadcrumb-item active">Users</li>
+                        <li class="breadcrumb-item active">Roles & Permissions</li>
                     </ol>
                 </div>
             </div>
@@ -88,64 +106,60 @@
                     <div class="card-header pb-0 card-no-border">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5>Users Management</h5>
-                                <p class="f-m-light mt-1">Create and manage users</p>
+                                <h5>Roles Management</h5>
+                                <p class="f-m-light mt-1">Create and manage roles with permissions</p>
                             </div>
                             <div class="header-actions">
-                                <button class="btn btn-success btn-sm" onclick="createUser()">
-                                    <i class="fa fa-plus me-1"></i>Create User
+                                <button class="btn btn-success btn-sm" onclick="createRole()">
+                                    <i class="fa fa-plus me-1"></i>Create Role
                                 </button>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="display table-striped border datatable" id="usersTable">
+                            <table class="display table-striped border datatable" id="rolesTable">
                                 <thead>
                                     <tr>
-                                        <th width="2%">No</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
+                                        <th>ID</th>
+                                        <th>Role Name</th>
+                                        <th>Permissions Count</th>
+                                        <th>Users Count</th>
                                         <th>Created At</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($users as $key => $user)
+                                    @foreach($roles as $role)
                                         <tr>
-                                            <td class="text-center">{{ ++$key }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
+                                            <td>{{ $role->id }}</td>
                                             <td>
-                                                @if($user->roles->isNotEmpty())
-                                                    @foreach($user->roles as $role)
-                                                        <span class="badge bg-{{ $role->name === 'Super Admin' ? 'danger' : ($role->name === 'Admin' ? 'success' : ($role->name === 'Agent' ? 'warning' : 'info')) }}">
-                                                            {{ $role->name }}
-                                                        </span>
-                                                    @endforeach
-                                                @else
-                                                    <span class="badge bg-secondary">No Role</span>
-                                                @endif
+                                                <span class="badge bg-{{ $role->name === 'Super Admin' ? 'danger' : ($role->name === 'Admin' ? 'success' : ($role->name === 'Agent' ? 'warning' : 'info')) }}">
+                                                    {{ $role->name }}
+                                                </span>
                                             </td>
-                                            <td>{{ $user->created_at->format('M d, Y H:i') }}</td>
+                                            <td>{{ $role->permissions->count() }}</td>
+                                            <td>{{ $role->users->count() }}</td>
+                                            <td>{{ $role->created_at->format('M d, Y H:i') }}</td>
                                             <td>
                                                 <ul class="action">
                                                     <li class="view">
-                                                        <a href="#!" onclick="viewUser({{ $user->id }})">
+                                                        <a href="#!" onclick="viewRole({{ $role->id }})">
                                                             <i class="fa-regular fa-eye"></i>
                                                         </a>
                                                     </li>
-                                                    <li class="edit">
-                                                        <a href="#!" onclick="editUser({{ $user->id }})">
-                                                            <i class="fa-regular fa-pen-to-square"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li class="delete">
-                                                        <a href="#!" onclick="deleteUser({{ $user->id }})">
-                                                            <i class="fa-solid fa-trash-can"></i>
-                                                        </a>
-                                                    </li>
+                                                    @if($role->name !== 'Super Admin')
+                                                        <li class="edit">
+                                                            <a href="#!" onclick="editRole({{ $role->id }})">
+                                                                <i class="fa-regular fa-pen-to-square"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li class="delete">
+                                                            <a href="#!" onclick="deleteRole({{ $role->id }})">
+                                                                <i class="fa-solid fa-trash-can"></i>
+                                                            </a>
+                                                        </li>
+                                                    @endif
                                                 </ul>
                                             </td>
                                         </tr>
@@ -159,48 +173,51 @@
         </div>
     </div>
 
-    <!-- Create/Edit User Modal -->
-    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <!-- Create/Edit Role Modal -->
+    <div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title text-white" id="userModalLabel">
-                        <i class="fa fa-user me-2"></i>Create User
+                    <h5 class="modal-title text-white" id="roleModalLabel">
+                        <i class="fa fa-shield me-2"></i>Create Role
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="userForm">
-                        <input type="hidden" id="userId" name="id">
+                    <form id="roleForm">
+                        <input type="hidden" id="roleId" name="id">
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="name" class="form-label fw-bold">
-                                    <i class="fa fa-user text-primary me-1"></i>Name
+                                    <i class="fa fa-shield text-primary me-1"></i>Role Name
                                 </label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name" required>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter role name" required>
                                 <div class="invalid-feedback" id="nameError"></div>
                             </div>
-                            <div class="col-md-12 mb-3">
-                                <label for="email" class="form-label fw-bold">
-                                    <i class="fa fa-envelope text-primary me-1"></i>Email
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">
+                                    <i class="fa fa-key text-primary me-1"></i>Permissions
                                 </label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" required>
-                                <div class="invalid-feedback" id="emailError"></div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label fw-bold">
-                                    <i class="fa fa-lock text-primary me-1"></i>Password
-                                </label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
-                                <div class="invalid-feedback" id="passwordError"></div>
-                                <small class="form-text text-muted" id="passwordHelp">Leave blank to keep current password (for edit)</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="password_confirmation" class="form-label fw-bold">
-                                    <i class="fa fa-lock text-primary me-1"></i>Confirm Password
-                                </label>
-                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm password">
-                                <div class="invalid-feedback" id="password_confirmationError"></div>
+                                <div class="permission-grid">
+                                    <div class="row">
+                                        @foreach($permissions->groupBy(function($permission) { return explode('.', $permission->name)[0]; }) as $group => $groupPermissions)
+                                            <div class="col-md-6 mb-3">
+                                                <h6 class="text-capitalize text-primary">{{ str_replace('-', ' ', $group) }}</h6>
+                                                @foreach($groupPermissions as $permission)
+                                                    <div class="permission-item">
+                                                        <input type="checkbox" 
+                                                               id="permission_{{ $permission->id }}" 
+                                                               name="permissions[]" 
+                                                               value="{{ $permission->id }}">
+                                                        <label for="permission_{{ $permission->id }}" class="form-label mb-0">
+                                                            {{ ucfirst(str_replace(['-', '.'], [' ', ' '], $permission->name)) }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -209,21 +226,21 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fa fa-times me-1"></i>Cancel
                     </button>
-                    <button type="button" class="btn btn-success" id="saveUserBtn" onclick="saveUser()">
-                        <i class="fa fa-save me-1"></i>Save User
+                    <button type="button" class="btn btn-success" id="saveRoleBtn" onclick="saveRole()">
+                        <i class="fa fa-save me-1"></i>Save Role
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- View User Modal -->
-    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+    <!-- View Role Modal -->
+    <div class="modal fade" id="viewRoleModal" tabindex="-1" aria-labelledby="viewRoleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title" id="viewUserModalLabel">
-                        <i class="fa fa-eye me-2"></i>View User
+                    <h5 class="modal-title" id="viewRoleModalLabel">
+                        <i class="fa fa-eye me-2"></i>View Role
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -232,24 +249,14 @@
                         <div class="col-12">
                             <div class="card border-0 bg-light">
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-user me-1"></i>Name</h6>
-                                            <p class="mb-3" id="viewName"></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-envelope me-1"></i>Email</h6>
-                                            <p class="mb-3" id="viewEmail"></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-calendar me-1"></i>Created At</h6>
-                                            <p class="mb-3" id="viewCreatedAt"></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-edit me-1"></i>Updated At</h6>
-                                            <p class="mb-3" id="viewUpdatedAt"></p>
-                                        </div>
-                                    </div>
+                                    <h4 class="card-title text-primary" id="viewRoleName"></h4>
+                                    <hr>
+                                    <h6 class="text-primary mb-3">Permissions:</h6>
+                                    <div id="viewPermissions" class="row"></div>
+                                    <hr>
+                                    <small class="text-muted">
+                                        <i class="fa fa-calendar me-1"></i>Created: <span id="viewCreatedAt"></span>
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -278,8 +285,8 @@
                     <div class="text-center">
                         <i class="fa fa-exclamation-triangle fa-3x text-warning mb-3"></i>
                         <h5>Are you sure?</h5>
-                        <p>Do you really want to delete this user? This action cannot be undone.</p>
-                        <input type="hidden" id="deleteUserId">
+                        <p>Do you really want to delete this role? This action cannot be undone.</p>
+                        <input type="hidden" id="deleteRoleId">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -306,103 +313,124 @@
         let isEditMode = false;
         
         $(document).ready(function() {
-            dataTable = $('#usersTable').DataTable({
+            dataTable = $('#rolesTable').DataTable({
                 "responsive": true,
                 "pageLength": 10,
                 "order": [],
             });
         });
 
-        // Create new user
-        function createUser() {
+        // Create new role
+        function createRole() {
             isEditMode = false;
-            document.getElementById('userModalLabel').innerHTML = '<i class="fa fa-user me-2"></i>Create User';
-            document.getElementById('saveUserBtn').innerHTML = '<i class="fa fa-save me-1"></i>Save User';
-            document.getElementById('userForm').reset();
-            document.getElementById('userId').value = '';
-            document.getElementById('password').required = true;
-            document.getElementById('password_confirmation').required = true;
-            document.getElementById('passwordHelp').style.display = 'none';
+            document.getElementById('roleModalLabel').innerHTML = '<i class="fa fa-shield me-2"></i>Create Role';
+            document.getElementById('saveRoleBtn').innerHTML = '<i class="fa fa-save me-1"></i>Save Role';
+            document.getElementById('roleForm').reset();
+            document.getElementById('roleId').value = '';
+            
+            // Uncheck all permissions
+            document.querySelectorAll('input[name="permissions[]"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
             clearValidationErrors();
-            new bootstrap.Modal(document.getElementById('userModal')).show();
+            new bootstrap.Modal(document.getElementById('roleModal')).show();
         }
 
-        // Edit user
-        function editUser(id) {
+        // Edit role
+        function editRole(id) {
             isEditMode = true;
-            document.getElementById('userModalLabel').innerHTML = '<i class="fa fa-edit me-2"></i>Edit User';
-            document.getElementById('saveUserBtn').innerHTML = '<i class="fa fa-save me-1"></i>Update User';
-            document.getElementById('password').required = false;
-            document.getElementById('password_confirmation').required = false;
-            document.getElementById('passwordHelp').style.display = 'block';
+            document.getElementById('roleModalLabel').innerHTML = '<i class="fa fa-edit me-2"></i>Edit Role';
+            document.getElementById('saveRoleBtn').innerHTML = '<i class="fa fa-save me-1"></i>Update Role';
             
-            // Fetch user data
-            fetch(`/users/${id}`)
+            // Fetch role data
+            fetch(`/roles/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        document.getElementById('userId').value = data.data.id;
+                        document.getElementById('roleId').value = data.data.id;
                         document.getElementById('name').value = data.data.name;
-                        document.getElementById('email').value = data.data.email;
-                        document.getElementById('password').value = '';
-                        document.getElementById('password_confirmation').value = '';
+                        
+                        // Uncheck all permissions first
+                        document.querySelectorAll('input[name="permissions[]"]').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        
+                        // Check role permissions
+                        data.data.permissions.forEach(permission => {
+                            const checkbox = document.getElementById(`permission_${permission.id}`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                        
                         clearValidationErrors();
-                        new bootstrap.Modal(document.getElementById('userModal')).show();
+                        new bootstrap.Modal(document.getElementById('roleModal')).show();
                     }
                 })
                 .catch(error => {
-                    showNotification('Error fetching user data', 'error');
+                    showNotification('Error fetching role data', 'error');
                     console.error('Error:', error);
                 });
         }
 
-        // View user
-        function viewUser(id) {
-            fetch(`/users/${id}`)
+        // View role
+        function viewRole(id) {
+            fetch(`/roles/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        document.getElementById('viewName').textContent = data.data.name;
-                        document.getElementById('viewEmail').textContent = data.data.email;
+                        document.getElementById('viewRoleName').textContent = data.data.name;
+                        
+                        // Display permissions
+                        const permissionsDiv = document.getElementById('viewPermissions');
+                        permissionsDiv.innerHTML = '';
+                        
+                        data.data.permissions.forEach(permission => {
+                            const permissionBadge = `
+                                <div class="col-md-6 mb-2">
+                                    <span class="badge bg-secondary">${permission.name}</span>
+                                </div>
+                            `;
+                            permissionsDiv.innerHTML += permissionBadge;
+                        });
+                        
                         document.getElementById('viewCreatedAt').textContent = new Date(data.data.created_at).toLocaleString();
-                        document.getElementById('viewUpdatedAt').textContent = new Date(data.data.updated_at).toLocaleString();
-                        new bootstrap.Modal(document.getElementById('viewUserModal')).show();
+                        new bootstrap.Modal(document.getElementById('viewRoleModal')).show();
                     }
                 })
                 .catch(error => {
-                    showNotification('Error fetching user data', 'error');
+                    showNotification('Error fetching role data', 'error');
                     console.error('Error:', error);
                 });
         }
 
-        // Save user (create or update)
-        function saveUser() {
-            const form = document.getElementById('userForm');
+        // Save role (create or update)
+        function saveRole() {
+            const form = document.getElementById('roleForm');
             const formData = new FormData(form);
-            const id = document.getElementById('userId').value;
+            const id = document.getElementById('roleId').value;
             
-            const url = isEditMode ? `/users/${id}` : '/users';
+            const url = isEditMode ? `/roles/${id}` : '/roles';
             const method = isEditMode ? 'PUT' : 'POST';
             
             // Clear previous validation errors
             clearValidationErrors();
             
             // Show loading state
-            const saveBtn = document.getElementById('saveUserBtn');
+            const saveBtn = document.getElementById('saveRoleBtn');
             const originalText = saveBtn.innerHTML;
             saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Saving...';
             saveBtn.disabled = true;
             
+            // Get selected permissions
+            const selectedPermissions = Array.from(document.querySelectorAll('input[name="permissions[]"]:checked'))
+                .map(checkbox => checkbox.value);
+            
             const requestData = {
                 name: formData.get('name'),
-                email: formData.get('email'),
+                permissions: selectedPermissions
             };
-
-            // Only include password if it's provided
-            if (formData.get('password')) {
-                requestData.password = formData.get('password');
-                requestData.password_confirmation = formData.get('password_confirmation');
-            }
             
             fetch(url, {
                 method: method,
@@ -417,7 +445,7 @@
             .then(data => {
                 if (data.success) {
                     showNotification(data.message, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                    bootstrap.Modal.getInstance(document.getElementById('roleModal')).hide();
                     setTimeout(() => location.reload(), 1000);
                 } else {
                     if (data.errors) {
@@ -437,17 +465,17 @@
             });
         }
 
-        // Delete user
-        function deleteUser(id) {
-            document.getElementById('deleteUserId').value = id;
+        // Delete role
+        function deleteRole(id) {
+            document.getElementById('deleteRoleId').value = id;
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
 
         // Confirm delete
         function confirmDelete() {
-            const id = document.getElementById('deleteUserId').value;
+            const id = document.getElementById('deleteRoleId').value;
             
-            fetch(`/users/${id}`, {
+            fetch(`/roles/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

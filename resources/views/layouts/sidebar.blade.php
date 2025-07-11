@@ -94,6 +94,20 @@
                             <span>Users</span>
                         </a>
                     </li>
+                    @role('Super Admin')
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-price') }}"></use>
+                            </svg>
+                            <span>Roles & Permissions</span>
+                        </a>
+                    </li>
+                    @endrole
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="">
