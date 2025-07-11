@@ -59,7 +59,7 @@
         }
 
         .permission-grid {
-            max-height: 300px;
+            max-height: 600px;
             overflow-y: auto;
             border: 1px solid #dee2e6;
             border-radius: 8px;
@@ -143,11 +143,6 @@
                                             <td>{{ $role->created_at->format('M d, Y H:i') }}</td>
                                             <td>
                                                 <ul class="action">
-                                                    <li class="view">
-                                                        <a href="#!" onclick="viewRole({{ $role->id }})">
-                                                            <i class="fa-regular fa-eye"></i>
-                                                        </a>
-                                                    </li>
                                                     @if($role->name !== 'Super Admin')
                                                         <li class="edit">
                                                             <a href="#!" onclick="editRole({{ $role->id }})">
@@ -228,43 +223,6 @@
                     </button>
                     <button type="button" class="btn btn-success" id="saveRoleBtn" onclick="saveRole()">
                         <i class="fa fa-save me-1"></i>Save Role
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Role Modal -->
-    <div class="modal fade" id="viewRoleModal" tabindex="-1" aria-labelledby="viewRoleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title" id="viewRoleModalLabel">
-                        <i class="fa fa-eye me-2"></i>View Role
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card border-0 bg-light">
-                                <div class="card-body">
-                                    <h4 class="card-title text-primary" id="viewRoleName"></h4>
-                                    <hr>
-                                    <h6 class="text-primary mb-3">Permissions:</h6>
-                                    <div id="viewPermissions" class="row"></div>
-                                    <hr>
-                                    <small class="text-muted">
-                                        <i class="fa fa-calendar me-1"></i>Created: <span id="viewCreatedAt"></span>
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times me-1"></i>Close
                     </button>
                 </div>
             </div>
@@ -374,38 +332,6 @@
                 });
         }
 
-        // View role
-        function viewRole(id) {
-            fetch(`/roles/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('viewRoleName').textContent = data.data.name;
-                        
-                        // Display permissions
-                        const permissionsDiv = document.getElementById('viewPermissions');
-                        permissionsDiv.innerHTML = '';
-                        
-                        data.data.permissions.forEach(permission => {
-                            const permissionBadge = `
-                                <div class="col-md-6 mb-2">
-                                    <span class="badge bg-secondary">${permission.name}</span>
-                                </div>
-                            `;
-                            permissionsDiv.innerHTML += permissionBadge;
-                        });
-                        
-                        document.getElementById('viewCreatedAt').textContent = new Date(data.data.created_at).toLocaleString();
-                        new bootstrap.Modal(document.getElementById('viewRoleModal')).show();
-                    }
-                })
-                .catch(error => {
-                    showNotification('Error fetching role data', 'error');
-                    console.error('Error:', error);
-                });
-        }
-
-        // Save role (create or update)
         function saveRole() {
             const form = document.getElementById('roleForm');
             const formData = new FormData(form);
