@@ -19,7 +19,8 @@ Route::view('footer-dark', 'starter_kit.footers.footer_dark')->name('footer_dark
 Route::view('footer-fixed', 'starter_kit.footers.footer_fixed')->name('footer_fixed');
 
 Route::get('/', function () {
-    return view('welcome');
+    // Ensure the 'login' route exists and is named 'login'
+    return redirect()->route('login');
 })->name('home');
 
 Route::view('dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
