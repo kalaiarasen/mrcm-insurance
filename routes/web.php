@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Livewire\Settings\Appearance;
@@ -25,6 +26,10 @@ Route::view('dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('d
 Route::view('for-your-action', 'pages.your-action.index')->middleware(['auth', 'verified'])->name('for-your-action');
 Route::view('policy-holders', 'pages.policy-holder.index')->middleware(['auth', 'verified'])->name('policy-holder');
 Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->name('claim');
+
+Route::get('new-policy', [PolicyController::class, 'newPolicy'])->middleware(['auth', 'verified'])->name('new-policy');
+
+
 Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);
 Route::resource('users', UserController::class)->middleware(['auth', 'verified']);
 Route::resource('roles', RoleController::class)->middleware(['auth', 'verified']);

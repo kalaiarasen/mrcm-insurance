@@ -72,6 +72,18 @@
                     </li>
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}" href="{{ route('new-policy') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                            </svg>
+                            <span>New Policy</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-button') }}"></use>
@@ -99,10 +111,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
                             <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-social') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-price') }}"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-social') }}"></use>
                             </svg>
                             <span>Roles & Permissions</span>
                         </a>
