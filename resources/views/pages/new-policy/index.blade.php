@@ -1,4 +1,4 @@
-@extends('layouts.main')
+ @extends('layouts.main')
 
 @section('title', 'New Policy')
 
@@ -31,13 +31,14 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="progress mb-3" style="height: 25px;">
-                            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                                Step 1 of 2
+                            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100">
+                                Step 1 of 3
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small class="text-muted">Step 1: Applicant Details</small>
                             <small class="text-muted">Step 2: Healthcare Services</small>
+                            <small class="text-muted">Step 3: Pricing Details</small>
                         </div>
                         
                         <!-- Debug Panel (for testing) -->
@@ -149,13 +150,13 @@
                                 <div class="col-md-2">
                                     <div class="mb-3">
                                         <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="mb-3">
                                         <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm Password" required>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm Password" autocomplete="new-password" required>
                                     </div>
                                 </div>
                             </div>
@@ -545,8 +546,157 @@
                                 <div class="row mt-4">
                                     <div class="col-md-12 text-end">
                                         <button type="button" class="btn btn-light me-2" id="step2PrevBtn">Previous Step</button>
-                                        <button type="submit" class="btn btn-primary" id="step2NextBtn">Submit Application</button>
+                                        <button type="submit" class="btn btn-primary" id="step2NextBtn">Next Step</button>
                                     </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3: Pricing Details -->
+            <div class="col-md-12" id="step3Card" style="display: none;">
+                <div class="card">
+                    <div class="card-header pb-0 card-no-border" style="position: relative;">
+                        <h5>3. Pricing Details</h5>
+                        <span class="badge bg-primary" style="position: absolute; top: 15px; right: 15px;">Great Eastern</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="pricingDetailsForm">
+                            <!-- Quote Summary Section -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <h6 class="mb-3">Policy Summary</h6>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <h6>Cover Type</h6>
+                                    <p id="summaryCoverType" class="text-muted">-</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Professional Type</h6>
+                                    <p id="summaryProfessionalType" class="text-muted">-</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Employment Status</h6>
+                                    <p id="summaryEmploymentStatus" class="text-muted">-</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <h6>Specialty</h6>
+                                    <p id="summarySpecialty" class="text-muted">-</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Service Type</h6>
+                                    <p id="summaryServiceType" class="text-muted">-</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Applicant Name</h6>
+                                    <p id="summaryApplicantName" class="text-muted">-</p>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Policy Details Section -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <label for="policyStartDate" class="form-label">Policy Starting Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="policyStartDate" name="policy_start_date" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="policyExpiryDate" class="form-label">Policy Expiry Date</label>
+                                    <input type="date" class="form-control" id="policyExpiryDate" name="policy_expiry_date" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="liabilityLimit" class="form-label">Select Liability Limit <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="liabilityLimit" name="liability_limit" required>
+                                        <option value="">Select Liability Limit</option>
+                                        <option value="1000000">RM 1,000,000</option>
+                                        <option value="2000000">RM 2,000,000</option>
+                                        <option value="5000000">RM 5,000,000</option>
+                                        <option value="10000000">RM 10,000,000</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Pricing Breakdown Section -->
+                            <div id="pricingBreakdown" style="display: none;">
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <h6>Amount Details</h6>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-6"><span>Limit of Indemnity</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayLiabilityLimit">0.00</span></span></div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-6"><span>Premium Per Annum</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayBasePremium">0.00</span></span></div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-6"><span>Gross Premium</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayGrossPremium">0.00</span></span></div>
+                                </div>
+                                
+                                <div class="row mb-2" id="locumAddonRow" style="display: none;">
+                                    <div class="col-md-6"><span>Locum Extension</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayLocumAddon">0.00</span></span></div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-6"><span id="sstLabel">6% SST</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displaySST">0.00</span></span></div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-6"><span>Stamp Duty</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayStampDuty">10.00</span></span></div>
+                                </div>
+                                
+                                <hr>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6"><strong>Total Payable</strong></div>
+                                    <div class="col-md-6"><strong>: RM <span id="displayTotalPayable">0.00</span></strong></div>
+                                </div>
+                                
+                                <hr>
+                                
+                                <!-- Locum Extension Option -->
+                                <div id="locumExtensionSection" style="display: none;">
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <div class="card bg-light">
+                                                <div class="card-body">
+                                                    <h6 class="mb-2">Locum Extension Add-on</h6>
+                                                    <p class="mb-3 small">We extend the coverage afforded under this policy for any claim made against you during the period of insurance arising out of malpractice committed or allegedly committed by a locum officer practicing at your clinic.</p>
+                                                    
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="locumExtensionCheckbox" name="locum_extension">
+                                                        <label class="form-check-label" for="locumExtensionCheckbox">
+                                                            Add Locum Extension (Additional premium applies)
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-12 text-end">
+                                    <button type="button" class="btn btn-light me-2" id="step3PrevBtn">Previous Step</button>
+                                    <button type="submit" class="btn btn-success" id="step3NextBtn">Submit Application</button>
                                 </div>
                             </div>
                         </form>
@@ -559,1146 +709,6 @@
 @endsection
 
 @section('scripts')
-<script>
-// Generate a unique user ID for this session if not exists
-function getUserId() {
-    let userId = localStorage.getItem('policyUserId');
-    if (!userId) {
-        userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('policyUserId', userId);
-    }
-    return userId;
-}
-
-// Save form data to localStorage
-function saveFormData(step, formData) {
-    const userId = getUserId();
-    const key = `policy_${userId}_step${step}`;
-    localStorage.setItem(key, JSON.stringify(formData));
-    console.log(`Data saved for step ${step}:`, formData);
-}
-
-// Load form data from localStorage
-function loadFormData(step) {
-    const userId = getUserId();
-    const key = `policy_${userId}_step${step}`;
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : {};
-}
-
-// Clear all saved data for current user
-function clearAllSavedData() {
-    const userId = getUserId();
-    for (let i = 1; i <= totalSteps; i++) {
-        const key = `policy_${userId}_step${i}`;
-        localStorage.removeItem(key);
-    }
-    console.log('All saved data cleared for user:', userId);
-}
-
-// Get all saved data
-function getAllSavedData() {
-    const allData = {};
-    for (let i = 1; i <= totalSteps; i++) {
-        const stepData = loadFormData(i);
-        Object.assign(allData, stepData);
-    }
-    return allData;
-}
-
-// Debug function to view all saved data
-function debugSavedData() {
-    const userId = getUserId();
-    console.log('Current User ID:', userId);
-    for (let i = 1; i <= totalSteps; i++) {
-        const data = loadFormData(i);
-        console.log(`Step ${i} data:`, data);
-    }
-    console.log('All combined data:', getAllSavedData());
-}
-
-// Toggle debug panel
-function toggleDebugPanel() {
-    const panel = document.getElementById('debugPanel');
-    if (panel) {
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    }
-}
-
-// Populate form with saved data
-function populateForm(step, data) {
-    Object.keys(data).forEach(name => {
-        const element = document.querySelector(`[name="${name}"]`);
-        if (element) {
-            if (element.type === 'checkbox' || element.type === 'radio') {
-                element.checked = data[name];
-            } else {
-                element.value = data[name];
-            }
-        }
-    });
-    
-    // For step 2, restore the cascading dropdown state
-    if (step === 2) {
-        restoreHealthcareServicesState(data);
-    }
-}
-
-// Restore healthcare services cascading dropdown state
-function restoreHealthcareServicesState(data) {
-    setTimeout(() => {
-        // Trigger professional indemnity type change if set
-        if (data.professional_indemnity_type) {
-            const professionalIndemnitySelect = document.getElementById('professionalIndemnityType');
-            if (professionalIndemnitySelect) {
-                professionalIndemnitySelect.dispatchEvent(new Event('change'));
-                
-                // Chain the subsequent selections
-                setTimeout(() => {
-                    if (data.employment_status) {
-                        const employmentStatusSelect = document.getElementById('employmentStatus');
-                        if (employmentStatusSelect) {
-                            employmentStatusSelect.dispatchEvent(new Event('change'));
-                            
-                            setTimeout(() => {
-                                if (data.specialty_area) {
-                                    const specialtyAreaSelect = document.getElementById('specialtyArea');
-                                    if (specialtyAreaSelect) {
-                                        specialtyAreaSelect.dispatchEvent(new Event('change'));
-                                        
-                                        setTimeout(() => {
-                                            if (data.cover_type) {
-                                                const coverTypeSelect = document.getElementById('coverType');
-                                                if (coverTypeSelect) {
-                                                    coverTypeSelect.dispatchEvent(new Event('change'));
-                                                    
-                                                    setTimeout(() => {
-                                                        if (data.locum_practice_location) {
-                                                            const locumSelect = document.getElementById('locumPracticeLocation');
-                                                            if (locumSelect) {
-                                                                locumSelect.dispatchEvent(new Event('change'));
-                                                            }
-                                                        }
-                                                        if (data.service_type) {
-                                                            const serviceTypeSelect = document.getElementById('serviceTypeSelection');
-                                                            if (serviceTypeSelect) {
-                                                                serviceTypeSelect.dispatchEvent(new Event('change'));
-                                                            }
-                                                        }
-                                                    }, 100);
-                                                }
-                                            }
-                                        }, 100);
-                                    }
-                                }
-                            }, 100);
-                        }
-                    }
-                }, 100);
-            }
-        }
-    }, 100);
-}
-
-// Get form data as object
-function getFormData(formElement) {
-    const formData = new FormData(formElement);
-    const data = {};
-    for (let [key, value] of formData.entries()) {
-        data[key] = value;
-    }
-    return data;
-}
-
-// Step navigation
-let currentStep = 1;
-const totalSteps = 2;
-
-function updateProgressBar(step) {
-    const progressBar = document.getElementById('progressBar');
-    const progressPercentage = (step / totalSteps) * 100;
-    
-    if (progressBar) {
-        progressBar.style.width = progressPercentage + '%';
-        progressBar.setAttribute('aria-valuenow', progressPercentage);
-        progressBar.textContent = `Step ${step} of ${totalSteps}`;
-        
-        // Change color based on completion
-        if (step === totalSteps) {
-            progressBar.classList.remove('bg-primary');
-            progressBar.classList.add('bg-success');
-        } else {
-            progressBar.classList.remove('bg-success');
-            progressBar.classList.add('bg-primary');
-        }
-    }
-}
-
-function showStep(step) {
-    // Hide all steps
-    for (let i = 1; i <= totalSteps; i++) {
-        const stepCard = document.getElementById(`step${i}Card`);
-        if (stepCard) {
-            stepCard.style.display = 'none';
-        }
-    }
-    
-    // Show current step
-    const currentCard = document.getElementById(`step${step}Card`);
-    if (currentCard) {
-        currentCard.style.display = 'block';
-    }
-    
-    // Update progress bar
-    updateProgressBar(step);
-    
-    // Load saved data for this step
-    const savedData = loadFormData(step);
-    if (Object.keys(savedData).length > 0) {
-        populateForm(step, savedData);
-    }
-    
-    currentStep = step;
-}
-
-function nextStep() {
-    if (currentStep < totalSteps) {
-        showStep(currentStep + 1);
-    }
-}
-
-function prevStep() {
-    if (currentStep > 1) {
-        showStep(currentStep - 1);
-    }
-}
-
-$(document).ready(function() {
-    // Initialize - show first step and load any saved data
-    showStep(1);
-    
-    // Handle nationality status change
-    $('#nationalityStatus').on('change', function() {
-        const value = $(this).val();
-        const nricField = $('#nricNumber');
-        const passportField = $('#passportNumber');
-        const nricRequired = $('#nricRequired');
-        const passportRequired = $('#passportRequired');
-        
-        if (value === 'malaysian') {
-            nricField.prop('required', true);
-            passportField.prop('required', false);
-            nricRequired.show();
-            passportRequired.hide();
-        } else if (value === 'non_malaysian') {
-            nricField.prop('required', false);
-            passportField.prop('required', true);
-            nricRequired.hide();
-            passportRequired.show();
-        } else {
-            nricField.prop('required', false);
-            passportField.prop('required', false);
-            nricRequired.hide();
-            passportRequired.hide();
-        }
-    });
-
-    // Handle registration council change
-    $('#registrationCouncil').on('change', function() {
-        const value = $(this).val();
-        const otherField = $('#otherCouncilField');
-        const otherInput = $('#otherCouncil');
-        const registrationLabel = $('#registrationNumberLabel');
-        const registrationInput = $('#registrationNumber');
-        
-        // Reset fields
-        otherInput.val('');
-        registrationInput.val('');
-        
-        if (value === 'mmc') {
-            // Malaysian Medical Council
-            otherField.hide();
-            otherInput.prop('required', false);
-            registrationLabel.html('MMC Number <span class="text-danger">*</span>');
-            registrationInput.attr('placeholder', 'Enter MMC Number');
-            registrationInput.prop('required', true);
-        } else if (value === 'mdc') {
-            // Malaysian Dental Council
-            otherField.hide();
-            otherInput.prop('required', false);
-            registrationLabel.html('MDC Number <span class="text-danger">*</span>');
-            registrationInput.attr('placeholder', 'Enter MDC Number');
-            registrationInput.prop('required', true);
-        } else if (value === 'others') {
-            // Others - show specify field
-            otherField.show();
-            otherInput.prop('required', true);
-            registrationLabel.html('Registration Number <span class="text-danger">*</span>');
-            registrationInput.attr('placeholder', 'Enter Registration Number');
-            registrationInput.prop('required', true);
-        } else {
-            // No selection
-            otherField.hide();
-            otherInput.prop('required', false);
-            registrationLabel.html('Registration Number <span class="text-danger">*</span>');
-            registrationInput.attr('placeholder', 'Registration Number');
-            registrationInput.prop('required', false);
-        }
-    });
-
-    // Step 1 form submission
-    $('#policyApplicationForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        // Check if passwords match
-        const password = $('#password').val();
-        const confirmPassword = $('#confirmPassword').val();
-        
-        if (password !== confirmPassword) {
-            alert('Passwords do not match. Please check and try again.');
-            $('#confirmPassword').focus();
-            return;
-        }
-        
-        // Basic validation
-        if (!this.checkValidity()) {
-            e.stopPropagation();
-            $(this).addClass('was-validated');
-            return;
-        }
-        
-        // Save form data
-        const formData = getFormData(this);
-        saveFormData(1, formData);
-        
-        // Show success message and move to next step
-        // alert('Step 1 data saved successfully!');
-        nextStep();
-    });        // Step 2 form submission
-        $('#healthcareServicesForm').on('submit', function(e) {
-            e.preventDefault();
-            
-            // Basic validation
-            if (!this.checkValidity()) {
-                e.stopPropagation();
-                $(this).addClass('was-validated');
-                return;
-            }
-            
-            // Save form data
-            const formData = getFormData(this);
-            saveFormData(2, formData);
-            
-            // Get all saved data
-            const allData = getAllSavedData();
-            
-            // Show success message with data summary
-            let dataSummary = 'Application submitted successfully!\n\nData Summary:\n';
-            dataSummary += `User ID: ${getUserId()}\n`;
-            dataSummary += `Total fields saved: ${Object.keys(allData).length}\n\n`;
-            dataSummary += 'Check browser console for complete data details.';
-            
-            alert(dataSummary);
-            console.log('Complete application data:', allData);
-            
-            // Update progress to show completion
-            updateProgressBar(totalSteps);
-            
-            // Here you would normally submit all data to the server
-            // Example: 
-            // fetch('/api/submit-policy', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(allData)
-            // });
-        });
-
-        // Navigation button handlers
-        $('#step1NextBtn').on('click', function() {
-            $('#policyApplicationForm').trigger('submit');
-        });
-
-        $('#step2PrevBtn').on('click', function() {
-            // Save current step 2 data before going back
-            const formData = getFormData(document.getElementById('healthcareServicesForm'));
-            saveFormData(2, formData);
-            prevStep();
-        });
-
-        $('#step2NextBtn').on('click', function() {
-            $('#healthcareServicesForm').trigger('submit');
-        });
-
-        // Real-time password confirmation validation
-        $('#confirmPassword').on('input', function() {
-            const password = $('#password').val();
-            const confirmPassword = $(this).val();
-            
-            if (password && confirmPassword) {
-                if (password === confirmPassword) {
-                    $(this).removeClass('is-invalid').addClass('is-valid');
-                } else {
-                    $(this).removeClass('is-valid').addClass('is-invalid');
-                }
-            } else {
-                $(this).removeClass('is-valid is-invalid');
-            }
-        });
-
-        // Auto-save on form field changes (optional - saves data as user types)
-        $('#policyApplicationForm input, #policyApplicationForm select').on('change', function() {
-            const formData = getFormData(document.getElementById('policyApplicationForm'));
-            saveFormData(1, formData);
-        });
-
-        $('#healthcareServicesForm input, #healthcareServicesForm select').on('change', function() {
-            const formData = getFormData(document.getElementById('healthcareServicesForm'));
-            saveFormData(2, formData);
-        });
-    });
-</script>
-<script>
-    // Healthcare Services Form Logic (Step 2)
-    document.addEventListener('DOMContentLoaded', function() {
-        const professionalIndemnityType = document.getElementById('professionalIndemnityType');
-        const employmentStatusSection = document.getElementById('employmentStatusSection');
-        const employmentStatus = document.getElementById('employmentStatus');
-        const specialtySection = document.getElementById('specialtySection');
-        const specialtyArea = document.getElementById('specialtyArea');
-        const coverTypeSection = document.getElementById('coverTypeSection');
-        const coverType = document.getElementById('coverType');
-        const practiceAreaSection = document.getElementById('practiceAreaSection');
-        const practiceArea = document.getElementById('practiceArea');
-        const locumPracticeSection = document.getElementById('locumPracticeSection');
-        const locumPracticeLocation = document.getElementById('locumPracticeLocation');
-        const serviceTypeSection = document.getElementById('serviceTypeSection');
-        const serviceTypeSelection = document.getElementById('serviceTypeSelection');
-        const serviceDefinitionSection = document.getElementById('serviceDefinitionSection');
-
-        // Step 1: Professional Indemnity Type Change
-        professionalIndemnityType.addEventListener('change', function() {
-            const selectedValue = this.value;
-            
-            // Reset ALL subsequent fields and hide ALL subsequent sections
-            resetAllFields();
-            hideAllSections();
-            
-            if (selectedValue === 'medical_practice' || selectedValue === 'dental_practice') {
-                employmentStatusSection.style.display = 'block';
-                employmentStatus.required = true;
-                updateEmploymentStatusOptions(selectedValue);
-            }
-        });
-
-        // Step 2: Employment Status Change
-        employmentStatus.addEventListener('change', function() {
-            const professionalType = professionalIndemnityType.value;
-            const employmentType = this.value;
-            
-            // Reset subsequent fields and hide subsequent sections
-            resetFieldsFromSpecialty();
-            hideAllSectionsFromEmployment();
-            
-            if (employmentType) {
-                specialtySection.style.display = 'block';
-                specialtyArea.required = true;
-                updateSpecialtyOptions(professionalType, employmentType);
-            }
-        });
-
-        // Step 3: Specialty Change
-        specialtyArea.addEventListener('change', function() {
-            const selectedValue = this.value;
-            const professionalType = professionalIndemnityType.value;
-            const employmentType = employmentStatus.value;
-            
-            // Reset subsequent fields and hide subsequent sections
-            resetFieldsFromCoverType();
-            hideAllSectionsFromSpecialty();
-            
-            if (selectedValue) {
-                // If lecturer_trainee, form is complete
-                if (selectedValue === 'lecturer_trainee') {
-                    // Form complete for lecturer/trainee - no more sections needed
-                    alert('Form completed!');
-
-                } else {
-                    coverTypeSection.style.display = 'block';
-                    coverType.required = true;
-                    updateCoverTypeOptions(professionalType, employmentType, selectedValue);
-                }
-            }
-        });
-
-        // Step 4: Cover Type Change
-        coverType.addEventListener('change', function() {
-            const selectedValue = this.value;
-            const employmentType = employmentStatus.value;
-            const specialtyType = specialtyArea.value;
-            const professionalType = professionalIndemnityType.value;
-            
-            // Reset subsequent fields and hide subsequent sections
-            resetFieldsFromPracticeArea();
-            hideAllSectionsFromCoverType();
-            
-            if (selectedValue) {
-                // Handle Dental Specialist practicing Oral and Maxillofacial Surgery
-                if (professionalType === 'dental_practice' && specialtyType === 'dentist_specialist' && selectedValue === 'dental_specialist_oral_maxillofacial_surgery') {
-                    // Show service type selection for field of practice
-                    serviceTypeSection.style.display = 'block';
-                    serviceTypeSelection.required = true;
-                    updateDentalSpecialistFieldOptions();
-                }
-                // Handle other Dental Specialist selections
-                else if (professionalType === 'dental_practice' && specialtyType === 'dentist_specialist' && selectedValue === 'dental_specialists') {
-                    // Form complete for general dental specialists
-                    alert('Form completed for Dental Specialists!');
-                }
-                // Handle Medical Practice - Private General Practitioner
-                else if (professionalType === 'medical_practice' && employmentType === 'private' && specialtyType === 'general_practitioner') {
-                    const servicesWithDefinitions = [
-                        'core_services',
-                        'core_services_with_procedures',
-                        'general_practitioner_with_obstetrics',
-                        'cosmetic_aesthetic_non_invasive',
-                        'cosmetic_aesthetic_non_surgical_invasive'
-                    ];
-                    
-                    if (servicesWithDefinitions.includes(selectedValue)) {
-                        showServiceDefinition(selectedValue);
-                    }
-                    
-                    // Form complete after showing definition
-                    alert('Form completed!');
-                }
-                // Handle Dental Practice - General Dentist
-                else if (professionalType === 'dental_practice' && specialtyType === 'general_dentist') {
-                    // Show definition directly based on cover type, then go to coverage details
-                    
-                    // Check if cover type needs definition
-                    const servicesWithDefinitions = [
-                        'general_dental_practice',
-                        'general_dental_practitioners'
-                    ];
-                    
-                    if (servicesWithDefinitions.includes(selectedValue)) {
-                        showServiceDefinition(selectedValue);
-                    }
-                    
-                    // Form complete after showing definition
-                    setTimeout(() => {
-                        alert('Form completed for Dental Practice!');
-                    }, 100);
-                }
-                // Handle Medical Practice - Locum Cover
-                else if (selectedValue === 'locum_cover') {
-                    locumPracticeSection.style.display = 'block';
-                    locumPracticeLocation.required = true;
-                } else if (selectedValue === 'general_cover') {
-                    // Show service type selection for General Cover
-                    serviceTypeSection.style.display = 'block';
-                    serviceTypeSelection.required = true;
-                    updateServiceTypeOptions('general_cover');
-                } else if (selectedValue === 'low_risk_specialist' || selectedValue === 'medium_risk_specialist') {
-                    // Show service type selection for Specialists
-                    serviceTypeSection.style.display = 'block';
-                    serviceTypeSelection.required = true;
-                    updateSpecialistServiceOptions(selectedValue);
-                } else {
-                    // For other cover types, go directly to Practice Area
-                    practiceAreaSection.style.display = 'block';
-                    practiceArea.required = true;
-                }
-            }
-        });
-
-        // Step 5: Locum Practice Location Change
-        locumPracticeLocation.addEventListener('change', function() {
-            const selectedValue = this.value;
-            
-            // Reset subsequent fields and hide subsequent sections
-            resetFieldsFromServiceType();
-            hideAllSectionsFromServiceType();
-            
-            if (selectedValue) {
-                // Show service type selection for Locum Cover with location-specific options
-                serviceTypeSection.style.display = 'block';
-                serviceTypeSelection.required = true;
-                updateServiceTypeOptions('locum_cover', selectedValue);
-            }
-        });
-
-        // Step 6: Service Type Selection Change
-        serviceTypeSelection.addEventListener('change', function() {
-            const selectedValue = this.value;
-            const coverTypeValue = coverType.value;
-            const professionalType = professionalIndemnityType.value;
-            const specialtyType = specialtyArea.value;
-            
-            // Reset subsequent fields and hide subsequent sections - BUT KEEP SERVICE TYPE SECTION VISIBLE
-            resetFieldsFromServiceType();
-            hideAllSectionsFromServiceType();
-            
-            if (selectedValue) {
-                // Handle dental specialist field selections
-                if (professionalType === 'dental_practice' && specialtyType === 'dentist_specialist' && 
-                    coverTypeValue === 'dental_specialist_oral_maxillofacial_surgery') {
-                    // Form complete for dental specialist fields
-                    alert('Form completed for Dental Specialist Oral and Maxillofacial Surgery!');
-                } else {
-                    // Check if it's a service type that needs definition
-                    const servicesWithDefinitions = [
-                        'office_clinical_orthopaedics',
-                        'cosmetic_aesthetic_surgical_invasive', 
-                        'ophthalmology_surgeries_non_ga',
-                        'core_services',
-                        'core_services_with_procedures',
-                        'general_practitioner_with_obstetrics',
-                        'cosmetic_aesthetic_non_invasive',
-                        'cosmetic_aesthetic_non_surgical_invasive',
-                        'general_practice',
-                        'general_practice_with_specialized_procedures'
-                    ];
-                    
-                    if (servicesWithDefinitions.includes(selectedValue)) {
-                        // Show definition for these services
-                        showServiceDefinition(selectedValue);
-                    }
-                    
-                    // Go directly to form completion
-                    alert('Form completed for selected service!');
-                }
-            }
-        });
-
-        // Step 7: Practice Area Change (for other paths)
-        practiceArea.addEventListener('change', function() {
-            const selectedValue = this.value;
-            
-            // Reset subsequent fields and hide subsequent sections
-            resetFieldsFromCoverageDetails();
-            hideAllSectionsFromCoverageDetails();
-            
-            if (selectedValue) {
-                alert('Form completed for selected practice area!');
-            }
-        });
-
-        // Function to update service type options based on cover type
-         function updateServiceTypeOptions(coverType, locumLocation = null) {
-            const serviceSelect = document.getElementById('serviceTypeSelection');
-            
-            if (coverType === 'locum_cover') {
-                if (locumLocation === 'private_clinic') {
-                    // Only 2 options for Locum Cover at Private Clinic
-                    serviceSelect.innerHTML = `
-                        <option value="">Select</option>
-                        <option value="core_services">Core Services</option>
-                        <option value="core_services_with_procedures">Core Services with procedures</option>
-                    `;
-                } else if (locumLocation === 'private_hospital') {
-                    // Different options for Locum Cover at Private Hospital
-                    serviceSelect.innerHTML = `
-                        <option value="">Select</option>
-                        <option value="general_practitioner_private_hospital_outpatient">Outpatient Service</option>
-                        <option value="general_practitioner_private_hospital_emergency">Emergency Department</option>
-                    `;
-                }
-            } else if (coverType === 'general_cover') {
-                // All options for General Cover
-                serviceSelect.innerHTML = `
-                    <option value="">Select</option>
-                    <option value="core_services">Core Services</option>
-                    <option value="core_services_with_procedures">Core Services with procedures</option>
-                    <option value="general_practitioner_private_hospital_outpatient">General Practitioner in Private Hospital - Outpatient Services</option>
-                    <option value="general_practitioner_private_hospital_emergency">General Practitioner in Private Hospital– Emergency Department</option>
-                    <option value="general_practitioner_with_obstetrics">General Practitioner with Obstetrics</option>
-                    <option value="cosmetic_aesthetic_non_invasive">Cosmetic & Aesthetic – Non - Invasive Elective Topical Enhancement</option>
-                    <option value="cosmetic_aesthetic_non_surgical_invasive">Cosmetic & Aesthetic – Non - Surgical Invasive Elective Topical Enhancement</option>
-                `;
-            }
-        }
-
-        // Function to show service definition
-        function showServiceDefinition(serviceType) {
-            const definitionContent = document.getElementById('definitionContent');
-            
-            if (serviceType === 'core_services') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <ol>
-                        <li>History taking, Examination, and Diagnosis.</li>
-                        <li>Prescription, Injections IM & IV, and IV Drips in Emergencies.</li>
-                        <li>Immunizations, I&D, T&S under Local Anesthesia. Simple Removal of Foreign Bodies from ENT & Eye</li>
-                        <li>Neubelisation.</li>
-                        <li>CPR.</li>
-                        <li>Medical Examinations / Screenings.</li>
-                        <li>Urine and Blood Testings / Analysis.</li>
-                        <li>Plain Xrays.</li>
-                        <li>Ante-Natal Screenings up to 24 weeks. Pap Smears.</li>
-                        <li>Family Planning Advice and Prescriptions.</li>
-                        <li>Other similar services traditionally carried out by General Practitioners</li>
-                    </ol>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'general_dental_practice') {
-                // For General Dental Practice cover type
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <ol>
-                        <li>Complete dental examinations and diagnosis of disease including x-rays</li>
-                        <li>Preventive dentistry (e.g cleanings, oral hygiene instruction, fluoride treatments, fissure sealants, scaling)</li>
-                        <li>Extractions, fillings, crowns, veneers, bridges, dentures</li>
-                        <li>Minor oral surgeries (e.g. laserations, gum injuries, broken tooths, simple root canal treatment and wisdom tooth extractions)<br />
-                            <strong style="font-weight:bold">*Please choose 2 million cover if you do minor oral surgeries.</strong>
-                        </li>
-                    </ol>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'general_dental_practitioners') {
-                // For General Dental Practitioners, practising accredited specialised procedures
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <strong class="text-dark">Accredited specialized procedures includes:</strong>
-                    <ol>
-                        <li>Braces</li>
-                        <li>Periodontics</li>
-                        <li>Endodontics</li>
-                        <li>Implants</li>
-                        <li>Orthodontics</li>
-                        <li>Oral Surgeries</li>
-                    </ol>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'general_practice') {
-                // For Government dental services
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <ol>
-                        <li>Complete dental examinations and diagnosis of disease including x-rays</li>
-                        <li>Preventive dentistry (e.g cleanings, oral hygiene instruction, fluoride treatments, fissure sealants, scaling)</li>
-                        <li>Extractions, fillings, crowns, veneers, bridges, dentures</li>
-                    </ol>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'general_practice_with_specialized_procedures') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <ol>
-                        <li>Braces</li>
-                        <li>Periodontics</li>
-                        <li>Endodontics</li>
-                        <li>Implants</li>
-                        <li>Orthodontics</li>
-                        <li>Oral Surgeries</li>
-                    </ol>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            }
-            // ... rest of existing medical definitions ...
-            else if (serviceType === 'core_services_with_procedures') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <ol>
-                        <li>Removal of Ingrowing Toe Nails.</li>
-                        <li>Excisions of Lumps & Bumps (Non-Facial Warts, Cysts, Lipomas, Granulomas)</li>
-                        <li>Insertions and Removals of IUCDs</li>
-                        <li>Cortisone Injections. ( Tendonitis, Teno-synovitis, Plantar Fascitis )</li>
-                        <li>Immobilizations of Undisplaced Fractures of Metacarpal and Phalangeal Joints.</li>
-                        <li>Circumcision</li>
-                        <li>Other similar procedures traditionally carried out by General Practitioners</li>
-                    </ol>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'general_practitioner_with_obstetrics') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <p>36 weeks (full term of pregnancy) exclude deliveries</p>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'cosmetic_aesthetic_non_invasive') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <p>Non-invasive procedures: External applications or treatment procedures that are carried out without creating a break in the skin or penetration of the integument. They target the epidermis only.</p>
-                    <ul>
-                        <li>Superficial chemical peels</li>
-                        <li>Microdermabrasion</li>
-                        <li>Intense pulsed light</li>
-                    </ul>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'cosmetic_aesthetic_non_surgical_invasive') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <p>Minimally invasive procedures: Treatment procedures that induce minimal damage to the tissues at the point of entry of instruments. These procedures involve penetration or transgression of integument but are limited to the sub-dermis and subcutaneous fat; not extending beyond the superficial musculo- aponeurotic layer of the face and neck, or beyond the superficial fascial layer of the torso and limbs.</p>
-                    <strong class="text-dark">They are limited to the following procedures:</strong>
-                    <ul>
-                        <li>Chemical peel (Medium depth)</li>
-                        <li>Botulinum toxin injection</li>
-                        <li>Filler injection - excluding silicone and fat</li>
-                        <li>Skin tightening procedures-up to upper dermis (radiofrequency, infrared, ultrasound and other devices)</li>
-                        <li>Superficial sclerotherapy</li>
-                        <li>Lasers for treating skin pigmentation</li>
-                        <li>Lasers for treating benign skin lesions</li>
-                        <li>Lasers for skin rejuvenation (including non-ablative)</li>
-                        <li>Lasers for hair removal</li>
-                    </ul>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'office_clinical_orthopaedics') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <p><strong>Jobscope:</strong></p>
-                    <ul>
-                        <li>All excision biopsy of lumps under local</li>
-                        <li>All nail/ nail bed procedures</li>
-                        <li>administration of local anesthesia</li>
-                        <li>Arthrocentesis and joint or soft tissue injections</li>
-                        <li>Application of splints or casts</li>
-                        <li>Simple amputation under local</li>
-                        <li>Tendon/ nerve entrapment release</li>
-                        <li>Incision and drainage of soft tissue infection</li>
-                        <li>Closed reduction and immobilization of fracture and dislocation</li>
-                        <li>Debridement of soft tissue and closer of wound</li>
-                        <li>Removal of foreign bodies under local</li>
-                        <li>Repair of muscle/ tendon under local</li>
-                        <li>Use of fluoroscopy (sedation or local anesthesia procedures)</li>
-                        <li>Tissue flap under local</li>
-                        <li>Manipulation of joint under sedation/local anesthesia</li>
-                    </ul>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'cosmetic_aesthetic_surgical_invasive') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <p>Surgical includes excisions of warts, mole, scars and other External Cosmetic Surgery under L.A.</p>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'ophthalmology_surgeries_non_ga') {
-                definitionContent.innerHTML = `
-                    <h6>Definition / Information</h6>
-                    <p>Cataract etc under L.A. (Non G.A.)</p>
-                `;
-                serviceDefinitionSection.style.display = 'block';
-            } else if (serviceType === 'general_practitioner_private_hospital_outpatient' || serviceType === 'general_practitioner_private_hospital_emergency') {
-                // NO DEFINITION for private hospital services - hide the section
-                serviceDefinitionSection.style.display = 'none';
-            } else {
-                serviceDefinitionSection.style.display = 'none';
-            }
-        }
-
-        // Reset Functions
-        function resetAllFields() {
-            employmentStatus.value = '';
-            specialtyArea.value = '';
-            coverType.value = '';
-            serviceTypeSelection.value = '';
-            locumPracticeLocation.value = '';
-            practiceArea.value = '';
-        }
-
-        function resetFieldsFromSpecialty() {
-            specialtyArea.value = '';
-            coverType.value = '';
-            serviceTypeSelection.value = '';
-            locumPracticeLocation.value = '';
-            practiceArea.value = '';
-        }
-
-        function resetFieldsFromCoverType() {
-            coverType.value = '';
-            serviceTypeSelection.value = '';
-            locumPracticeLocation.value = '';
-            practiceArea.value = '';
-        }
-
-        // NEW: Reset function for service type (doesn't reset service type itself)
-        function resetFieldsFromServiceType() {
-            practiceArea.value = '';
-        }
-
-        function resetFieldsFromPracticeArea() {
-            practiceArea.value = '';
-        }
-
-        function resetFieldsFromCoverageDetails() {
-            // No more coverage detail fields to reset - using alerts for completion
-        }
-
-        // Hide Functions - Cascading Hide Logic
-        function hideAllSections() {
-            employmentStatusSection.style.display = 'none';
-            specialtySection.style.display = 'none';
-            coverTypeSection.style.display = 'none';
-            serviceTypeSection.style.display = 'none';
-            serviceDefinitionSection.style.display = 'none';
-            locumPracticeSection.style.display = 'none';
-            practiceAreaSection.style.display = 'none';
-            
-            // Remove required attributes
-            employmentStatus.required = false;
-            specialtyArea.required = false;
-            coverType.required = false;
-            serviceTypeSelection.required = false;
-            locumPracticeLocation.required = false;
-            practiceArea.required = false;
-        }
-
-        function hideAllSectionsFromEmployment() {
-            specialtySection.style.display = 'none';
-            coverTypeSection.style.display = 'none';
-            serviceTypeSection.style.display = 'none';
-            serviceDefinitionSection.style.display = 'none';
-            locumPracticeSection.style.display = 'none';
-            practiceAreaSection.style.display = 'none';
-            
-            specialtyArea.required = false;
-            coverType.required = false;
-            serviceTypeSelection.required = false;
-            locumPracticeLocation.required = false;
-            practiceArea.required = false;
-        }
-
-        function hideAllSectionsFromSpecialty() {
-            coverTypeSection.style.display = 'none';
-            serviceTypeSection.style.display = 'none';
-            serviceDefinitionSection.style.display = 'none';
-            locumPracticeSection.style.display = 'none';
-            practiceAreaSection.style.display = 'none';
-            
-            coverType.required = false;
-            serviceTypeSelection.required = false;
-            locumPracticeLocation.required = false;
-            practiceArea.required = false;
-        }
-
-        function hideAllSectionsFromCoverType() {
-            serviceTypeSection.style.display = 'none';
-            serviceDefinitionSection.style.display = 'none';
-            locumPracticeSection.style.display = 'none';
-            practiceAreaSection.style.display = 'none';
-            
-            serviceTypeSelection.required = false;
-            locumPracticeLocation.required = false;
-            practiceArea.required = false;
-        }
-
-        // NEW: Hide function for service type (doesn't hide service type section itself)
-        function hideAllSectionsFromServiceType() {
-            serviceDefinitionSection.style.display = 'none';
-            practiceAreaSection.style.display = 'none';
-            
-            practiceArea.required = false;
-        }
-
-        function hideAllSectionsFromPracticeArea() {
-            serviceDefinitionSection.style.display = 'none';
-        }
-
-        function hideAllSectionsFromCoverageDetails() {
-            // No more sections to hide - form completion alerts are used instead
-        }
-
-        // Update Options Functions (keeping existing functions...)
-        function updateEmploymentStatusOptions(indemnityType) {
-            const employmentSelect = document.getElementById('employmentStatus');
-            
-            employmentSelect.innerHTML = '<option value="">Select Employment Status</option>';
-            
-            if (indemnityType === 'medical_practice') {
-                employmentSelect.innerHTML += `
-                    <option value="government">Government</option>
-                    <option value="private">Private</option>
-                    <option value="non_practicing">Non-Practicing</option>
-                `;
-            } else if (indemnityType === 'dental_practice') {
-                employmentSelect.innerHTML += `
-                    <option value="government">Government</option>
-                    <option value="private">Private</option>
-                `;
-            }
-        }
-
-        function updateSpecialtyOptions(professionalType, employmentType) {
-            const specialtySelect = document.getElementById('specialtyArea');
-            
-            specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
-            
-            if (professionalType === 'medical_practice') {
-                if (employmentType === 'government') {
-                    specialtySelect.innerHTML += `
-                        <option value="medical_officer">Medical Officer</option>
-                        <option value="medical_specialist">Medical Specialist</option>
-                    `;
-                } else if (employmentType === 'private') {
-                    specialtySelect.innerHTML += `
-                        <option value="general_practitioner">General Practitioner</option>
-                        <option value="medical_specialist">Medical Specialist</option>
-                    `;
-                } else if (employmentType === 'non_practicing') {
-                    specialtySelect.innerHTML += `
-                        <option value="lecturer_trainee">Lecturer/Trainee</option>
-                    `;
-                }
-            } else if (professionalType === 'dental_practice') {
-                if (employmentType === 'government' || employmentType === 'private') {
-                    specialtySelect.innerHTML += `
-                        <option value="general_dentist">General Dentist</option>
-                        <option value="dentist_specialist">Dentist Specialist</option>
-                    `;
-                }
-            }
-        }
-
-        function updateCoverTypeOptions(professionalType, employmentType, specialtyType) {
-            const coverTypeSelect = document.getElementById('coverType');
-            const coverTypeLabel = document.querySelector('label[for="coverType"]') || document.querySelector('#coverTypeSection p');
-            
-            // Update the label/title based on specialty type and professional type
-            if (specialtyType === 'dentist_specialist') {
-                if (coverTypeLabel) {
-                    coverTypeLabel.innerHTML = 'Your type of service <span class="text-danger">*</span>';
-                }
-                coverTypeSelect.innerHTML = '<option value="">Select Specialty</option>';
-            } else if (professionalType === 'dental_practice') {
-                if (coverTypeLabel) {
-                    coverTypeLabel.innerHTML = 'Type of cover <span class="text-danger">*</span>';
-                }
-                coverTypeSelect.innerHTML = '<option value="">Select Type of Cover</option>';
-            } else if (specialtyType === 'medical_specialist') {
-                if (coverTypeLabel) {
-                    coverTypeLabel.innerHTML = 'Select Your Specialist Category <span class="text-danger">*</span>';
-                }
-                coverTypeSelect.innerHTML = '<option value="">Select Your Specialist Category</option>';
-            } else {
-                if (coverTypeLabel) {
-                    coverTypeLabel.innerHTML = 'Your type of service <span class="text-danger">*</span>';
-                }
-                coverTypeSelect.innerHTML = '<option value="">Select</option>';
-            }
-            
-            if (professionalType === 'medical_practice') {
-                if (employmentType === 'government') {
-                    if (specialtyType === 'medical_officer') {
-                        coverTypeSelect.innerHTML += `
-                            <option value="locum_cover">Locum Cover</option>
-                            <option value="general_cover">General Cover</option>
-                        `;
-                    } else if (specialtyType === 'medical_specialist') {
-                        coverTypeSelect.innerHTML += `
-                            <option value="low_risk_specialist">Low Risk Specialist</option>
-                            <option value="medium_risk_specialist">Medium Risk Specialist</option>
-                        `;
-                    }
-                } else if (employmentType === 'private') {
-                    if (specialtyType === 'general_practitioner') {
-                        coverTypeSelect.innerHTML += `
-                            <option value="core_services">Core Services</option>
-                            <option value="core_services_with_procedures">Core Services with procedures</option>
-                            <option value="general_practitioner_private_hospital_outpatient">General Practitioner in Private Hospital - Outpatient Services</option>
-                            <option value="general_practitioner_private_hospital_emergency">General Practitioner in Private Hospital– Emergency Department</option>
-                            <option value="general_practitioner_with_obstetrics">General Practitioner with Obstetrics</option>
-                            <option value="cosmetic_aesthetic_non_invasive">Cosmetic & Aesthetic – Non - Invasive Elective Topical Enhancement</option>
-                            <option value="cosmetic_aesthetic_non_surgical_invasive">Cosmetic & Aesthetic – Non - Surgical Invasive Elective Topical Enhancement</option>
-                        `;
-                    } else if (specialtyType === 'medical_specialist') {
-                        coverTypeSelect.innerHTML += `
-                            <option value="low_risk_specialist">Low Risk Specialist</option>
-                            <option value="medium_risk_specialist">Medium Risk Specialist</option>
-                        `;
-                    }
-                }
-            } else if (professionalType === 'dental_practice') {
-                if (specialtyType === 'dentist_specialist') {
-                    // For Dental Specialist, show specialty options directly
-                    coverTypeSelect.innerHTML += `
-                        <option value="dental_specialists">Dental Specialists</option>
-                        <option value="dental_specialist_oral_maxillofacial_surgery">Dental Specialist practicing Oral and Maxillofacial Surgery</option>
-                    `;
-                } else if (specialtyType === 'general_dentist') {
-                    if (employmentType === 'government') {
-                        coverTypeSelect.innerHTML += `
-                            <option value="locum_cover_only">Locum cover only</option>
-                            <option value="general_cover">General Cover</option>
-                        `;
-                    } else if (employmentType === 'private') {
-                        coverTypeSelect.innerHTML += `
-                            <option value="general_dental_practice">General Dental Practice</option>
-                            <option value="general_dental_practitioners">General Dental Practitioners, practising accredited specialised procedures</option>
-                        `;
-                    }
-                }
-            }
-        }
-
-        function updateSpecialistServiceOptions(specialistCategory) {
-            const serviceSelect = document.getElementById('serviceTypeSelection');
-            
-            if (specialistCategory === 'low_risk_specialist') {
-                serviceSelect.innerHTML = `
-                    <option value="">Select</option>
-                    <option value="occupational_health_physicians">Occupational Health Physicians / Family Physicians</option>
-                    <option value="general_physicians">General Physicians</option>
-                    <option value="dermatology_non_cosmetic">Dermatology - Non - Cosmetic</option>
-                    <option value="infections_diseases">Infections Diseases</option>
-                    <option value="pathology">Pathology</option>
-                    <option value="psychiatry">Psychiatry</option>
-                    <option value="endocrinology">Endocrinology</option>
-                    <option value="rehab_medicine">Rehab, medicine</option>
-                    <option value="paediatrics_non_neonatal">Paediatrics - (Non Neonatal)</option>
-                    <option value="geriatrics">Geriatrics</option>
-                    <option value="haemotology">Haemotology</option>
-                    <option value="immunology">Immunology</option>
-                    <option value="nephrology">Nephrology</option>
-                    <option value="nuclear_medicine">Nuclear medicine</option>
-                    <option value="neurology">Neurology</option>
-                    <option value="radiology_non_interventional">Radiology(Non Interventional)</option>
-                `;
-            } else if (specialistCategory === 'medium_risk_specialist') {
-                serviceSelect.innerHTML = `
-                    <option value="">Select</option>
-                    <option value="ophthalmology_office_procedures">Ophthalmology / Office procedures</option>
-                    <option value="office_ent_clinic_based">Office ENT(Clinic based)</option>
-                    <option value="ophthalmology_surgeries_non_ga">Ophthalmology Surgeries (Non G.A.)</option>
-                    <option value="ent_surgeries_non_ga">ENT Surgeries(Non G.A.)</option>
-                    <option value="radiology_interventional">Radiology - Interventional</option>
-                    <option value="gastroenterology">Gastroenterology</option>
-                    <option value="office_clinical_orthopaedics">Office / Clinical Orthopaedics</option>
-                    <option value="office_clinical_gynaecology">Office / Clinical Gynaecology</option>
-                    <option value="cosmetic_aesthetic_non_surgical_invasive">Cosmetic and Aesthetic (Non-surgical Invasive elective topical enhancement)</option>
-                    <option value="cosmetic_aesthetic_surgical_invasive">Cosmetic and Aesthetic ( Surgical, Invasive)</option>
-                `;
-            }
-        }
-
-        function updateDentalServiceOptions(coverType) {
-            const serviceSelect = document.getElementById('serviceTypeSelection');
-            
-            if (coverType === 'general_cover' || coverType === 'locum_cover_only') {
-                serviceSelect.innerHTML = `
-                    <option value="">Select</option>
-                    <option value="general_practice">General Practice</option>
-                    <option value="general_practice_with_specialized_procedures">General Practice with Specialized Procedures</option>
-                `;
-            }
-        }
-
-        function updateDentalSpecialistFieldOptions() {
-            const serviceSelect = document.getElementById('serviceTypeSelection');
-            const serviceTypeLabel = document.querySelector('label[for="serviceTypeSelection"]') || document.querySelector('#serviceTypeSection p');
-            
-            // Update the label to "Please select your field of practice"
-            if (serviceTypeLabel) {
-                serviceTypeLabel.innerHTML = 'Please select your field of practice <span class="text-danger">*</span>';
-            }
-            
-            serviceSelect.innerHTML = `
-                <option value="">Select</option>
-                <option value="clinic_based_non_general_anaesthetic">Clinic based Non-General Anaesthetic Dental only procedures</option>
-                <option value="hospital_based_full_fledged_omfs">Hospital-based full-fledged OMFS</option>
-            `;
-        }
-    });
-</script>
+    @include('pages.new-policy.js._new-policy')
+    @include('pages.new-policy.js._health-care')
 @endsection
