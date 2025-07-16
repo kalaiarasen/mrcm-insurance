@@ -63,7 +63,7 @@
         <!-- First Row - Announcements and Action Buttons -->
         <div class="row mb-4">
             <!-- Announcements Section -->
-            <div class="col-lg-8">
+            <div class="col-lg-7">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>📢 Latest Announcements</h5>
@@ -90,7 +90,7 @@
             </div>
 
             <!-- Quick Actions Section -->
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>⚡ Quick Actions</h5>
