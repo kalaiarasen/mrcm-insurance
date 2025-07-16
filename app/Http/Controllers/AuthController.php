@@ -75,6 +75,9 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Assign Client role to newly registered users
+        $user->assignRole('Client');
+
         event(new Registered($user));
 
         Auth::login($user);

@@ -82,13 +82,13 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // Client permissions (limited access)
-        $clientRole->givePermissionTo([
-            'dashboard.view',
-            'policy-holders.view',
-            'claims.view',
-            'claims.create',
-            'announcements.view',
-        ]);
+        // $clientRole->givePermissionTo([
+        //     'dashboard.view',
+        //     'policy-holders.view',
+        //     'claims.view',
+        //     'claims.create',
+        //     'announcements.view',
+        // ]);
 
         // Agent permissions (more access than client)
         $agentRole->givePermissionTo([
