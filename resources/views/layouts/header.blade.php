@@ -92,7 +92,7 @@
                         <img class="b-r-10" src="{{ asset('assets/images/dashboard/profile.png') }}" alt="" />
                         <div class="flex-grow-1">
                             <span>{{ Auth::user()->name }}</span>
-                            <p class="mb-0">Admin <i class="middle fa-solid fa-angle-down"></i></p>
+                            <p class="mb-0">{{ Auth::user()->roles->first()->name ?? 'User' }} <i class="middle fa-solid fa-angle-down"></i></p>
                         </div>
                     </div>
                     <ul class="profile-dropdown onhover-show-div">

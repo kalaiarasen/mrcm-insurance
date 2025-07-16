@@ -14,27 +14,26 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        // if(auth()->user()->hasRole('Super Admin')) {
-        //     return view('dashboard');
-        // }
-
-        $announcements = Announcement::latest()
-            ->take(5) // Limit to 5 latest announcements
+        if(auth()->user()->hasRole('Client')) {
+           $announcements = Announcement::latest()
+            ->take(5)
             ->get();
 
-        // Get some basic statistics (you can expand this based on your needs)
-        $totalUsers = User::count();
-        $totalPolicies = 0; // You can add policy count when you have policy model
-        $totalClaims = 0; // You can add claims count when you have claims model
-        $monthlyRevenue = 0; // You can calculate monthly revenue
+            $totalUsers = User::count();
+            $totalPolicies = 0;
+            $totalClaims = 0;
+            $monthlyRevenue = 0;
 
-        return view('dashboard-client', compact(
-            'announcements',
-            'totalUsers',
-            'totalPolicies',
-            'totalClaims',
-            'monthlyRevenue'
-        ));
+            return view('dashboard-client', compact(
+                'announcements',
+                'totalUsers',
+                'totalPolicies',
+                'totalClaims',
+                'monthlyRevenue'
+            ));
+        }
+
+        return view('dashboard');
     }
 
     /**

@@ -34,6 +34,69 @@
                             <span>Dashboard</span>
                         </a>
                     </li>
+                    @role('Client')
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav" href="">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-social') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-social') }}"></use>
+                            </svg>
+                            <span>Professional Indemnity</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav" href="">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                            </svg>
+                            <span>Clinic Cover</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav" href="">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
+                            </svg>
+                            <span>Group/Entity Cover</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav" href="">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
+                            </svg>
+                            <span>Allied Healthcare</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav" href="">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-button') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-button') }}"></use>
+                            </svg>
+                            <span>Q&A</span>
+                        </a>
+                    </li>
+                    @endrole
+                    @hasanyrole('Super Admin|Admin|Agent')
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('for-your-action') ? 'active' : '' }}" href="{{ route('for-your-action') }}">
@@ -106,6 +169,7 @@
                             <span>Users</span>
                         </a>
                     </li>
+                    @endhasanyrole
                     @role('Super Admin')
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
@@ -120,6 +184,7 @@
                         </a>
                     </li>
                     @endrole
+                    @hasanyrole('Super Admin|Admin')
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="">
@@ -156,6 +221,7 @@
                             <span>Client Management</span>
                         </a>
                     </li>
+                    @endhasanyrole
                     {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title" href="#">
