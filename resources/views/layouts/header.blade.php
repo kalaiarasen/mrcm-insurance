@@ -35,13 +35,6 @@
         </div>
         <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
             <ul class="nav-menus">
-                <li class="fullscreen-body">
-                    <span>
-                        <svg id="maximize-screen">
-                            <use href="{{ asset('assets/svg/icon-sprite.svg#full-screen') }}"></use>
-                        </svg>
-                    </span>
-                </li>
                 <li>
                     <div class="mode">
                         <svg>
