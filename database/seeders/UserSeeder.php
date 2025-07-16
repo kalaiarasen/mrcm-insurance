@@ -28,31 +28,12 @@ class UserSeeder extends Seeder
                 'created_at' => now()->subDays(8),
                 'updated_at' => now()->subDays(8),
             ],
-            [
-                'name' => 'Mike Johnson',
-                'email' => 'mike@example.com',
-                'password' => Hash::make('password123'),
-                'created_at' => now()->subDays(5),
-                'updated_at' => now()->subDays(5),
-            ],
-            [
-                'name' => 'Sarah Wilson',
-                'email' => 'sarah@example.com',
-                'password' => Hash::make('password123'),
-                'created_at' => now()->subDays(3),
-                'updated_at' => now()->subDays(3),
-            ],
-            [
-                'name' => 'David Brown',
-                'email' => 'david@example.com',
-                'password' => Hash::make('password123'),
-                'created_at' => now()->subDays(1),
-                'updated_at' => now()->subDays(1),
-            ],
         ];
 
-        foreach ($users as $user) {
-            User::create($user);
+        foreach ($users as $userData) {
+            $user = User::create($userData);
+            // Assign Admin role to all users created in this seeder
+            $user->assignRole('Admin');
         }
     }
 }

@@ -15,44 +15,44 @@ return new class extends Migration
     public function up(): void
     {
         // Create Admin role with permissions (between Super Admin and Agent)
-        $adminRole = Role::create(['name' => 'Admin']);
+        // $adminRole = Role::create(['name' => 'Admin']);
         
-        // Admin permissions (more than Agent, less than Super Admin)
-        $adminPermissions = [
-            'dashboard.view',
-            'for-your-action.view',
-            'policy-holders.view',
-            'policy-holders.create',
-            'policy-holders.edit',
-            'policy-holders.delete',
-            'claims.view',
-            'claims.create',
-            'claims.edit',
-            'claims.delete',
-            'announcements.view',
-            'announcements.create',
-            'announcements.edit',
-            'announcements.delete',
-            'users.view',
-            'users.create',
-            'users.edit',
-            'users.delete',
-            'wallet-management.view',
-            'agent-management.view',
-            'client-management.view',
-        ];
+        // // Admin permissions (more than Agent, less than Super Admin)
+        // $adminPermissions = [
+        //     'dashboard.view',
+        //     'for-your-action.view',
+        //     'policy-holders.view',
+        //     'policy-holders.create',
+        //     'policy-holders.edit',
+        //     'policy-holders.delete',
+        //     'claims.view',
+        //     'claims.create',
+        //     'claims.edit',
+        //     'claims.delete',
+        //     'announcements.view',
+        //     'announcements.create',
+        //     'announcements.edit',
+        //     'announcements.delete',
+        //     'users.view',
+        //     'users.create',
+        //     'users.edit',
+        //     'users.delete',
+        //     'wallet-management.view',
+        //     'agent-management.view',
+        //     'client-management.view',
+        // ];
         
-        $adminRole->givePermissionTo($adminPermissions);
+        // $adminRole->givePermissionTo($adminPermissions);
         
-        // Assign Admin role to all users who don't have any role (except Super Admin)
-        $usersWithoutRoles = User::whereDoesntHave('roles')->get();
+        // // Assign Admin role to all users who don't have any role (except Super Admin)
+        // $usersWithoutRoles = User::whereDoesntHave('roles')->get();
         
-        foreach ($usersWithoutRoles as $user) {
-            // Skip Super Admin user (admin@example.com)
-            if ($user->email !== 'admin@example.com') {
-                $user->assignRole('Admin');
-            }
-        }
+        // foreach ($usersWithoutRoles as $user) {
+        //     // Skip Super Admin user (admin@example.com)
+        //     if ($user->email !== 'admin@example.com') {
+        //         $user->assignRole('Admin');
+        //     }
+        // }
     }
 
     /**
