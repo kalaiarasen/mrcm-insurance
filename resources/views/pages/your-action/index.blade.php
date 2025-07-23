@@ -23,7 +23,7 @@
         
         #dateFilterCollapse .form-control:focus, 
         #dateFilterCollapse .form-select:focus {
-            border-color: #0d6efd;
+            border-color: #3D9FD8;
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
             transform: translateY(-1px);
         }

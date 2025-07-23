@@ -1,6 +1,6 @@
 table.dataTable tbody th.focus,
 table.dataTable tbody td.focus {
-  outline: 2px solid #0d6efd;
+  outline: 2px solid #3D9FD8;
   outline-offset: -2px;
 }
 table.dataTable tbody tr.selected th.focus,
