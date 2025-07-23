@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolicyController;
@@ -35,6 +36,8 @@ Route::get('new-policy', [PolicyController::class, 'newPolicy'])->middleware(['a
 Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);
 Route::resource('users', UserController::class)->middleware(['auth', 'verified']);
 Route::resource('roles', RoleController::class)->middleware(['auth', 'verified']);
+Route::resource('agents', AgentController::class)->middleware(['auth', 'verified']);
+
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

@@ -24,7 +24,7 @@
         <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0">
             <div class="notification-slider">
                 <div class="d-flex h-100">
-                    <img src="{{ asset('assets/images/giftools.gif') }}" alt="gif" />
+                    {{-- <img src="{{ asset('assets/images/giftools.gif') }}" alt="gif" /> --}}
                     <h6 class="mb-0 f-w-400">
                         <span class="font-primary">Today's Date: </span>
                         <span class="f-light">{{ \Carbon\Carbon::now()->format('F j, Y') }}</span>

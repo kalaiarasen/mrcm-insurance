@@ -12,7 +12,7 @@
         top: 10,
         left: 0,
         blur: 6,
-        color: ["#7366FF", "#838383", "#ffffff"],
+        color: ["#3D9FD8", "#838383", "#ffffff"],
         opacity: 0.2,
       },
     },

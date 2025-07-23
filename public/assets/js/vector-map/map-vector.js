@@ -11,7 +11,7 @@
       hoverColor: !1,
       regionStyle: {
         initial: {
-          fill: "#7366ff",
+          fill: "#3D9FD8",
         },
       },
       backgroundColor: "transparent",

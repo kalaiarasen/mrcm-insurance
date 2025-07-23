@@ -139,7 +139,7 @@
         top: 4,
         left: 0,
         blur: 2,
-        color: "#7366FF",
+        color: "#3D9FD8",
         opacity: 0.02,
       },
     },
@@ -158,7 +158,7 @@
         },
       },
     },
-    colors: ["#7366FF", "#54BA4A"],
+    colors: ["#3D9FD8", "#54BA4A"],
     fill: {
       type: ["gradient", "solid"],
       gradient: {
@@ -273,7 +273,7 @@
         top: 4,
         left: 0,
         blur: 2,
-        colors: ["#7366FF", "#54BA4A", "#FFAA05"],
+        colors: ["#3D9FD8", "#54BA4A", "#FFAA05"],
         opacity: 0.02,
       },
     },
@@ -285,7 +285,7 @@
         },
       },
     },
-    colors: ["#7366FF", "#54BA4A", "#FFAA05"],
+    colors: ["#3D9FD8", "#54BA4A", "#FFAA05"],
     stroke: {
       width: 3,
       curve: "smooth",
@@ -431,7 +431,7 @@
         opacityTo: 0,
         stops: [0, 100],
       },
-      colors: ["#7366FF", "#FFAA05", "#54BA4A", "#FF3364"],
+      colors: ["#3D9FD8", "#FFAA05", "#54BA4A", "#FF3364"],
     },
 
     stroke: {
@@ -451,7 +451,7 @@
         useSeriesColors: false,
       },
       markers: {
-        fillColors: ["#7366FF", "#FFAA05", "#54BA4A", "#FF3364"],
+        fillColors: ["#3D9FD8", "#FFAA05", "#54BA4A", "#FF3364"],
         radius: 10,
         width: 14,
         height: 14,
@@ -610,7 +610,7 @@
     dataLabels: {
       enabled: false,
     },
-    colors: ["#7366FF", "#ffb829"],
+    colors: ["#3D9FD8", "#ffb829"],
     fill: {
       type: "solid",
     },

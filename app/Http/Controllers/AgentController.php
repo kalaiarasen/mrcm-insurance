@@ -3,32 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-class UserController extends Controller
+class AgentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        // Exclude Super Admin users from the list
         $users = User::with('roles')
             ->whereNot('id', Auth::id())
-            ->whereDoesntHave('roles', function($query) {
-                $query->where('name', 'Super Admin')->orWhere('name', 'Agent');
+            ->whereHas('roles', function($query) {
+                $query->where('name', 'Agent');
             })
             ->get();
-        return view('pages.user.index', compact('users'));
+        return view('pages.agent.index', compact('users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
@@ -43,10 +36,9 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Assign Admin role to users created by Super Admin (not Super Admin role itself)
         $currentUser = Auth::user();
         if ($currentUser && $currentUser->hasRole('Super Admin')) {
-            $user->assignRole('Admin');
+            $user->assignRole('Agent');
         }
 
         return response()->json([
@@ -56,28 +48,23 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user): JsonResponse
+    public function show($user): JsonResponse
     {
+        $user = User::findOrFail($user);
         return response()->json([
             'success' => true,
             'data' => $user
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user): JsonResponse
+    public function update(Request $request, $user): JsonResponse
     {
+        $user = User::findOrFail($user);
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ];
 
-        // Only validate password if it's provided
         if ($request->filled('password')) {
             $rules['password'] = ['required', 'confirmed', Password::min(8)];
         }
@@ -93,7 +80,7 @@ class UserController extends Controller
             $updateData['password'] = Hash::make($request->password);
         }
 
-        $user->assignRole('Super Admin');
+        $user->assignRole('Agent');
         $user->update($updateData);
 
         return response()->json([
@@ -103,11 +90,9 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user): JsonResponse
+    public function destroy($user): JsonResponse
     {
+        $user = User::findOrFail($user);
         $user->delete();
 
         return response()->json([

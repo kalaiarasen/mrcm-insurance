@@ -186,7 +186,7 @@ function _defineProperty(obj, key, value) {
       },
     },
     fill: {
-      colors: ["#7366ff"],
+      colors: ["#3D9FD8"],
       type: "gradient",
       gradient: {
         shade: "light",
@@ -198,7 +198,7 @@ function _defineProperty(obj, key, value) {
         stops: [0, 100],
       },
     },
-    colors: ["#7366ff"],
+    colors: ["#3D9FD8"],
     series: [
       {
         data: [70, 60, 82, 80, 60, 90, 70, 120, 50, 60, 0],
@@ -611,7 +611,7 @@ function _defineProperty(obj, key, value) {
     },
     fill: {
       opacity: 0.9,
-      colors: ["#7366ff"],
+      colors: ["#3D9FD8"],
     },
     series: [
       {
@@ -1272,7 +1272,7 @@ function _defineProperty(obj, key, value) {
         },
       },
     },
-    colors: ["#7366ff"],
+    colors: ["#3D9FD8"],
     stroke: {
       width: 0,
     },
@@ -1307,11 +1307,11 @@ function _defineProperty(obj, key, value) {
       max: 100,
     },
     fill: {
-      colors: ["#7366ff"],
+      colors: ["#3D9FD8"],
       type: "gradient",
       gradient: {
         inverseColors: false,
-        gradientToColors: ["#7366ff"],
+        gradientToColors: ["#3D9FD8"],
       },
     },
   };

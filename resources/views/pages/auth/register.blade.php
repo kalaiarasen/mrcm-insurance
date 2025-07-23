@@ -7,9 +7,9 @@
         <meta name="description" content="Cuba admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
         <meta name="keywords" content="admin template, Cuba admin template, dashboard template, flat admin template, responsive admin template, web app">
         <meta name="author" content="pixelstrap">
-        <link rel="icon" href="https://laravel.pixelstrap.com/cuba/assets/images/favicon.png" type="image/x-icon">
-        <link rel="shortcut icon" href="https://laravel.pixelstrap.com/cuba/assets/images/favicon.png" type="image/x-icon">
-        <title>Register | Cuba - Premium Admin Template By Pixelstrap</title>
+        <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/x-icon">
+        <link rel="shortcut icon" href="{{ asset('img/favicon.png') }}" type="image/x-icon">
+        <title>MRCM Insurance | Register</title>
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/fontawesome.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/icofont.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/themify.css') }}">
@@ -36,8 +36,8 @@
                     <div class="px-4 py-5">
                         <div class="text-center mb-4">
                             <a class="logo" href="{{ route('home') }}">
-                                <img class="img-fluid for-light" src="https://laravel.pixelstrap.com/cuba/assets/images/logo/logo.png" alt="logo">
-                                <img class="img-fluid for-dark" src="https://laravel.pixelstrap.com/cuba/assets/images/logo/logo_dark.png" alt="logo">
+                                <img class="img-fluid for-light" src="{{ asset('img/logo.png') }}" alt="logo">
+                                <img class="img-fluid for-dark" src="{{ asset('img/logo.png') }}" alt="logo">
                             </a>
                         </div>
                         <div class="login-main">
@@ -87,22 +87,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group mb-0">
-                                    <div class="form-check">
+                                    {{-- <div class="form-check">
                                         <input class="checkbox-primary form-check-input" id="checkbox1" type="checkbox" required>
                                         <label class="text-muted form-check-label" for="checkbox1">I agree to the Terms & Conditions</label>
-                                    </div>
+                                    </div> --}}
                                     <button class="btn btn-primary btn-block w-100 mt-3" type="submit">Create Account</button>
-                                </div>
-                                <h6 class="text-muted mt-4 or">Or Sign up with</h6>
-                                <div class="social mt-4">
-                                    <div class="btn-showcase"><a class="btn btn-light" href="https://www.linkedin.com/login"
-                                            target="_blank"><i class="fa-brands fa-linkedin-in"></i></a><a
-                                            class="btn btn-light" href="https://twitter.com/login?lang=en"
-                                            target="_blank"><i class="fa-brands fa-x-twitter"></i></a><a
-                                            class="btn btn-light" href="https://www.facebook.com/" target="_blank"><i
-                                                class="fa-brands fa-facebook-f"></i></a><a class="btn btn-light"
-                                            href="https://www.google.com/" target="_blank"><i
-                                                class="fa-brands fa-google"></i></a></div>
                                 </div>
                                 <p class="mt-4 mb-0 text-center">Already have an account?<a class="ms-2"
                                         href="{{ route('login') }}">Sign In</a></p>
