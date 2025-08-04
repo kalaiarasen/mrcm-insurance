@@ -65,13 +65,13 @@
 
                                 <div class="form-group">
                                     <label class="col-form-label">Email Address</label>
-                                    <input class="form-control" type="email" name="email" value="{{ old('email') }}" required placeholder="test@gmail.com">
+                                    <input class="form-control" type="email" name="email" value="{{ old('email') }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Password</label>
                                     <div class="form-input position-relative">
                                         <input class="form-control" type="password" name="password" required
-                                            placeholder="*********">
+                                            >
                                         <div class="show-hide"><span class="show"> </span></div>
                                     </div>
                                 </div>
