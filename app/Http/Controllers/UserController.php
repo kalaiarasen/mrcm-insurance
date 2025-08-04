@@ -20,7 +20,7 @@ class UserController extends Controller
         $users = User::with('roles')
             ->whereNot('id', Auth::id())
             ->whereDoesntHave('roles', function($query) {
-                $query->where('name', 'Super Admin')->orWhere('name', 'Agent');
+                $query->where('name', 'Super Admin')->orWhere('name', 'Agent')->orWhere('name', 'Client');
             })
             ->get();
         return view('pages.user.index', compact('users'));
