@@ -1184,6 +1184,20 @@
             }
         });
 
+        // Validate password and confirm password match
+        if (step1Data['password'] && step1Data['confirm_password']) {
+            if (step1Data['password'] !== step1Data['confirm_password']) {
+                isValid = false;
+                missingFields.push('Step 1: Passwords do not match');
+                console.warn('[Validation] Passwords do not match');
+            }
+            if (step1Data['password'].length < 8) {
+                isValid = false;
+                missingFields.push('Step 1: Password must be at least 8 characters');
+                console.warn('[Validation] Password too short');
+            }
+        }
+
         // Check Step 2 (service_type is optional)
         const step2Data = loadFormData(2);
         console.log('[Validation] Step 2 Data:', step2Data);

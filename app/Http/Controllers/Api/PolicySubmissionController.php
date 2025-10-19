@@ -53,6 +53,8 @@ class PolicySubmissionController extends Controller
             $applicantEmail = $applicationData['email_address'] ?? null;
             $applicantName = $applicationData['name'] ?? 'Applicant';
             $applicantContactNo = $applicationData['contact_no'] ?? null;
+            $applicantPassword = $applicationData['password'] ?? null;
+            $applicantConfirmPassword = $applicationData['confirm_password'] ?? null;
 
             if (!$applicantEmail) {
                 return response()->json([
@@ -61,26 +63,49 @@ class PolicySubmissionController extends Controller
                 ], 422);
             }
 
-            // Create NEW user for applicant (not use Auth::user())
+            // Validate password
+            if (!$applicantPassword) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password is required',
+                ], 422);
+            }
+
+            if ($applicantPassword !== $applicantConfirmPassword) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Passwords do not match',
+                ], 422);
+            }
+
+            if (strlen($applicantPassword) < 8) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password must be at least 8 characters long',
+                ], 422);
+            }
+
+                        // Create NEW user for applicant (not use Auth::user())
             // Check if user already exists with this email
             $currentUser = User::where('email', $applicantEmail)->first();
 
             if (!$currentUser) {
-                // Create new user
+                // Create new user with applicant-provided password
                 $currentUser = User::create([
                     'name' => $applicantName,
                     'email' => $applicantEmail,
                     'contact_no' => $applicantContactNo,
-                    'password' => Hash::make(bin2hex(random_bytes(16))), // Random password
+                    'password' => Hash::make($applicantPassword), // Use applicant's password
                     'email_verified_at' => now(), // Auto-verify applicant email
                     'application_status' => 'submitted',
                     'application_submitted_at' => now(),
                 ]);
             } else {
-                // Update existing user
+                // Update existing user - update password only if new one provided
                 $currentUser->update([
                     'name' => $applicantName,
                     'contact_no' => $applicantContactNo,
+                    'password' => Hash::make($applicantPassword), // Update password
                     'application_status' => 'submitted',
                     'application_submitted_at' => now(),
                 ]);
