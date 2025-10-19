@@ -131,11 +131,6 @@
                                             <td>{{ $user->created_at->format('M d, Y H:i') }}</td>
                                             <td>
                                                 <ul class="action">
-                                                    <li class="view">
-                                                        <a href="#!" onclick="viewUser({{ $user->id }})">
-                                                            <i class="fa-regular fa-eye"></i>
-                                                        </a>
-                                                    </li>
                                                     <li class="edit">
                                                         <a href="#!" onclick="editUser({{ $user->id }})">
                                                             <i class="fa-regular fa-pen-to-square"></i>
@@ -211,53 +206,6 @@
                     </button>
                     <button type="button" class="btn btn-success" id="saveUserBtn" onclick="saveUser()">
                         <i class="fa fa-save me-1"></i>Save User
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View User Modal -->
-    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title" id="viewUserModalLabel">
-                        <i class="fa fa-eye me-2"></i>View User
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card border-0 bg-light">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-user me-1"></i>Name</h6>
-                                            <p class="mb-3" id="viewName"></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-envelope me-1"></i>Email</h6>
-                                            <p class="mb-3" id="viewEmail"></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-calendar me-1"></i>Created At</h6>
-                                            <p class="mb-3" id="viewCreatedAt"></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary"><i class="fa fa-edit me-1"></i>Updated At</h6>
-                                            <p class="mb-3" id="viewUpdatedAt"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times me-1"></i>Close
                     </button>
                 </div>
             </div>
@@ -348,25 +296,6 @@
                         document.getElementById('password_confirmation').value = '';
                         clearValidationErrors();
                         new bootstrap.Modal(document.getElementById('userModal')).show();
-                    }
-                })
-                .catch(error => {
-                    showNotification('Error fetching user data', 'error');
-                    console.error('Error:', error);
-                });
-        }
-
-        // View user
-        function viewUser(id) {
-            fetch(`/users/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('viewName').textContent = data.data.name;
-                        document.getElementById('viewEmail').textContent = data.data.email;
-                        document.getElementById('viewCreatedAt').textContent = new Date(data.data.created_at).toLocaleString();
-                        document.getElementById('viewUpdatedAt').textContent = new Date(data.data.updated_at).toLocaleString();
-                        new bootstrap.Modal(document.getElementById('viewUserModal')).show();
                     }
                 })
                 .catch(error => {

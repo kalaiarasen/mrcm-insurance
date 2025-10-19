@@ -497,12 +497,7 @@
         
         $(document).ready(function () {
             // Initialize DataTable
-            dataTable = $(".datatable").DataTable({
-                "dom": '<"row"<"col-sm-6"l><"col-sm-6"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
-                "responsive": true,
-                "pageLength": 10,
-                "order": [[ 4, "desc" ]], // Sort by date column by default
-            });
+            dataTable = $(".datatable").DataTable();
             
             // Set default end date to today
             document.getElementById('endDate').value = new Date().toISOString().split('T')[0];
