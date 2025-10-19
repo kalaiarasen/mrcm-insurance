@@ -174,220 +174,62 @@
                             <table class="display table-striped border datatable">
                                 <thead>
                                     <tr>
+                                        <th>Date</th>
                                         <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Office</th>
-                                        <th>Age</th>
-                                        <th>Start date</th>
-                                        <th>Salary</th>
+                                        <th>Gender</th>
+                                        <th>Nation Status</th>
+                                        <th>NRIC No</th>
+                                        <th>Email</th>
+                                        <th>Contact No</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Tiger Nixon</td>
-                                        <td>System Architect</td>
-                                        <td>Edinburgh</td>
-                                        <td>61</td>
-                                        <td>25/04/2011</td>
-                                        <td>$320,800</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Garrett Winters</td>
-                                        <td>Accountant</td>
-                                        <td>Tokyo</td>
-                                        <td>63</td>
-                                        <td>25/07/2015</td>
-                                        <td>$170,750</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Ashton Cox</td>
-                                        <td>Junior Technical Author</td>
-                                        <td>San Francisco</td>
-                                        <td>66</td>
-                                        <td>12/01/2009</td>
-                                        <td>$86,000</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Cedric Kelly</td>
-                                        <td>Senior Javascript Developer</td>
-                                        <td>Edinburgh</td>
-                                        <td>22</td>
-                                        <td>29/03/2016</td>
-                                        <td>$433,060</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Airi Satou</td>
-                                        <td>Accountant</td>
-                                        <td>Tokyo</td>
-                                        <td>33</td>
-                                        <td>28/11/2008</td>
-                                        <td>$162,700</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Brielle Williamson</td>
-                                        <td>Integration Specialist</td>
-                                        <td>New York</td>
-                                        <td>61</td>
-                                        <td>02/12/2012</td>
-                                        <td>$372,000</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Herrod Chandler</td>
-                                        <td>Sales Assistant</td>
-                                        <td>San Francisco</td>
-                                        <td>59</td>
-                                        <td>06/08/2012</td>
-                                        <td>$137,500</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rhona Davidson</td>
-                                        <td>Integration Specialist</td>
-                                        <td>Tokyo</td>
-                                        <td>55</td>
-                                        <td>14/10/2010</td>
-                                        <td>$327,900</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Colleen Hurst</td>
-                                        <td>Javascript Developer</td>
-                                        <td>San Francisco</td>
-                                        <td>39</td>
-                                        <td>15/09/2009</td>
-                                        <td>$205,500</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sonya Frost</td>
-                                        <td>Software Engineer</td>
-                                        <td>Edinburgh</td>
-                                        <td>23</td>
-                                        <td>13/12/2008</td>
-                                        <td>$103,600</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jena Gaines</td>
-                                        <td>Office Manager</td>
-                                        <td>London</td>
-                                        <td>30</td>
-                                        <td>19/12/2008</td>
-                                        <td>$90,560</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Quinn Flynn</td>
-                                        <td>Support Lead</td>
-                                        <td>Edinburgh</td>
-                                        <td>22</td>
-                                        <td>03/03/2013</td>
-                                        <td>$342,000</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
+                                    @forelse($policyHolders as $holder)
+                                        <tr>
+                                            <td>
+                                                <small>{{ $holder->created_at->format('d-M-Y') }}</small>
+                                            </td>
+                                            <td>
+                                                <strong>{{ $holder->applicantProfile?->title ?? '' }}. {{ $holder->name }}</strong>
+                                            </td>
+                                            <td>
+                                                {{ ucwords($holder->applicantProfile?->gender ?? '-') }}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ ucwords($holder->applicantProfile?->nationality_status ?? '-') }}</span>
+                                            </td>
+                                            <td>
+                                                {{ $holder->applicantProfile?->nric_number ?? $holder->applicantProfile?->passport_number ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $holder->email }}
+                                            </td>
+                                            <td>
+                                                {{ $holder->contact_no }}
+                                            </td>
+                                            <td>
+                                                <ul class="action">
+                                                    <li class="edit">
+                                                        <a href="#" onclick="editPolicyHolder({{ $holder->id }}); return false;" title="Edit">
+                                                            <i class="fa-regular fa-pen-to-square"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li class="view">
+                                                        <a href="#" onclick="viewPolicyHolder({{ $holder->id }}); return false;" title="View Details">
+                                                            <i class="fa-regular fa-eye"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="text-center text-muted py-4">
+                                                No policy holders found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -396,6 +238,101 @@
             </div>
         </div>
     </div><!-- Container-fluid Ends-->
+
+    <!-- View Details Modal -->
+    <div class="modal fade" id="viewPolicyHolderModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalLabel">Policy Holder Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="viewDetailsContent">
+                        <!-- Content will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editPolicyHolderModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Policy Holder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <!-- Basic Information Section -->
+                        <div class="mb-3">
+                            <label for="editName" class="form-label fw-bold">Name</label>
+                            <input type="text" class="form-control" id="editName" name="name" required>
+                            <div class="invalid-feedback d-block" id="nameError"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label fw-bold">Email</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                            <div class="invalid-feedback d-block" id="emailError"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editContactNo" class="form-label fw-bold">Contact No</label>
+                            <input type="text" class="form-control" id="editContactNo" name="contact_no" required>
+                            <div class="invalid-feedback d-block" id="contactNoError"></div>
+                        </div>
+
+                        <!-- Password Section -->
+                        <hr class="my-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="fa fa-lock me-2"></i>Change Password (Optional)
+                        </h6>
+
+                        <div class="mb-3">
+                            <label for="editCurrentPassword" class="form-label fw-bold">Current Password</label>
+                            <input type="password" class="form-control" id="editCurrentPassword" name="current_password">
+                            <div class="invalid-feedback d-block" id="currentPasswordError"></div>
+                            <small class="text-muted">Leave blank if you don't want to change password</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editNewPassword" class="form-label fw-bold">New Password</label>
+                            <input type="password" class="form-control" id="editNewPassword" name="new_password">
+                            <div class="invalid-feedback d-block" id="newPasswordError"></div>
+                            <small class="text-muted d-block">
+                                Password must contain:
+                                <ul class="mb-2 mt-2">
+                                    <li>At least 8 characters</li>
+                                    <li>Uppercase & lowercase letters</li>
+                                    <li>Numbers & symbols</li>
+                                </ul>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editConfirmPassword" class="form-label fw-bold">Confirm Password</label>
+                            <input type="password" class="form-control" id="editConfirmPassword" name="confirm_password">
+                            <div class="invalid-feedback d-block" id="confirmPasswordError"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-save me-1"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
@@ -408,6 +345,57 @@
         $(document).ready(function () {
             $(".datatable").DataTable();
         });
+
+        // Show Notification Function
+        function showNotification(message, type = 'info') {
+            const alertTypes = {
+                'success': 'alert-success',
+                'error': 'alert-danger',
+                'warning': 'alert-warning',
+                'info': 'alert-info'
+            };
+            
+            const alertClass = alertTypes[type] || 'alert-info';
+            const iconMap = {
+                'success': 'fa-check-circle',
+                'error': 'fa-exclamation-circle',
+                'warning': 'fa-exclamation-triangle',
+                'info': 'fa-info-circle'
+            };
+            
+            const icon = iconMap[type] || 'fa-info-circle';
+            
+            const alertHTML = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    <i class="fa ${icon} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            
+            // Create container if it doesn't exist
+            let alertContainer = document.getElementById('notificationContainer');
+            if (!alertContainer) {
+                alertContainer = document.createElement('div');
+                alertContainer.id = 'notificationContainer';
+                alertContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 500px;';
+                document.body.appendChild(alertContainer);
+            }
+            
+            // Add the alert
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = alertHTML;
+            const alertElement = tempDiv.firstElementChild;
+            alertContainer.appendChild(alertElement);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                alertElement.classList.remove('show');
+                alertElement.addEventListener('transitionend', () => {
+                    alertElement.remove();
+                }, { once: true });
+            }, 5000);
+        }
 
         document.getElementById('quickDateSelect').addEventListener('change', function() {
             const selection = this.value;
@@ -578,6 +566,191 @@
         // Clear custom search when clearing filter
         function clearCustomSearch() {
             $.fn.dataTable.ext.search = [];
+        }
+
+        // View Policy Holder Details
+        function viewPolicyHolder(holderId) {
+            $.ajax({
+                url: `/policy-holders/${holderId}`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        const data = response.data;
+                        
+                        // Helper function to convert to title case (ucwords equivalent)
+                        const ucwords = (str) => {
+                            if (!str) return str;
+                            return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+                        };
+                        
+                        const detailsHTML = `
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p><strong>Full Name:</strong></p>
+                                    <p>${data.name}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Email:</strong></p>
+                                    <p>${data.email}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p><strong>Contact No:</strong></p>
+                                    <p>${data.contact_no}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Joined Date:</strong></p>
+                                    <p>${data.created_at}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        document.getElementById('viewDetailsContent').innerHTML = detailsHTML;
+                        const modal = new bootstrap.Modal(document.getElementById('viewPolicyHolderModal'));
+                        modal.show();
+                    }
+                },
+                error: function(xhr) {
+                    showNotification('Error loading policy holder details', 'error');
+                    console.error(xhr);
+                }
+            });
+        }
+
+        // Edit Policy Holder
+        let currentPolicyHolderId = null;
+
+        function editPolicyHolder(holderId) {
+            currentPolicyHolderId = holderId;
+            
+            // Fetch policy holder data
+            $.ajax({
+                url: `/policy-holders/${holderId}/edit`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        const data = response.data;
+                        
+                        // Populate form
+                        document.getElementById('editName').value = data.name;
+                        document.getElementById('editEmail').value = data.email;
+                        document.getElementById('editContactNo').value = data.contact_no;
+                        
+                        // Clear password fields
+                        document.getElementById('editCurrentPassword').value = '';
+                        document.getElementById('editNewPassword').value = '';
+                        document.getElementById('editConfirmPassword').value = '';
+                        
+                        // Clear error messages
+                        clearFormErrors();
+                        
+                        // Update form action
+                        const form = document.getElementById('editForm');
+                        form.action = `/policy-holders/${holderId}`;
+                        
+                        // Show modal
+                        const modal = new bootstrap.Modal(document.getElementById('editPolicyHolderModal'));
+                        modal.show();
+                    }
+                },
+                error: function(xhr) {
+                    showNotification('Error loading policy holder data', 'error');
+                    console.error(xhr);
+                }
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            $.ajax({
+                url: this.action,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editPolicyHolderModal'));
+                        modal.hide();
+                        
+                        // Reload the page after a short delay
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    }
+                },
+                error: function(xhr) {
+                    clearFormErrors();
+                    
+                    if (xhr.status === 422) {
+                        // Validation errors
+                        const errors = xhr.responseJSON.errors;
+                        displayFormErrors(errors);
+                        showNotification('Please fix the errors below', 'warning');
+                    } else if (xhr.status === 403) {
+                        showNotification('You are not authorized to perform this action', 'error');
+                    } else {
+                        showNotification('An error occurred while updating the policy holder', 'error');
+                        console.error(xhr);
+                    }
+                }
+            });
+        });
+
+        // Display form validation errors
+        function displayFormErrors(errors) {
+            const errorMap = {
+                'name': 'nameError',
+                'email': 'emailError',
+                'contact_no': 'contactNoError',
+                'current_password': 'currentPasswordError',
+                'new_password': 'newPasswordError',
+                'confirm_password': 'confirmPasswordError'
+            };
+            
+            for (const field in errors) {
+                if (errorMap[field]) {
+                    const errorElement = document.getElementById(errorMap[field]);
+                    if (errorElement) {
+                        errorElement.textContent = errors[field][0];
+                        errorElement.style.color = '#dc3545';
+                    }
+                }
+            }
+        }
+
+        // Clear form errors
+        function clearFormErrors() {
+            const errorFields = [
+                'nameError',
+                'emailError',
+                'contactNoError',
+                'currentPasswordError',
+                'newPasswordError',
+                'confirmPasswordError'
+            ];
+            
+            errorFields.forEach(fieldId => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    element.textContent = '';
+                }
+            });
         }
     </script>
 @endsection

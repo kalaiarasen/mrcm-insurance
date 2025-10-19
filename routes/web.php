@@ -4,6 +4,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolicyController;
+use App\Http\Controllers\PolicyHolderController;
 use App\Http\Controllers\Api\PolicySubmissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -28,7 +29,15 @@ Route::get('/', function () {
 
 Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::view('for-your-action', 'pages.your-action.index')->middleware(['auth', 'verified'])->name('for-your-action');
-Route::view('policy-holders', 'pages.policy-holder.index')->middleware(['auth', 'verified'])->name('policy-holder');
+
+// Policy Holders routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('policy-holders', [PolicyHolderController::class, 'index'])->name('policy-holder');
+    Route::get('policy-holders/{user}/edit', [PolicyHolderController::class, 'edit'])->name('policy-holders.edit');
+    Route::get('policy-holders/{user}', [PolicyHolderController::class, 'show'])->name('policy-holders.show');
+    Route::put('policy-holders/{user}', [PolicyHolderController::class, 'update'])->name('policy-holders.update');
+});
+
 Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->name('claim');
 
 Route::get('new-policy', [PolicyController::class, 'newPolicy'])->name('new-policy');
