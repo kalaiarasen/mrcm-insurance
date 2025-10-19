@@ -58,19 +58,44 @@
     }
 
     function populateForm(step, data) {
+        console.log(`[populateForm] Step ${step}, Data:`, data);
+        
         Object.keys(data).forEach(name => {
-            const element = document.querySelector(`[name="${name}"]`);
-            if (element) {
-                if (element.type === 'checkbox' || element.type === 'radio') {
-                    element.checked = data[name];
-                } else if (element.type === 'password') {
-                    // Keep timeout only for password fields to handle browser autofill issues
-                    setTimeout(() => {
-                        element.value = data[name] || '';
-                    }, 100);
+            console.log(`[populateForm] Processing field: ${name} = ${data[name]}`);
+            
+            const elements = document.querySelectorAll(`[name="${name}"]`);
+            console.log(`[populateForm] Found ${elements.length} elements with name="${name}"`);
+            
+            if (elements.length === 0) {
+                console.warn(`[populateForm] No elements found for name="${name}"`);
+                return;
+            }
+            
+            const element = elements[0];
+            
+            if (element.type === 'checkbox') {
+                console.log(`[populateForm] Processing checkbox: ${name}`);
+                elements.forEach(el => {
+                    el.checked = el.value === data[name];
+                    console.log(`[populateForm] Checkbox ${name}=${el.value}, should be checked: ${el.value === data[name]}, actual: ${el.checked}`);
+                });
+            } else if (element.type === 'radio') {
+                console.log(`[populateForm] Processing radio: ${name}, looking for value: ${data[name]}`);
+                const radioToCheck = document.querySelector(`[name="${name}"][value="${data[name]}"]`);
+                if (radioToCheck) {
+                    radioToCheck.checked = true;
+                    console.log(`[populateForm] Found and checked radio: ${name}[value="${data[name]}"]`);
                 } else {
-                    element.value = data[name];
+                    console.warn(`[populateForm] Radio not found: ${name}[value="${data[name]}"]`);
                 }
+            } else if (element.type === 'password') {
+                // Keep timeout only for password fields to handle browser autofill issues
+                setTimeout(() => {
+                    element.value = data[name] || '';
+                }, 100);
+            } else {
+                element.value = data[name];
+                console.log(`[populateForm] Set ${element.type} ${name} = ${data[name]}`);
             }
         });
         
@@ -93,6 +118,7 @@
     function populatePricingSummary() {
         const step1Data = loadFormData(1);
         const step2Data = loadFormData(2);
+        const step3Data = loadFormData(3);
 
         // Populate the top display fields (Cover Type, Medical Status, Class)
         const coverTypeText = getCoverTypeText(step2Data);
@@ -111,16 +137,81 @@
         setLiabilityOptionsForStep2(step2Data);
 
         setupPricingCalculations();
+
+        // Restore liability limit selection if it was previously saved
+        // Do this after setting up event listeners
+        if (step3Data && step3Data.liability_limit) {
+            const liabilitySelect = document.getElementById('liabilityLimit');
+            if (liabilitySelect) {
+                liabilitySelect.value = step3Data.liability_limit;
+                // Trigger change to recalculate premium with saved value
+                setTimeout(() => {
+                    const evt = new Event('change', { bubbles: true });
+                    liabilitySelect.dispatchEvent(evt);
+                }, 100);
+            }
+        }
     }
 
     function setLiabilityOptionsForStep2(step2Data) {
         const select = document.getElementById('liabilityLimit');
         if (!select) return;
 
-        // Condition: when step2 indicates Government Medical Officers with Locum only
-        // (employment_status === 'government' and cover_type === 'locum_cover' OR locum_cover_only)
+        // Services that should only show RM 2,000,000 (GP services)
+        const twoMillionOnlyServices = [
+            'core_services_with_procedures',
+            'general_practitioner_private_hospital_outpatient',
+            'general_practitioner_private_hospital_emergency',
+            'general_practitioner_with_obstetrics',
+            'cosmetic_aesthetic_non_invasive',
+            'cosmetic_aesthetic_non_surgical_invasive'
+        ];
+
+        // Low risk specialists that should show RM 1,000,000 & RM 2,000,000
+        const lowRiskSpecialists = [
+            'occupational_health_physicians',
+            'general_physicians',
+            'dermatology_non_cosmetic',
+            'infections_diseases',
+            'pathology',
+            'psychiatry',
+            'endocrinology',
+            'rehab_medicine',
+            'paediatrics_non_neonatal',
+            'geriatrics',
+            'haemotology',
+            'immunology',
+            'nephrology',
+            'nuclear_medicine',
+            'neurology',
+            'radiology_non_interventional'
+        ];
+
+        // Medium risk specialists that should only show RM 2,000,000
+        const mediumRiskSpecialists = [
+            'ophthalmology_office_procedures',
+            'office_ent_clinic_based',
+            'ophthalmology_surgeries_non_ga',
+            'ent_surgeries_non_ga',
+            'radiology_interventional',
+            'gastroenterology',
+            'office_clinical_orthopaedics',
+            'office_clinical_gynaecology',
+            'cosmetic_aesthetic_non_surgical_invasive',
+            'cosmetic_aesthetic_surgical_invasive'
+        ];
+
+        // Check conditions
         const isLocumOnlyGov = step2Data && (step2Data.employment_status === 'government') && 
             (step2Data.cover_type === 'locum_cover' || step2Data.cover_type === 'locum_cover_only');
+        
+        const isTwoMillionOnlyService = step2Data && twoMillionOnlyServices.includes(step2Data.service_type);
+        
+        const isMediumRiskSpecialist = step2Data && mediumRiskSpecialists.includes(step2Data.service_type);
+        
+        const isLowRiskSpecialist = step2Data && lowRiskSpecialists.includes(step2Data.service_type);
+
+        const isLecturerTrainee = step2Data && step2Data.specialty_area === 'lecturer_trainee';
 
         // Build options
         let html = '';
@@ -129,8 +220,21 @@
         html += '<option value="" disabled selected>Choose Liability Limit</option>';
 
         if (isLocumOnlyGov) {
+            // Government Locum only: RM 1,000,000 only
             html += '<option value="1000000">RM 1,000,000</option>';
+        } else if (isLecturerTrainee) {
+            // Lecturer/Trainee: RM 1,000,000 & RM 2,000,000
+            html += '<option value="1000000">RM 1,000,000</option>';
+            html += '<option value="2000000">RM 2,000,000</option>';
+        } else if (isTwoMillionOnlyService || isMediumRiskSpecialist) {
+            // Specific GP services + Medium risk specialists: RM 2,000,000 only
+            html += '<option value="2000000">RM 2,000,000</option>';
+        } else if (isLowRiskSpecialist) {
+            // Low risk specialists: RM 1,000,000 & RM 2,000,000
+            html += '<option value="1000000">RM 1,000,000</option>';
+            html += '<option value="2000000">RM 2,000,000</option>';
         } else {
+            // Default: All options
             html += '<option value="1000000">RM 1,000,000</option>';
             html += '<option value="2000000">RM 2,000,000</option>';
             html += '<option value="5000000">RM 5,000,000</option>';
@@ -325,7 +429,7 @@
     }
 
     let currentStep = 1;
-    const totalSteps = 3;
+    const totalSteps = 8;
 
     function updateProgressBar(step) {
         const progressBar = document.getElementById('progressBar');
@@ -342,6 +446,57 @@
             } else {
                 progressBar.classList.remove('bg-success');
                 progressBar.classList.add('bg-primary');
+            }
+        }
+    }
+
+    // Helper function to restore conditional sections on page load
+    function restoreConditionalSections() {
+        console.log('[restoreConditionalSections] Starting restoration');
+        
+        // Step 5
+        const currentInsuranceVal = $('input[name="current_insurance"]:checked').val();
+        console.log('[restoreConditionalSections] current_insurance value:', currentInsuranceVal);
+        if (currentInsuranceVal === 'yes') {
+            const section = document.getElementById('currentInsuranceDetailsSection');
+            if (section) {
+                section.style.display = 'block';
+                console.log('[restoreConditionalSections] Showing currentInsuranceDetailsSection');
+            } else {
+                console.warn('[restoreConditionalSections] currentInsuranceDetailsSection not found');
+            }
+        }
+        
+        const previousClaimsVal = $('input[name="previous_claims"]:checked').val();
+        console.log('[restoreConditionalSections] previous_claims value:', previousClaimsVal);
+        if (previousClaimsVal === 'yes') {
+            const section = document.getElementById('previousClaimsDetailsSection');
+            if (section) {
+                section.style.display = 'block';
+                console.log('[restoreConditionalSections] Showing previousClaimsDetailsSection');
+            } else {
+                console.warn('[restoreConditionalSections] previousClaimsDetailsSection not found');
+            }
+        }
+
+        // Step 6: Show details section if ANY question is "yes"
+        const claimsMadeVal = $('input[name="claims_made"]:checked').val();
+        const awareOfErrorsVal = $('input[name="aware_of_errors"]:checked').val();
+        const disciplinaryActionVal = $('input[name="disciplinary_action"]:checked').val();
+        
+        console.log('[restoreConditionalSections] Step 6 values:', {
+            claims_made: claimsMadeVal,
+            aware_of_errors: awareOfErrorsVal,
+            disciplinary_action: disciplinaryActionVal
+        });
+
+        if (claimsMadeVal === 'yes' || awareOfErrorsVal === 'yes' || disciplinaryActionVal === 'yes') {
+            const section = document.getElementById('claimsDetailsSection');
+            if (section) {
+                section.style.display = 'block';
+                console.log('[restoreConditionalSections] Showing claimsDetailsSection');
+            } else {
+                console.warn('[restoreConditionalSections] claimsDetailsSection not found');
             }
         }
     }
@@ -373,8 +528,24 @@
         if (Object.keys(savedData).length > 0) {
             console.log(`Populating form for step ${step} with saved data`);
             populateForm(step, savedData);
+            
+            // Restore conditional sections visibility after form is populated
+            setTimeout(() => {
+                if (step === 5 || step === 6) {
+                    restoreConditionalSections();
+                }
+                if (step === 8) {
+                    initSignatureCanvas();
+                }
+            }, 50);
         } else {
             console.log(`No saved data found for step ${step}`);
+            // Initialize signature canvas even if no saved data
+            if (step === 8) {
+                setTimeout(() => {
+                    initSignatureCanvas();
+                }, 50);
+            }
         }
         
         currentStep = step;
@@ -401,6 +572,80 @@
         } else {
             console.log('Already at first step');
         }
+    }
+
+    // Step 8: Signature Canvas Variables and Functions
+    let signatureCanvas = null;
+    let signatureContext = null;
+    let isDrawing = false;
+
+    function initSignatureCanvas() {
+        signatureCanvas = document.getElementById('signatureCanvas');
+        if (!signatureCanvas) {
+            console.warn('Signature canvas not found');
+            return;
+        }
+
+        signatureContext = signatureCanvas.getContext('2d');
+        
+        // Set canvas resolution to match display size
+        const dpr = window.devicePixelRatio || 1;
+        const rect = signatureCanvas.getBoundingClientRect();
+        
+        signatureCanvas.width = rect.width * dpr;
+        signatureCanvas.height = rect.height * dpr;
+        
+        if (signatureContext) {
+            signatureContext.scale(dpr, dpr);
+            // Set white background
+            signatureContext.fillStyle = 'white';
+            signatureContext.fillRect(0, 0, rect.width, rect.height);
+        }
+
+        console.log('Signature canvas initialized:', signatureCanvas.width, 'x', signatureCanvas.height);
+
+        // Mouse events
+        signatureCanvas.addEventListener('mousedown', startDrawing, false);
+        signatureCanvas.addEventListener('mousemove', draw, false);
+        signatureCanvas.addEventListener('mouseup', stopDrawing, false);
+        signatureCanvas.addEventListener('mouseout', stopDrawing, false);
+
+        // Touch events
+        signatureCanvas.addEventListener('touchstart', startDrawing, false);
+        signatureCanvas.addEventListener('touchmove', draw, false);
+        signatureCanvas.addEventListener('touchend', stopDrawing, false);
+    }
+
+    function startDrawing(e) {
+        e.preventDefault();
+        isDrawing = true;
+        const rect = signatureCanvas.getBoundingClientRect();
+        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+        signatureContext.beginPath();
+        signatureContext.moveTo(x, y);
+        console.log('Drawing started at:', x, y);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const rect = signatureCanvas.getBoundingClientRect();
+        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+        signatureContext.lineWidth = 2;
+        signatureContext.lineCap = 'round';
+        signatureContext.lineJoin = 'round';
+        signatureContext.strokeStyle = '#333';
+        signatureContext.lineTo(x, y);
+        signatureContext.stroke();
+    }
+
+    function stopDrawing(e) {
+        if (isDrawing) {
+            console.log('Drawing stopped');
+        }
+        isDrawing = false;
     }
 
     $(document).ready(function() {
@@ -520,18 +765,8 @@
             const formData = getFormData(this);
             saveFormData(3, formData);
             
-            const allData = getAllSavedData();
-            
-            let dataSummary = 'Application submitted successfully!\n\nData Summary:\n';
-            dataSummary += `User ID: ${getUserId()}\n`;
-            dataSummary += `Total fields saved: ${Object.keys(allData).length}\n\n`;
-            dataSummary += 'Check browser console for complete data details.';
-            
-            alert(dataSummary);
-            console.log('Complete application data:', allData);
-            
-            updateProgressBar(totalSteps);
-            
+            console.log('Step 3 completed, moving to step 4. Current step:', currentStep);
+            nextStep();
         });
 
         $('#step1NextBtn').on('click', function(e) {
@@ -574,8 +809,113 @@
 
         $('#step3NextBtn').on('click', function(e) {
             e.preventDefault();
-            console.log('Step 3 Submit button clicked');
+            console.log('Step 3 Next button clicked');
             $('#pricingDetailsForm').trigger('submit');
+        });
+
+        $('#declarationForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                return;
+            }
+            
+            const formData = getFormData(this);
+            saveFormData(4, formData);
+            
+            console.log('Step 4 completed, moving to step 5. Current step:', currentStep);
+            nextStep();
+        });
+
+        $('#step4PrevBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 4 Previous button clicked');
+            // Save current form data before moving back
+            const declarationForm = document.getElementById('declarationForm');
+            if (declarationForm) {
+                const formData = getFormData(declarationForm);
+                saveFormData(4, formData);
+                console.log('Step 4 data saved before moving back:', formData);
+            }
+            prevStep();
+        });
+
+        $('#step4NextBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 4 Next button clicked');
+            $('#declarationForm').trigger('submit');
+        });
+
+        $('#insuranceHistoryForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                return;
+            }
+            
+            const formData = getFormData(this);
+            saveFormData(5, formData);
+            
+            console.log('Step 5 completed, moving to step 6. Current step:', currentStep);
+            nextStep();
+        });
+
+        $('#step5PrevBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 5 Previous button clicked');
+            // Save current form data before moving back
+            const insuranceHistoryForm = document.getElementById('insuranceHistoryForm');
+            if (insuranceHistoryForm) {
+                const formData = getFormData(insuranceHistoryForm);
+                saveFormData(5, formData);
+                console.log('Step 5 data saved before moving back:', formData);
+            }
+            prevStep();
+        });
+
+        $('#step5NextBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 5 Next button clicked');
+            $('#insuranceHistoryForm').trigger('submit');
+        });
+
+        $('#claimsExperienceForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                return;
+            }
+            
+            const formData = getFormData(this);
+            saveFormData(6, formData);
+            
+            console.log('Step 6 completed, moving to step 7. Current step:', currentStep);
+            nextStep();
+        });
+
+        $('#step6PrevBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 6 Previous button clicked');
+            // Save current form data before moving back
+            const claimsExperienceForm = document.getElementById('claimsExperienceForm');
+            if (claimsExperienceForm) {
+                const formData = getFormData(claimsExperienceForm);
+                saveFormData(6, formData);
+                console.log('Step 6 data saved before moving back:', formData);
+            }
+            prevStep();
+        });
+
+        $('#step6NextBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 6 Submit button clicked');
+            $('#claimsExperienceForm').trigger('submit');
         });
 
         $('#confirmPassword').on('input', function() {
@@ -609,5 +949,191 @@
             const formData = getFormData(document.getElementById('pricingDetailsForm'));
             saveFormData(3, formData);
         });
+
+        $('#declarationForm input, #declarationForm select').on('change', function() {
+            console.log('Declaration form field changed:', this.name, '=', this.value);
+            const formData = getFormData(document.getElementById('declarationForm'));
+            saveFormData(4, formData);
+        });
+
+        $('#insuranceHistoryForm input, #insuranceHistoryForm select, #insuranceHistoryForm textarea').on('change input', function() {
+            console.log('Insurance history form field changed:', this.name, '=', this.value);
+            const formData = getFormData(document.getElementById('insuranceHistoryForm'));
+            saveFormData(5, formData);
+        });
+
+        $('#claimsExperienceForm input, #claimsExperienceForm select').on('change', function() {
+            console.log('Claims experience form field changed:', this.name, '=', this.value);
+            const formData = getFormData(document.getElementById('claimsExperienceForm'));
+            saveFormData(6, formData);
+        });
+
+        // Step 7: Data Protection Form
+        $('#dataProtectionForm').on('submit', function(e) {
+            e.preventDefault();
+            console.log('Data Protection form submitted');
+            
+            const agreeDeclaration = document.getElementById('agreeDeclaration');
+            if (!agreeDeclaration || !agreeDeclaration.checked) {
+                alert('Please read and agree to the Data Protection Notice declaration');
+                return;
+            }
+
+            const dataProtectionForm = document.getElementById('dataProtectionForm');
+            if (dataProtectionForm) {
+                const formData = getFormData(dataProtectionForm);
+                saveFormData(7, formData);
+                console.log('Data saved for step 7');
+            }
+
+            console.log('Step 7 completed, moving to step 8. Current step:', currentStep);
+            nextStep();
+        });
+
+        $('#dataProtectionForm input').on('change', function() {
+            console.log('Data protection form field changed:', this.name, '=', this.value);
+            const formData = getFormData(document.getElementById('dataProtectionForm'));
+            saveFormData(7, formData);
+        });
+
+        $('#step7PrevBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 7 Previous button clicked');
+            // Save current form data before moving back
+            const dataProtectionForm = document.getElementById('dataProtectionForm');
+            if (dataProtectionForm) {
+                const formData = getFormData(dataProtectionForm);
+                saveFormData(7, formData);
+                console.log('Step 7 data saved before moving back:', formData);
+            }
+            prevStep();
+        });
+
+        $('#step7NextBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 7 Next button clicked');
+            $('#dataProtectionForm').trigger('submit');
+        });
+
+        // Step 8: Declaration & Signature Event Handlers
+        $('#clearSignatureBtn').on('click', function(e) {
+            e.preventDefault();
+            if (signatureCanvas && signatureContext) {
+                const rect = signatureCanvas.getBoundingClientRect();
+                signatureContext.fillStyle = 'white';
+                signatureContext.fillRect(0, 0, rect.width, rect.height);
+                console.log('Signature cleared');
+            }
+        });
+
+        $('#declarationSignatureForm').on('submit', function(e) {
+            e.preventDefault();
+            console.log('Declaration & Signature form submitted');
+            
+            const agreeDeclarationFinal = document.getElementById('agreeDeclarationFinal');
+            if (!agreeDeclarationFinal || !agreeDeclarationFinal.checked) {
+                alert('Please read and agree to the declaration');
+                return;
+            }
+
+            // Check if signature was drawn
+            let hasSignature = false;
+            if (signatureCanvas) {
+                const imageData = signatureContext.getImageData(0, 0, signatureCanvas.width, signatureCanvas.height);
+                const data = imageData.data;
+                // Check if any pixel is not white (255, 255, 255, 255)
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i] !== 255 || data[i+1] !== 255 || data[i+2] !== 255) {
+                        hasSignature = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!hasSignature) {
+                alert('Please provide a signature before submitting');
+                return;
+            }
+
+            const declarationSignatureForm = document.getElementById('declarationSignatureForm');
+            if (declarationSignatureForm) {
+                const formData = getFormData(declarationSignatureForm);
+                if (signatureCanvas) {
+                    formData.signature = signatureCanvas.toDataURL('image/png');
+                }
+                saveFormData(8, formData);
+                console.log('Data saved for step 8');
+            }
+
+            // Log all saved data and show completion message
+            debugSavedData();
+            alert('Application submitted successfully! Thank you for your submission.');
+            updateProgressBar(totalSteps);
+        });
+
+        $('#declarationSignatureForm input').on('change', function() {
+            console.log('Declaration signature form field changed:', this.name, '=', this.value);
+            const formData = getFormData(document.getElementById('declarationSignatureForm'));
+            saveFormData(8, formData);
+        });
+
+        $('#step8PrevBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 8 Previous button clicked');
+            const declarationSignatureForm = document.getElementById('declarationSignatureForm');
+            if (declarationSignatureForm) {
+                const formData = getFormData(declarationSignatureForm);
+                saveFormData(8, formData);
+                console.log('Step 8 data saved before moving back:', formData);
+            }
+            prevStep();
+        });
+
+        $('#step8NextBtn').on('click', function(e) {
+            e.preventDefault();
+            console.log('Step 8 Submit button clicked');
+            $('#declarationSignatureForm').trigger('submit');
+        });
+
+        // Step 5: Conditional display for insurance history sections
+        $('input[name="current_insurance"]').on('change', function() {
+            const currentInsuranceDetailsSection = document.getElementById('currentInsuranceDetailsSection');
+            if (this.value === 'yes') {
+                currentInsuranceDetailsSection.style.display = 'block';
+            } else {
+                currentInsuranceDetailsSection.style.display = 'none';
+            }
+        });
+
+        $('input[name="previous_claims"]').on('change', function() {
+            const previousClaimsDetailsSection = document.getElementById('previousClaimsDetailsSection');
+            if (this.value === 'yes') {
+                previousClaimsDetailsSection.style.display = 'block';
+            } else {
+                previousClaimsDetailsSection.style.display = 'none';
+            }
+        });
+
+        // Step 6: Conditional display for claims experience sections
+        // Show details section if ANY question has "yes" selected
+        $('input[name="claims_made"], input[name="aware_of_errors"], input[name="disciplinary_action"]').on('change', function() {
+            const claimsMadeVal = $('input[name="claims_made"]:checked').val();
+            const awareOfErrorsVal = $('input[name="aware_of_errors"]:checked').val();
+            const disciplinaryActionVal = $('input[name="disciplinary_action"]:checked').val();
+
+            const claimsDetailsSection = document.getElementById('claimsDetailsSection');
+            
+            // Show details if ANY question is answered "yes"
+            if (claimsMadeVal === 'yes' || awareOfErrorsVal === 'yes' || disciplinaryActionVal === 'yes') {
+                claimsDetailsSection.style.display = 'block';
+            } else {
+                claimsDetailsSection.style.display = 'none';
+            }
+
+            saveFormData(6, getFormData(document.getElementById('claimsExperienceForm')));
+        });
+
+        // Call this function after form data is restored on page load
+        setTimeout(restoreConditionalSections, 100);
     });
 </script>

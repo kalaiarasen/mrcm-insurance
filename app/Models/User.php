@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -23,6 +25,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'contact_no',
+        'application_status',
+        'application_submitted_at',
     ];
 
     /**
@@ -58,5 +63,85 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Get the user's applicant profile.
+     */
+    public function applicantProfile(): HasOne
+    {
+        return $this->hasOne(ApplicantProfile::class);
+    }
+
+    /**
+     * Get the user's applicant contact.
+     */
+    public function applicantContact(): HasOne
+    {
+        return $this->hasOne(ApplicantContact::class);
+    }
+
+    /**
+     * Get the user's qualifications.
+     */
+    public function qualifications(): HasMany
+    {
+        return $this->hasMany(Qualification::class);
+    }
+
+    /**
+     * Get the user's addresses.
+     */
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    /**
+     * Get the user's healthcare service.
+     */
+    public function healthcareService(): HasOne
+    {
+        return $this->hasOne(HealthcareService::class);
+    }
+
+    /**
+     * Get the user's policy pricing.
+     */
+    public function policyPricing(): HasOne
+    {
+        return $this->hasOne(PolicyPricing::class);
+    }
+
+    /**
+     * Get the user's risk management.
+     */
+    public function riskManagement(): HasOne
+    {
+        return $this->hasOne(RiskManagement::class);
+    }
+
+    /**
+     * Get the user's insurance history.
+     */
+    public function insuranceHistory(): HasOne
+    {
+        return $this->hasOne(InsuranceHistory::class);
+    }
+
+    /**
+     * Get the user's claims experience.
+     */
+    public function claimsExperience(): HasOne
+    {
+        return $this->hasOne(ClaimsExperience::class);
+    }
+
+    /**
+     * Get the user's policy application.
+     */
+    public function policyApplication(): HasOne
+    {
+        return $this->hasOne(PolicyApplication::class);
     }
 }
