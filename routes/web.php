@@ -38,7 +38,7 @@ Route::post('policies/submit', [PolicySubmissionController::class, 'submit'])
     ->middleware(['auth', 'verified'])
     ->name('policies.submit');
 
-
+Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);
 Route::resource('users', UserController::class)->middleware(['auth', 'verified']);
 Route::resource('roles', RoleController::class)->middleware(['auth', 'verified']);
 Route::resource('agents', AgentController::class)->middleware(['auth', 'verified']);

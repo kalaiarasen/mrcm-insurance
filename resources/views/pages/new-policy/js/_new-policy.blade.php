@@ -1287,10 +1287,7 @@
 
         // Prepare data for submission
         const submissionData = {
-            user_id: getUserId(),
-            application_data: formData,
-            submitted_at: new Date().toISOString(),
-            user_agent: navigator.userAgent
+            application_data: formData
         };
 
         console.log('[Submit] Submitting form data:', submissionData);

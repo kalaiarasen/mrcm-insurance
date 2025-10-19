@@ -37,7 +37,6 @@ class PolicySubmissionController extends Controller
             // Validate request
             $validator = Validator::make($request->all(), [
                 'application_data' => 'required|array',
-                'submitted_at' => 'required|date_format:Y-m-d\TH:i:s.000\Z',
             ]);
 
             if ($validator->fails()) {
