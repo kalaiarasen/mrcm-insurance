@@ -294,15 +294,13 @@ class PolicySubmissionController extends Controller
             // Step 7 & 8: Save Policy Application (Declaration & Signature)
             // Mark old policy applications as inactive
             PolicyApplication::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active policy application
-            $referenceNumber = $this->generateReferenceNumber($currentUser->id);
+            // Create new active policy application (reference number will be assigned after approval)
             PolicyApplication::create([
                 'user_id' => $currentUser->id,
                 'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',
                 'agree_declaration' => $applicationData['agree_declaration_final'] === 'yes',
                 'signature_data' => $applicationData['signature'] ?? null,
                 'status' => 'submitted',
-                'reference_number' => $referenceNumber,
                 'submitted_at' => now(),
                 'is_used' => true,
             ]);
@@ -322,13 +320,11 @@ class PolicySubmissionController extends Controller
             \Log::info('Policy application submitted', [
                 'user_id' => $currentUser->id,
                 'submitted_at' => now(),
-                'reference_number' => $referenceNumber,
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Application submitted successfully',
-                'reference_number' => $referenceNumber,
                 'user_id' => $currentUser->id,
             ], 200);
 

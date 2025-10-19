@@ -658,6 +658,14 @@
                                 <hr>
                             </div>
 
+                            <!-- Hidden fields to store calculated values -->
+                            <input type="hidden" id="displayBasePremiumInput" name="displayBasePremium" value="0">
+                            <input type="hidden" id="displayGrossPremiumInput" name="displayGrossPremium" value="0">
+                            <input type="hidden" id="displayLocumAddonInput" name="displayLocumAddon" value="0">
+                            <input type="hidden" id="displaySSTInput" name="displaySST" value="0">
+                            <input type="hidden" id="displayStampDutyInput" name="displayStampDuty" value="10">
+                            <input type="hidden" id="displayTotalPayableInput" name="displayTotalPayable" value="0">
+
                             <div class="row mt-4">
                                 <div class="col-md-12 text-end">
                                     <button type="button" class="btn btn-light me-2" id="step3PrevBtn">Previous Step</button>

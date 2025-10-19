@@ -396,6 +396,14 @@
         document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
         document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
         
+        // Also populate hidden fields for form submission
+        document.getElementById('displayBasePremiumInput').value = basePremium;
+        document.getElementById('displayGrossPremiumInput').value = grossPremium;
+        document.getElementById('displayLocumAddonInput').value = 0;
+        document.getElementById('displaySSTInput').value = sst;
+        document.getElementById('displayStampDutyInput').value = stampDuty;
+        document.getElementById('displayTotalPayableInput').value = totalPayable;
+        
         document.getElementById('locumAddonRow').style.display = 'none';
         
         document.getElementById('pricingBreakdown').style.display = 'block';
@@ -793,6 +801,26 @@
                 $(this).addClass('was-validated');
                 return;
             }
+            
+            // Populate hidden fields with calculated values from display elements
+            document.getElementById('displayBasePremiumInput').value = parseFloat(
+                document.getElementById('displayBasePremium').textContent.replace(/[^0-9.]/g, '')
+            ) || 0;
+            document.getElementById('displayGrossPremiumInput').value = parseFloat(
+                document.getElementById('displayGrossPremium').textContent.replace(/[^0-9.]/g, '')
+            ) || 0;
+            document.getElementById('displayLocumAddonInput').value = parseFloat(
+                document.getElementById('displayLocumAddon').textContent.replace(/[^0-9.]/g, '')
+            ) || 0;
+            document.getElementById('displaySSTInput').value = parseFloat(
+                document.getElementById('displaySST').textContent.replace(/[^0-9.]/g, '')
+            ) || 0;
+            document.getElementById('displayStampDutyInput').value = parseFloat(
+                document.getElementById('displayStampDuty').textContent.replace(/[^0-9.]/g, '')
+            ) || 10;
+            document.getElementById('displayTotalPayableInput').value = parseFloat(
+                document.getElementById('displayTotalPayable').textContent.replace(/[^0-9.]/g, '')
+            ) || 0;
             
             const formData = getFormData(this);
             saveFormData(3, formData);

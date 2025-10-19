@@ -5,6 +5,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyHolderController;
+use App\Http\Controllers\YourActionController;
 use App\Http\Controllers\Api\PolicySubmissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -28,7 +29,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::view('for-your-action', 'pages.your-action.index')->middleware(['auth', 'verified'])->name('for-your-action');
+Route::get('for-your-action', [YourActionController::class, 'index'])->middleware(['auth', 'verified'])->name('for-your-action');
 
 // Policy Holders routes
 Route::middleware(['auth', 'verified'])->group(function () {
