@@ -1154,7 +1154,8 @@
     function validateAllSteps() {
         const step1Fields = ['title', 'full_name', 'nationality_status', 'gender', 'contact_no', 'email_address', 'password', 'confirm_password', 'mailing_address', 'mailing_postcode', 'mailing_city', 'mailing_state', 'mailing_country', 'primary_clinic_type', 'primary_clinic_name', 'primary_address', 'primary_postcode', 'primary_city', 'primary_state', 'primary_country', 'institution_1', 'qualification_1', 'year_obtained_1', 'registration_council', 'registration_number'];
         
-        const step2Fields = ['professional_indemnity_type', 'employment_status', 'specialty_area', 'cover_type', 'service_type'];
+        // service_type is optional - some paths don't need it
+        const step2Fields = ['professional_indemnity_type', 'employment_status', 'specialty_area', 'cover_type'];
         
         const step3Fields = ['policy_start_date', 'liability_limit'];
         
@@ -1183,7 +1184,7 @@
             }
         });
 
-        // Check Step 2
+        // Check Step 2 (service_type is optional)
         const step2Data = loadFormData(2);
         console.log('[Validation] Step 2 Data:', step2Data);
         step2Fields.forEach(field => {
@@ -1296,7 +1297,7 @@
 
         // Send AJAX request to server
         $.ajax({
-            url: '/api/policies/submit',
+            url: '{{ route("policies.submit") }}',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(submissionData),
@@ -1309,22 +1310,29 @@
                 console.log('[Submit] ✅ SUCCESS:', response);
                 
                 // Show success message
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Application Submitted Successfully!',
-                    html: '<p>Thank you for submitting your application.</p>' +
-                          '<p>Reference Number: <strong>' + (response.reference_number || 'N/A') + '</strong></p>' +
-                          '<p>We will review your application and contact you shortly.</p>',
-                    confirmButtonText: 'Go to Dashboard',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Clear localStorage and redirect
-                        clearAllSavedData();
-                        window.location.href = '{{ route("dashboard") }}';
-                    }
-                });
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Application Submitted Successfully!',
+                        html: '<p>Thank you for submitting your application.</p>' +
+                              '<p>Reference Number: <strong>' + (response.reference_number || 'N/A') + '</strong></p>' +
+                              '<p>We will review your application and contact you shortly.</p>',
+                        confirmButtonText: 'Go to Dashboard',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Clear localStorage and redirect
+                            clearAllSavedData();
+                            window.location.href = '{{ route("dashboard") }}';
+                        }
+                    });
+                } else {
+                    // Fallback if SweetAlert not available
+                    alert('Application Submitted Successfully!\n\nReference Number: ' + (response.reference_number || 'N/A') + '\n\nWe will review your application and contact you shortly.');
+                    clearAllSavedData();
+                    window.location.href = '{{ route("dashboard") }}';
+                }
 
                 // Update progress bar
                 updateProgressBar(totalSteps);
@@ -1349,12 +1357,17 @@
                 }
 
                 // Show error message
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Submission Failed',
-                    text: errorMessage,
-                    confirmButtonText: 'Try Again'
-                });
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Submission Failed',
+                        text: errorMessage,
+                        confirmButtonText: 'Try Again'
+                    });
+                } else {
+                    // Fallback if SweetAlert not available
+                    alert('Submission Failed:\n' + errorMessage);
+                }
 
                 console.log('[Submit] Error response:', jqXHR.responseJSON);
             },

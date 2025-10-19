@@ -51,6 +51,13 @@ class PolicySubmissionController extends Controller
             $applicationData = $request->input('application_data');
             $currentUser = Auth::user();
 
+            if (!$currentUser) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Authentication required',
+                ], 401);
+            }
+
             // Create or update user with authentication credentials
             if (isset($applicationData['email_address']) && $applicationData['email_address'] !== $currentUser->email) {
                 // Update user email if different

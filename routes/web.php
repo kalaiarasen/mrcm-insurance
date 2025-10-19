@@ -4,6 +4,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolicyController;
+use App\Http\Controllers\Api\PolicySubmissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Livewire\Settings\Appearance;
@@ -32,8 +33,12 @@ Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->na
 
 Route::get('new-policy', [PolicyController::class, 'newPolicy'])->middleware(['auth', 'verified'])->name('new-policy');
 
+// Policy Submission Route (Web route with CSRF)
+Route::post('policies/submit', [PolicySubmissionController::class, 'submit'])
+    ->middleware(['auth', 'verified'])
+    ->name('policies.submit');
 
-Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);
+
 Route::resource('users', UserController::class)->middleware(['auth', 'verified']);
 Route::resource('roles', RoleController::class)->middleware(['auth', 'verified']);
 Route::resource('agents', AgentController::class)->middleware(['auth', 'verified']);
