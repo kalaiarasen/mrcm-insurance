@@ -48,30 +48,43 @@ class PolicySubmissionController extends Controller
             }
 
             $applicationData = $request->input('application_data');
-            $currentUser = Auth::user();
 
-            if (!$currentUser) {
+            // Extract applicant email and name
+            $applicantEmail = $applicationData['email_address'] ?? null;
+            $applicantName = $applicationData['name'] ?? 'Applicant';
+            $applicantContactNo = $applicationData['contact_no'] ?? null;
+
+            if (!$applicantEmail) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Authentication required',
-                ], 401);
+                    'message' => 'Applicant email address is required',
+                ], 422);
             }
 
-            // Create or update user with authentication credentials
-            if (isset($applicationData['email_address']) && $applicationData['email_address'] !== $currentUser->email) {
-                // Update user email if different
-                $currentUser->email = $applicationData['email_address'];
-            }
+            // Create NEW user for applicant (not use Auth::user())
+            // Check if user already exists with this email
+            $currentUser = User::where('email', $applicantEmail)->first();
 
-            // Update contact number if provided
-            if (isset($applicationData['contact_no'])) {
-                $currentUser->contact_no = $applicationData['contact_no'];
+            if (!$currentUser) {
+                // Create new user
+                $currentUser = User::create([
+                    'name' => $applicantName,
+                    'email' => $applicantEmail,
+                    'contact_no' => $applicantContactNo,
+                    'password' => Hash::make(bin2hex(random_bytes(16))), // Random password
+                    'email_verified_at' => now(), // Auto-verify applicant email
+                    'application_status' => 'submitted',
+                    'application_submitted_at' => now(),
+                ]);
+            } else {
+                // Update existing user
+                $currentUser->update([
+                    'name' => $applicantName,
+                    'contact_no' => $applicantContactNo,
+                    'application_status' => 'submitted',
+                    'application_submitted_at' => now(),
+                ]);
             }
-
-            // Mark application as submitted
-            $currentUser->application_status = 'submitted';
-            $currentUser->application_submitted_at = now();
-            $currentUser->save();
 
             // Step 1: Save Applicant Profile
             $applicantProfile = ApplicantProfile::firstOrCreate(

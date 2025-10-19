@@ -31,11 +31,10 @@ Route::view('for-your-action', 'pages.your-action.index')->middleware(['auth', '
 Route::view('policy-holders', 'pages.policy-holder.index')->middleware(['auth', 'verified'])->name('policy-holder');
 Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->name('claim');
 
-Route::get('new-policy', [PolicyController::class, 'newPolicy'])->middleware(['auth', 'verified'])->name('new-policy');
+Route::get('new-policy', [PolicyController::class, 'newPolicy'])->name('new-policy');
 
-// Policy Submission Route (Web route with CSRF)
+// Policy Submission Route (Web route with CSRF - no auth required for new applicants)
 Route::post('policies/submit', [PolicySubmissionController::class, 'submit'])
-    ->middleware(['auth', 'verified'])
     ->name('policies.submit');
 
 Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);

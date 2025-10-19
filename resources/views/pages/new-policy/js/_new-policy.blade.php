@@ -1292,6 +1292,24 @@
 
         console.log('[Submit] Submitting form data:', submissionData);
 
+        // Get CSRF token - works for both authenticated and guest users
+        const getCsrfToken = function() {
+            // Try to get from meta tag first (works for guests)
+            const metaToken = document.querySelector('meta[name="csrf-token"]');
+            if (metaToken) {
+                return metaToken.getAttribute('content');
+            }
+            
+            // Fallback to blade template (works for authenticated users)
+            // In Blade: {{ csrf_token() }}
+            const templateToken = document.querySelector('[data-csrf-token]');
+            if (templateToken) {
+                return templateToken.getAttribute('data-csrf-token');
+            }
+            
+            return '';
+        };
+
         // Send AJAX request to server
         $.ajax({
             url: '{{ route("policies.submit") }}',
@@ -1299,7 +1317,7 @@
             contentType: 'application/json',
             data: JSON.stringify(submissionData),
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': getCsrfToken(),
                 'Accept': 'application/json'
             },
             timeout: 30000, // 30 second timeout
