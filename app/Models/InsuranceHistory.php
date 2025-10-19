@@ -19,6 +19,7 @@ class InsuranceHistory extends Model
         'retroactive_date',
         'previous_claims',
         'claims_details',
+        'is_used',
     ];
 
     protected $casts = [

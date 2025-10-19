@@ -28,6 +28,7 @@ class User extends Authenticatable
         'contact_no',
         'application_status',
         'application_submitted_at',
+        'submission_version',
     ];
 
     /**
@@ -71,7 +72,7 @@ class User extends Authenticatable
      */
     public function applicantProfile(): HasOne
     {
-        return $this->hasOne(ApplicantProfile::class);
+        return $this->hasOne(ApplicantProfile::class)->where('is_used', true);
     }
 
     /**
@@ -79,7 +80,7 @@ class User extends Authenticatable
      */
     public function applicantContact(): HasOne
     {
-        return $this->hasOne(ApplicantContact::class);
+        return $this->hasOne(ApplicantContact::class)->where('is_used', true);
     }
 
     /**
@@ -87,7 +88,7 @@ class User extends Authenticatable
      */
     public function qualifications(): HasMany
     {
-        return $this->hasMany(Qualification::class);
+        return $this->hasMany(Qualification::class)->where('is_used', true);
     }
 
     /**
@@ -95,7 +96,7 @@ class User extends Authenticatable
      */
     public function addresses(): HasMany
     {
-        return $this->hasMany(Address::class);
+        return $this->hasMany(Address::class)->where('is_used', true);
     }
 
     /**
@@ -103,7 +104,7 @@ class User extends Authenticatable
      */
     public function healthcareService(): HasOne
     {
-        return $this->hasOne(HealthcareService::class);
+        return $this->hasOne(HealthcareService::class)->where('is_used', true);
     }
 
     /**
@@ -111,7 +112,7 @@ class User extends Authenticatable
      */
     public function policyPricing(): HasOne
     {
-        return $this->hasOne(PolicyPricing::class);
+        return $this->hasOne(PolicyPricing::class)->where('is_used', true);
     }
 
     /**
@@ -119,7 +120,7 @@ class User extends Authenticatable
      */
     public function riskManagement(): HasOne
     {
-        return $this->hasOne(RiskManagement::class);
+        return $this->hasOne(RiskManagement::class)->where('is_used', true);
     }
 
     /**
@@ -127,7 +128,7 @@ class User extends Authenticatable
      */
     public function insuranceHistory(): HasOne
     {
-        return $this->hasOne(InsuranceHistory::class);
+        return $this->hasOne(InsuranceHistory::class)->where('is_used', true);
     }
 
     /**
@@ -135,7 +136,7 @@ class User extends Authenticatable
      */
     public function claimsExperience(): HasOne
     {
-        return $this->hasOne(ClaimsExperience::class);
+        return $this->hasOne(ClaimsExperience::class)->where('is_used', true);
     }
 
     /**
@@ -143,6 +144,6 @@ class User extends Authenticatable
      */
     public function policyApplication(): HasOne
     {
-        return $this->hasOne(PolicyApplication::class);
+        return $this->hasOne(PolicyApplication::class)->where('is_used', true);
     }
 }

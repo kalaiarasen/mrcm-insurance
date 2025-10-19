@@ -19,6 +19,7 @@ class Address extends Model
         'country',
         'clinic_type',
         'clinic_name',
+        'is_used',
     ];
 
     protected $casts = [

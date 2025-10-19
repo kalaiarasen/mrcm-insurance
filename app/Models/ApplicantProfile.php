@@ -19,6 +19,7 @@ class ApplicantProfile extends Model
         'registration_council',
         'other_council',
         'registration_number',
+        'is_used',
     ];
 
     protected $casts = [

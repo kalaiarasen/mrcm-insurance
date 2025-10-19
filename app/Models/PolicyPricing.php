@@ -20,6 +20,7 @@ class PolicyPricing extends Model
         'sst',
         'stamp_duty',
         'total_payable',
+        'is_used',
     ];
 
     protected $casts = [

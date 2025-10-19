@@ -13,6 +13,7 @@ class ApplicantContact extends Model
         'user_id',
         'contact_no',
         'email_address',
+        'is_used',
     ];
 
     protected $casts = [

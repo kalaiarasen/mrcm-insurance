@@ -18,6 +18,7 @@ class HealthcareService extends Model
         'locum_practice_location',
         'service_type',
         'practice_area',
+        'is_used',
     ];
 
     protected $casts = [

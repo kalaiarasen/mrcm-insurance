@@ -337,7 +337,18 @@
     }
 
     function updateExpiryDate() {
-        const startDateInput = document.getElementById('policyStartDate').value;
+        const policyStartDateInput = document.getElementById('policyStartDate');
+        const policyExpiryDateInput = document.getElementById('policyExpiryDate');
+        
+        let startDateInput = policyStartDateInput.value;
+        
+        // If no start date is set, use today's date
+        if (!startDateInput) {
+            const today = new Date();
+            startDateInput = today.toISOString().split('T')[0];
+            policyStartDateInput.value = startDateInput;
+        }
+        
         if (startDateInput) {
             // Parse the date string (format: YYYY-MM-DD)
             const [year, month, day] = startDateInput.split('-');
@@ -350,7 +361,7 @@
             const expiryMonth = String(expiryDate.getMonth() + 1).padStart(2, '0');
             const expiryDay = String(expiryDate.getDate()).padStart(2, '0');
             
-            document.getElementById('policyExpiryDate').value = `${expiryYear}-${expiryMonth}-${expiryDay}`;
+            policyExpiryDateInput.value = `${expiryYear}-${expiryMonth}-${expiryDay}`;
             
             console.log(`[updateExpiryDate] Start: ${startDateInput}, Expiry: ${expiryYear}-${expiryMonth}-${expiryDay}`);
         }

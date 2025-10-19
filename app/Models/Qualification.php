@@ -15,6 +15,7 @@ class Qualification extends Model
         'institution',
         'degree_or_qualification',
         'year_obtained',
+        'is_used',
     ];
 
     protected $casts = [

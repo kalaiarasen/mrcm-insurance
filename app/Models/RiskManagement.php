@@ -15,6 +15,7 @@ class RiskManagement extends Model
         'informed_consent',
         'adverse_incidents',
         'sterilisation_facilities',
+        'is_used',
     ];
 
     protected $casts = [

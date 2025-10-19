@@ -21,6 +21,7 @@ class ClaimsExperience extends Model
         'claim_amount_claimed',
         'claim_status',
         'claim_amounts_paid',
+        'is_used',
     ];
 
     protected $casts = [

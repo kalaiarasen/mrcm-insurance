@@ -15,8 +15,10 @@ class PolicyApplication extends Model
         'agree_declaration',
         'signature_data',
         'status',
+        'reference_number',
         'submitted_at',
         'approved_at',
+        'is_used',
     ];
 
     protected $casts = [
