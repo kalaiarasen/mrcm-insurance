@@ -337,11 +337,22 @@
     }
 
     function updateExpiryDate() {
-        const startDate = document.getElementById('policyStartDate').value;
-        if (startDate) {
-            const expiryDate = new Date(startDate);
-            expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-            document.getElementById('policyExpiryDate').value = expiryDate.toISOString().split('T')[0];
+        const startDateInput = document.getElementById('policyStartDate').value;
+        if (startDateInput) {
+            // Parse the date string (format: YYYY-MM-DD)
+            const [year, month, day] = startDateInput.split('-');
+            
+            // Create expiry date as December 31st of next year
+            const expiryDate = new Date(parseInt(year) + 1, 11, 31);
+            
+            // Format as YYYY-MM-DD for the input field
+            const expiryYear = expiryDate.getFullYear();
+            const expiryMonth = String(expiryDate.getMonth() + 1).padStart(2, '0');
+            const expiryDay = String(expiryDate.getDate()).padStart(2, '0');
+            
+            document.getElementById('policyExpiryDate').value = `${expiryYear}-${expiryMonth}-${expiryDay}`;
+            
+            console.log(`[updateExpiryDate] Start: ${startDateInput}, Expiry: ${expiryYear}-${expiryMonth}-${expiryDay}`);
         }
     }
 
@@ -537,6 +548,10 @@
                 if (step === 8) {
                     initSignatureCanvas();
                 }
+                // For step 3, recalculate expiry date after form is populated
+                if (step === 3) {
+                    updateExpiryDate();
+                }
             }, 50);
         } else {
             console.log(`No saved data found for step ${step}`);
@@ -544,6 +559,12 @@
             if (step === 8) {
                 setTimeout(() => {
                     initSignatureCanvas();
+                }, 50);
+            }
+            // For step 3, calculate expiry date on first load
+            if (step === 3) {
+                setTimeout(() => {
+                    updateExpiryDate();
                 }, 50);
             }
         }
