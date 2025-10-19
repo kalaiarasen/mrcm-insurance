@@ -559,44 +559,22 @@
                 <div class="card">
                     <div class="card-header pb-0 card-no-border" style="position: relative;">
                         <h5>3. Pricing Details</h5>
-                        <span class="badge bg-primary" style="position: absolute; top: 15px; right: 15px;">Great Eastern</span>
                     </div>
                     <div class="card-body">
                         <form id="pricingDetailsForm">
-                            <!-- Quote Summary Section -->
-                            <div class="row mb-4">
-                                <div class="col-md-12">
-                                    <h6 class="mb-3">Policy Summary</h6>
-                                </div>
-                            </div>
-                            
+                            <!-- Healthcare Services Information Display -->
                             <div class="row mb-3">
                                 <div class="col-md-4">
                                     <h6>Cover Type</h6>
-                                    <p id="summaryCoverType" class="text-muted">-</p>
+                                    <p id="displayCoverType" class="text-muted">Professional Indemnity - Medical Practitioner</p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h6>Professional Type</h6>
-                                    <p id="summaryProfessionalType" class="text-muted">-</p>
+                                    <h6>Medical Status</h6>
+                                    <p id="displayMedicalStatus" class="text-muted">Government Medical Officers - Locum only</p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h6>Employment Status</h6>
-                                    <p id="summaryEmploymentStatus" class="text-muted">-</p>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <h6>Specialty</h6>
-                                    <p id="summarySpecialty" class="text-muted">-</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <h6>Service Type</h6>
-                                    <p id="summaryServiceType" class="text-muted">-</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <h6>Applicant Name</h6>
-                                    <p id="summaryApplicantName" class="text-muted">-</p>
+                                    <h6>Class</h6>
+                                    <p id="displayClass" class="text-muted">Core Services</p>
                                 </div>
                             </div>
 
@@ -625,6 +603,7 @@
                             </div>
 
                             <!-- Pricing Breakdown Section -->
+                            <hr id="amountHr" style="display: none;">
                             <div id="pricingBreakdown" style="display: none;">
                                 <div class="row mb-3">
                                     <div class="col-md-12">
@@ -636,6 +615,8 @@
                                     <div class="col-md-6"><span>Limit of Indemnity</span></div>
                                     <div class="col-md-6"><span>: RM <span id="displayLiabilityLimit">0.00</span></span></div>
                                 </div>
+                                
+                                <hr>
                                 
                                 <div class="row mb-2">
                                     <div class="col-md-6"><span>Premium Per Annum</span></div>
@@ -653,7 +634,7 @@
                                 </div>
                                 
                                 <div class="row mb-2">
-                                    <div class="col-md-6"><span id="sstLabel">6% SST</span></div>
+                                    <div class="col-md-6"><span id="sstLabel">8% SST</span></div>
                                     <div class="col-md-6"><span>: RM <span id="displaySST">0.00</span></span></div>
                                 </div>
                                 
@@ -670,27 +651,6 @@
                                 </div>
                                 
                                 <hr>
-                                
-                                <!-- Locum Extension Option -->
-                                <div id="locumExtensionSection" style="display: none;">
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <div class="card bg-light">
-                                                <div class="card-body">
-                                                    <h6 class="mb-2">Locum Extension Add-on</h6>
-                                                    <p class="mb-3 small">We extend the coverage afforded under this policy for any claim made against you during the period of insurance arising out of malpractice committed or allegedly committed by a locum officer practicing at your clinic.</p>
-                                                    
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="locumExtensionCheckbox" name="locum_extension">
-                                                        <label class="form-check-label" for="locumExtensionCheckbox">
-                                                            Add Locum Extension (Additional premium applies)
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="row mt-4">
