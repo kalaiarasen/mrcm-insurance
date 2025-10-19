@@ -1030,13 +1030,14 @@
             e.preventDefault();
             console.log('Declaration & Signature form submitted');
             
+            // Step 1: Validate all required declarations are agreed
             const agreeDeclarationFinal = document.getElementById('agreeDeclarationFinal');
             if (!agreeDeclarationFinal || !agreeDeclarationFinal.checked) {
                 alert('Please read and agree to the declaration');
                 return;
             }
 
-            // Check if signature was drawn
+            // Step 2: Validate signature is drawn
             let hasSignature = false;
             if (signatureCanvas) {
                 const imageData = signatureContext.getImageData(0, 0, signatureCanvas.width, signatureCanvas.height);
@@ -1055,6 +1056,14 @@
                 return;
             }
 
+            // Step 3: Validate all required fields across all steps
+            const allStepsValid = validateAllSteps();
+            if (!allStepsValid) {
+                alert('Some required fields are missing. Please go back and complete all steps.');
+                return;
+            }
+
+            // Step 4: Save the final step data
             const declarationSignatureForm = document.getElementById('declarationSignatureForm');
             if (declarationSignatureForm) {
                 const formData = getFormData(declarationSignatureForm);
@@ -1065,10 +1074,11 @@
                 console.log('Data saved for step 8');
             }
 
-            // Log all saved data and show completion message
-            debugSavedData();
-            alert('Application submitted successfully! Thank you for your submission.');
-            updateProgressBar(totalSteps);
+            // Step 5: Collect all form data from all steps
+            const allFormData = getAllSavedData();
+            
+            // Step 6: Submit data to server
+            submitFormData(allFormData);
         });
 
         $('#declarationSignatureForm input').on('change', function() {
@@ -1136,4 +1146,223 @@
         // Call this function after form data is restored on page load
         setTimeout(restoreConditionalSections, 100);
     });
+
+    /**
+     * COMPREHENSIVE VALIDATION FUNCTION
+     * Validates all required fields across all 8 steps
+     */
+    function validateAllSteps() {
+        const step1Fields = ['title', 'full_name', 'nationality_status', 'gender', 'contact_no', 'email_address', 'password', 'confirm_password', 'mailing_address', 'mailing_postcode', 'mailing_city', 'mailing_state', 'mailing_country', 'primary_clinic_type', 'primary_clinic_name', 'primary_address', 'primary_postcode', 'primary_city', 'primary_state', 'primary_country', 'institution_1', 'qualification_1', 'year_obtained_1', 'registration_council', 'registration_number'];
+        
+        const step2Fields = ['professional_indemnity_type', 'employment_status', 'specialty_area', 'cover_type', 'service_type'];
+        
+        const step3Fields = ['policy_start_date', 'liability_limit'];
+        
+        const step4Fields = ['medical_records', 'informed_consent', 'adverse_incidents', 'sterilisation_facilities'];
+        
+        const step5Fields = ['current_insurance', 'previous_claims'];
+        
+        const step6Fields = ['claims_made', 'aware_of_errors', 'disciplinary_action'];
+        
+        const step7Fields = ['agree_declaration'];
+        
+        const step8Fields = ['agree_declaration_final'];
+
+        let isValid = true;
+        let missingFields = [];
+
+        // Check Step 1
+        const step1Data = loadFormData(1);
+        console.log('[Validation] Step 1 Data:', step1Data);
+        step1Fields.forEach(field => {
+            const value = step1Data[field];
+            if (!value || value === '') {
+                isValid = false;
+                missingFields.push(`Step 1: ${field}`);
+                console.warn(`[Validation] Missing Step 1 field: ${field}`);
+            }
+        });
+
+        // Check Step 2
+        const step2Data = loadFormData(2);
+        console.log('[Validation] Step 2 Data:', step2Data);
+        step2Fields.forEach(field => {
+            const value = step2Data[field];
+            if (!value || value === '') {
+                isValid = false;
+                missingFields.push(`Step 2: ${field}`);
+                console.warn(`[Validation] Missing Step 2 field: ${field}`);
+            }
+        });
+
+        // Check Step 3
+        const step3Data = loadFormData(3);
+        console.log('[Validation] Step 3 Data:', step3Data);
+        step3Fields.forEach(field => {
+            const value = step3Data[field];
+            if (!value || value === '') {
+                isValid = false;
+                missingFields.push(`Step 3: ${field}`);
+                console.warn(`[Validation] Missing Step 3 field: ${field}`);
+            }
+        });
+
+        // Check Step 4
+        const step4Data = loadFormData(4);
+        console.log('[Validation] Step 4 Data:', step4Data);
+        step4Fields.forEach(field => {
+            const value = step4Data[field];
+            if (!value || value === '') {
+                isValid = false;
+                missingFields.push(`Step 4: ${field}`);
+                console.warn(`[Validation] Missing Step 4 field: ${field}`);
+            }
+        });
+
+        // Check Step 5
+        const step5Data = loadFormData(5);
+        console.log('[Validation] Step 5 Data:', step5Data);
+        step5Fields.forEach(field => {
+            const value = step5Data[field];
+            if (!value || value === '') {
+                isValid = false;
+                missingFields.push(`Step 5: ${field}`);
+                console.warn(`[Validation] Missing Step 5 field: ${field}`);
+            }
+        });
+
+        // Check Step 6
+        const step6Data = loadFormData(6);
+        console.log('[Validation] Step 6 Data:', step6Data);
+        step6Fields.forEach(field => {
+            const value = step6Data[field];
+            if (!value || value === '') {
+                isValid = false;
+                missingFields.push(`Step 6: ${field}`);
+                console.warn(`[Validation] Missing Step 6 field: ${field}`);
+            }
+        });
+
+        // Check Step 7
+        const step7Data = loadFormData(7);
+        console.log('[Validation] Step 7 Data:', step7Data);
+        const agreeDeclaration = document.getElementById('agreeDeclaration');
+        if (!agreeDeclaration || !agreeDeclaration.checked) {
+            isValid = false;
+            missingFields.push('Step 7: Declaration agreement');
+            console.warn('[Validation] Step 7 agreement not checked');
+        }
+
+        // Check Step 8 signature
+        console.log('[Validation] Checking Step 8 signature...');
+        if (!signatureCanvas) {
+            isValid = false;
+            missingFields.push('Step 8: Signature canvas not initialized');
+            console.warn('[Validation] Signature canvas not initialized');
+        }
+
+        if (isValid) {
+            console.log('[Validation] ✅ ALL STEPS VALIDATED SUCCESSFULLY');
+        } else {
+            console.warn('[Validation] ❌ VALIDATION FAILED - Missing fields:', missingFields);
+            console.log(missingFields.join('\n'));
+        }
+
+        return isValid;
+    }
+
+    /**
+     * SUBMIT FORM DATA TO SERVER
+     * Best practice implementation with error handling and user feedback
+     */
+    function submitFormData(formData) {
+        // Show loading indicator
+        const submitBtn = document.getElementById('step8NextBtn');
+        const originalText = submitBtn.textContent;
+        const originalDisabled = submitBtn.disabled;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
+
+        // Prepare data for submission
+        const submissionData = {
+            user_id: getUserId(),
+            application_data: formData,
+            submitted_at: new Date().toISOString(),
+            user_agent: navigator.userAgent
+        };
+
+        console.log('[Submit] Submitting form data:', submissionData);
+
+        // Send AJAX request to server
+        $.ajax({
+            url: '/api/policies/submit',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(submissionData),
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            timeout: 30000, // 30 second timeout
+            success: function(response) {
+                console.log('[Submit] ✅ SUCCESS:', response);
+                
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Application Submitted Successfully!',
+                    html: '<p>Thank you for submitting your application.</p>' +
+                          '<p>Reference Number: <strong>' + (response.reference_number || 'N/A') + '</strong></p>' +
+                          '<p>We will review your application and contact you shortly.</p>',
+                    confirmButtonText: 'Go to Dashboard',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Clear localStorage and redirect
+                        clearAllSavedData();
+                        window.location.href = '{{ route("dashboard") }}';
+                    }
+                });
+
+                // Update progress bar
+                updateProgressBar(totalSteps);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('[Submit] ❌ ERROR:', jqXHR, textStatus, errorThrown);
+                
+                let errorMessage = 'An error occurred while submitting your application.';
+                
+                if (jqXHR.status === 422) {
+                    // Validation errors
+                    const errors = jqXHR.responseJSON.errors;
+                    errorMessage = 'Validation Error:\n' + Object.values(errors).flat().join('\n');
+                } else if (jqXHR.status === 401) {
+                    errorMessage = 'Your session has expired. Please login again.';
+                } else if (jqXHR.status === 403) {
+                    errorMessage = 'You do not have permission to submit this application.';
+                } else if (textStatus === 'timeout') {
+                    errorMessage = 'Request timeout. Please check your internet connection and try again.';
+                } else if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                    errorMessage = jqXHR.responseJSON.message;
+                }
+
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Submission Failed',
+                    text: errorMessage,
+                    confirmButtonText: 'Try Again'
+                });
+
+                console.log('[Submit] Error response:', jqXHR.responseJSON);
+            },
+            complete: function() {
+                // Restore button state
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        });
+    }
 </script>
