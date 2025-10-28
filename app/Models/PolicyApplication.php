@@ -16,8 +16,11 @@ class PolicyApplication extends Model
         'signature_data',
         'status',
         'reference_number',
+        'remarks',
+        'action_by',
         'submitted_at',
         'approved_at',
+        'action_at',
         'is_used',
     ];
 
@@ -26,6 +29,7 @@ class PolicyApplication extends Model
         'agree_declaration' => 'boolean',
         'submitted_at' => 'datetime',
         'approved_at' => 'datetime',
+        'action_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -36,5 +40,13 @@ class PolicyApplication extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the admin who performed the last action.
+     */
+    public function actionBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'action_by');
     }
 }

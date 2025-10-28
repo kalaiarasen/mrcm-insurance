@@ -74,6 +74,42 @@
         #quickDateSelect option {
             padding: 8px;
         }
+        
+        /* Badge Dark Mode Support */
+        body.dark-only .badge.bg-success {
+            background-color: #198754 !important;
+            color: #ffffff !important;
+        }
+        
+        body.dark-only .badge.bg-danger {
+            background-color: #dc3545 !important;
+            color: #ffffff !important;
+        }
+        
+        body.dark-only .badge.bg-primary {
+            background-color: #0d6efd !important;
+            color: #ffffff !important;
+        }
+        
+        body.dark-only .badge.bg-info {
+            background-color: #0dcaf0 !important;
+            color: #000000 !important;
+        }
+        
+        body.dark-only .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #000000 !important;
+        }
+        
+        body.dark-only .badge.bg-secondary {
+            background-color: #6c757d !important;
+            color: #ffffff !important;
+        }
+        
+        body.dark-only .badge.bg-light {
+            background-color: #495057 !important;
+            color: #ffffff !important;
+        }
     </style>
 @endsection
 
@@ -290,9 +326,19 @@
                                                 @if($policy['status'] === 'approved')
                                                     <span class="badge bg-success">Approved</span>
                                                 @elseif($policy['status'] === 'submitted')
-                                                    <span class="badge bg-info">Send UW</span>
+                                                    <span class="badge bg-info">Submitted</span>
                                                 @elseif($policy['status'] === 'rejected')
-                                                    <span class="badge bg-danger">Not paid</span>
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                @elseif($policy['status'] === 'active')
+                                                    <span class="badge bg-primary">Active</span>
+                                                @elseif($policy['status'] === 'processing')
+                                                    <span class="badge bg-warning">Processing</span>
+                                                @elseif($policy['status'] === 'send_uw')
+                                                    <span class="badge bg-info">Send UW</span>
+                                                @elseif($policy['status'] === 'cancelled')
+                                                    <span class="badge bg-secondary">Cancelled</span>
+                                                @elseif($policy['status'] === 'new')
+                                                    <span class="badge bg-light text-dark">New</span>
                                                 @else
                                                     <span class="badge bg-secondary">{{ ucfirst($policy['status']) }}</span>
                                                 @endif
@@ -324,13 +370,8 @@
                                             <td>
                                                 <ul class="action">
                                                     <li class="view">
-                                                        <a href="#" title="View">
+                                                        <a href="{{ route('for-your-action.show', $policy['id']) }}" title="View Details">
                                                             <i class="fa-regular fa-eye"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li class="edit">
-                                                        <a href="#" title="Edit">
-                                                            <i class="fa-regular fa-pen-to-square"></i>
                                                         </a>
                                                     </li>
                                                 </ul>

@@ -30,6 +30,8 @@ Route::get('/', function () {
 
 Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('for-your-action', [YourActionController::class, 'index'])->middleware(['auth', 'verified'])->name('for-your-action');
+Route::get('for-your-action/{id}', [YourActionController::class, 'show'])->middleware(['auth', 'verified'])->name('for-your-action.show');
+Route::put('for-your-action/{id}/update-status', [YourActionController::class, 'updateStatus'])->middleware(['auth', 'verified'])->name('for-your-action.update-status');
 
 // Policy Holders routes
 Route::middleware(['auth', 'verified'])->group(function () {
