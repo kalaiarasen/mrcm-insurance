@@ -314,7 +314,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($policies as $policy)
+                                    @foreach($policies as $policy)
                                         <tr>
                                             <td>
                                                 <small>{{ $policy['policy_id'] ?? '' }}</small>
@@ -377,20 +377,7 @@
                                                 </ul>
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td class="text-center text-muted py-4">No policies found.</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -411,23 +398,7 @@
         
         $(document).ready(function () {
             // Initialize DataTable with proper column configuration to prevent TN/4 errors
-            dataTable = $(".datatable").DataTable({
-                columnDefs: [
-                    { targets: 0, data: 0 },
-                    { targets: 1, data: 1 },
-                    { targets: 2, data: 2 },
-                    { targets: 3, data: 3 },
-                    { targets: 4, data: 4 },
-                    { targets: 5, data: 5 },
-                    { targets: 6, data: 6 },
-                    { targets: 7, data: 7 },
-                    { targets: 8, data: 8 },
-                    { targets: 9, data: 9 }
-                ],
-                deferRender: false,
-                info: true,
-                ordering: true
-            });
+            dataTable = $(".datatable").DataTable();
             
             // Set default end date to today
             document.getElementById('endDate').value = new Date().toISOString().split('T')[0];
