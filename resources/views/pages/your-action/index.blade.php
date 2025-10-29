@@ -379,9 +379,16 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="10" class="text-center text-muted py-4">
-                                                No policies found.
-                                            </td>
+                                            <td class="text-center text-muted py-4">No policies found.</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -403,13 +410,23 @@
         let dataTable;
         
         $(document).ready(function () {
-            // Initialize DataTable with deferRender to handle empty tables gracefully
+            // Initialize DataTable with proper column configuration to prevent TN/4 errors
             dataTable = $(".datatable").DataTable({
-                deferRender: true,
-                rowCallback: function(row, data, index) {
-                    // This prevents issues with empty rows
-                    return row;
-                }
+                columnDefs: [
+                    { targets: 0, data: 0 },
+                    { targets: 1, data: 1 },
+                    { targets: 2, data: 2 },
+                    { targets: 3, data: 3 },
+                    { targets: 4, data: 4 },
+                    { targets: 5, data: 5 },
+                    { targets: 6, data: 6 },
+                    { targets: 7, data: 7 },
+                    { targets: 8, data: 8 },
+                    { targets: 9, data: 9 }
+                ],
+                deferRender: false,
+                info: true,
+                ordering: true
             });
             
             // Set default end date to today
