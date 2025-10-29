@@ -185,7 +185,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($policyHolders as $holder)
+                                    @foreach($policyHolders as $holder)
                                         <tr>
                                             <td>
                                                 <small>{{ $holder->created_at->format('d-M-Y') }}</small>
@@ -223,13 +223,7 @@
                                                 </ul>
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="text-center text-muted py-4">
-                                                No policy holders found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
