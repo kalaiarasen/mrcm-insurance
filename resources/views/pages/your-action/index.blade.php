@@ -379,9 +379,16 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="10" class="text-center text-muted py-4">
-                                                No policies found.
-                                            </td>
+                                            <td class="text-center text-muted py-4">No policies found.</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                     @endforelse
                                 </tbody>
