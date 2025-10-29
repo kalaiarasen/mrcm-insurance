@@ -379,16 +379,9 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td class="text-center text-muted py-4">No policies found.</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td colspan="10" class="text-center text-muted py-4">
+                                                No policies found.
+                                            </td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -410,8 +403,14 @@
         let dataTable;
         
         $(document).ready(function () {
-            // Initialize DataTable
-            dataTable = $(".datatable").DataTable();
+            // Initialize DataTable with deferRender to handle empty tables gracefully
+            dataTable = $(".datatable").DataTable({
+                deferRender: true,
+                rowCallback: function(row, data, index) {
+                    // This prevents issues with empty rows
+                    return row;
+                }
+            });
             
             // Set default end date to today
             document.getElementById('endDate').value = new Date().toISOString().split('T')[0];
