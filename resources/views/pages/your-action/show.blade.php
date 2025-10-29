@@ -903,7 +903,6 @@
             </div>
 
             <!-- Admin Action Section -->
-            @can('update', $policyApplication)
             <div class="col-12">
                 <div class="card info-card mb-3" style="border-left-color: #dc3545;">
                     <div class="card-body">
@@ -1035,7 +1034,6 @@
                     </div>
                 </div>
             </div>
-            @endcan
 
             <!-- Action Buttons -->
             <div class="col-12 mb-4">
