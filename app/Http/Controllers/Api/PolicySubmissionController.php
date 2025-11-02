@@ -23,18 +23,11 @@ use Illuminate\Support\Facades\Auth;
 
 class PolicySubmissionController extends Controller
 {
-    /**
-     * Submit the complete insurance policy application
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function submit(Request $request)
     {
         try {
             DB::beginTransaction();
 
-            // Validate request
             $validator = Validator::make($request->all(), [
                 'application_data' => 'required|array',
             ]);
@@ -49,11 +42,9 @@ class PolicySubmissionController extends Controller
 
             $applicationData = $request->input('application_data');
 
-            // Extract applicant email and name
             $applicantEmail = $applicationData['email_address'] ?? null;
             $applicantTitle = $applicationData['title'] ?? null;
             $applicantFullName = $applicationData['full_name'] ?? null;
-            // Construct full name with title
             $applicantName = $applicantTitle && $applicantFullName 
                 ? strtoupper($applicantTitle) . '. ' . $applicantFullName 
                 : ($applicantFullName ?? 'Applicant');
@@ -68,7 +59,6 @@ class PolicySubmissionController extends Controller
                 ], 422);
             }
 
-            // Validate password
             if (!$applicantPassword) {
                 return response()->json([
                     'success' => false,
@@ -90,36 +80,26 @@ class PolicySubmissionController extends Controller
                 ], 422);
             }
 
-                        // Create NEW user for applicant (not use Auth::user())
-            // Check if user already exists with this email
             $currentUser = User::where('email', $applicantEmail)->first();
 
             if (!$currentUser) {
-                // Create new user with applicant-provided password
                 $currentUser = User::create([
                     'name' => $applicantName,
                     'email' => $applicantEmail,
                     'contact_no' => $applicantContactNo,
-                    'password' => Hash::make($applicantPassword), // Use applicant's password
-                    'email_verified_at' => now(), // Auto-verify applicant email
                     'application_status' => 'submitted',
                     'application_submitted_at' => now(),
                 ]);
             } else {
-                // Update existing user - update password only if new one provided
                 $currentUser->update([
                     'name' => $applicantName,
                     'contact_no' => $applicantContactNo,
-                    'password' => Hash::make($applicantPassword), // Update password
                     'application_status' => 'submitted',
                     'application_submitted_at' => now(),
                 ]);
             }
 
-            // Step 1: Save Applicant Profile
-            // Mark old profiles as inactive
             ApplicantProfile::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active profile
             $applicantProfile = ApplicantProfile::create([
                 'user_id' => $currentUser->id,
                 'title' => $applicationData['title'] ?? null,
@@ -133,10 +113,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Save Qualifications (up to 3)
-            // Mark old qualifications as inactive
             Qualification::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active qualifications
             for ($i = 1; $i <= 3; $i++) {
                 $institution = $applicationData["institution_$i"] ?? null;
                 $qualification = $applicationData["qualification_$i"] ?? null;
@@ -154,10 +131,7 @@ class PolicySubmissionController extends Controller
                 }
             }
 
-            // Save Addresses (Mailing, Primary, Secondary)
-            // Mark old addresses as inactive
             Address::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active addresses
             $addressTypes = [
                 'mailing' => ['address' => 'mailing_address', 'postcode' => 'mailing_postcode', 'city' => 'mailing_city', 'state' => 'mailing_state', 'country' => 'mailing_country'],
                 'primary_clinic' => ['type_field' => 'primary_clinic_type', 'clinic_name_field' => 'primary_clinic_name', 'address' => 'primary_address', 'postcode' => 'primary_postcode', 'city' => 'primary_city', 'state' => 'primary_state', 'country' => 'primary_country'],
@@ -176,7 +150,6 @@ class PolicySubmissionController extends Controller
                         'country' => $applicationData[$fields['country']] ?? null,
                     ];
                 } else {
-                    // Clinic address
                     $addressData = [
                         'clinic_type' => $applicationData[$fields['type_field']] ?? null,
                         'clinic_name' => $applicationData[$fields['clinic_name_field']] ?? null,
@@ -197,10 +170,7 @@ class PolicySubmissionController extends Controller
                 }
             }
 
-            // Save Applicant Contact
-            // Mark old contacts as inactive
             ApplicantContact::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active contact
             ApplicantContact::create([
                 'user_id' => $currentUser->id,
                 'contact_no' => $applicationData['contact_no'] ?? null,
@@ -208,10 +178,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Step 2: Save Healthcare Services
-            // Mark old services as inactive
             HealthcareService::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active service
             HealthcareService::create([
                 'user_id' => $currentUser->id,
                 'professional_indemnity_type' => $applicationData['professional_indemnity_type'] ?? null,
@@ -224,10 +191,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Step 3: Save Policy Pricing
-            // Mark old pricing as inactive
             PolicyPricing::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active pricing
             PolicyPricing::create([
                 'user_id' => $currentUser->id,
                 'policy_start_date' => $applicationData['policy_start_date'] ?? null,
@@ -242,10 +206,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Step 4: Save Risk Management
-            // Mark old risk management as inactive
             RiskManagement::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active risk management
             RiskManagement::create([
                 'user_id' => $currentUser->id,
                 'medical_records' => $applicationData['medical_records'] === 'yes',
@@ -255,10 +216,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Step 5: Save Insurance History
-            // Mark old insurance history as inactive
             InsuranceHistory::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active insurance history
             InsuranceHistory::create([
                 'user_id' => $currentUser->id,
                 'current_insurance' => $applicationData['current_insurance'] === 'yes',
@@ -272,10 +230,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Step 6: Save Claims Experience
-            // Mark old claims experience as inactive
             ClaimsExperience::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active claims experience
             ClaimsExperience::create([
                 'user_id' => $currentUser->id,
                 'claims_made' => $applicationData['claims_made'] === 'yes',
@@ -291,10 +246,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Step 7 & 8: Save Policy Application (Declaration & Signature)
-            // Mark old policy applications as inactive
             PolicyApplication::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            // Create new active policy application (reference number will be assigned after approval)
             PolicyApplication::create([
                 'user_id' => $currentUser->id,
                 'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',
@@ -305,18 +257,15 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // Assign client role if not already assigned
             if (!$currentUser->hasRole('client')) {
                 $currentUser->assignRole('client');
             }
 
-            // Increment submission version
             $currentUser->submission_version = ($currentUser->submission_version ?? 0) + 1;
             $currentUser->save();
 
             DB::commit();
 
-            // Log the submission
             \Log::info('Policy application submitted', [
                 'user_id' => $currentUser->id,
                 'submitted_at' => now(),

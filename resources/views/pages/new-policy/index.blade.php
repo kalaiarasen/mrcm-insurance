@@ -98,7 +98,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="mb-3">
                                         <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="fullName" name="full_name" placeholder="Full Name" required>
@@ -114,7 +114,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="mb-3">
                                         <label for="nricNumber" class="form-label">NRIC Number (XXXXXX-XX-XXXX) <span class="text-danger" id="nricRequired">*</span></label>
                                         <input type="text" class="form-control" id="nricNumber" name="nric_number" placeholder="NRIC Number (XXXXXX-XX-XXXX)">
@@ -238,13 +238,13 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="primaryAddress" class="form-label">Address <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="primaryAddress" name="primary_address" placeholder="Address" required>
                                     </div>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <div class="mb-3">
                                         <label for="primaryPostCode" class="form-label">PostCode <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="primaryPostCode" name="primary_postcode" placeholder="PostCode" required>
@@ -301,13 +301,13 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="secondaryAddress" class="form-label">Address</label>
                                         <input type="text" class="form-control" id="secondaryAddress" name="secondary_address" placeholder="Address">
                                     </div>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <div class="mb-3">
                                         <label for="secondaryPostCode" class="form-label">PostCode</label>
                                         <input type="text" class="form-control" id="secondaryPostCode" name="secondary_postcode" placeholder="PostCode">
