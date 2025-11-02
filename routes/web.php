@@ -28,37 +28,31 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
 
-Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('for-your-action', [YourActionController::class, 'index'])->middleware(['auth', 'verified'])->name('for-your-action');
-Route::get('for-your-action/{id}', [YourActionController::class, 'show'])->middleware(['auth', 'verified'])->name('for-your-action.show');
-Route::get('for-your-action/{id}/edit', [YourActionController::class, 'edit'])->middleware(['auth', 'verified'])->name('for-your-action.edit');
-Route::put('for-your-action/{id}/update-status', [YourActionController::class, 'updateStatus'])->middleware(['auth', 'verified'])->name('for-your-action.update-status');
-Route::put('for-your-action/{id}/update', [YourActionController::class, 'update'])->middleware(['auth', 'verified'])->name('for-your-action.update');
-
-// Policy Holders routes
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('policy-holders', [PolicyHolderController::class, 'index'])->name('policy-holder');
     Route::get('policy-holders/{user}/edit', [PolicyHolderController::class, 'edit'])->name('policy-holders.edit');
     Route::get('policy-holders/{user}', [PolicyHolderController::class, 'show'])->name('policy-holders.show');
     Route::put('policy-holders/{user}', [PolicyHolderController::class, 'update'])->name('policy-holders.update');
-});
 
-Route::view('claims', 'pages.claim.index')->middleware(['auth', 'verified'])->name('claim');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('for-your-action', [YourActionController::class, 'index'])->name('for-your-action');
+    Route::get('for-your-action/{id}', [YourActionController::class, 'show'])->name('for-your-action.show');
+    Route::get('for-your-action/{id}/edit', [YourActionController::class, 'edit'])->name('for-your-action.edit');
+    Route::put('for-your-action/{id}/update-status', [YourActionController::class, 'updateStatus'])->name('for-your-action.update-status');
+    Route::put('for-your-action/{id}/update', [YourActionController::class, 'update'])->name('for-your-action.update');
 
-Route::get('new-policy', [PolicyController::class, 'newPolicy'])->name('new-policy');
-
-// Policy Submission Route (Web route with CSRF - no auth required for new applicants)
-Route::post('policies/submit', [PolicySubmissionController::class, 'submit'])
-    ->name('policies.submit');
-
-Route::resource('announcements', AnnouncementController::class)->middleware(['auth', 'verified']);
-Route::resource('users', UserController::class)->middleware(['auth', 'verified']);
-Route::resource('roles', RoleController::class)->middleware(['auth', 'verified']);
-Route::resource('agents', AgentController::class)->middleware(['auth', 'verified']);
-
-
-Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
+
+    Route::view('claims', 'pages.claim.index')->name('claim');
+    Route::get('new-policy', [PolicyController::class, 'newPolicy'])->name('new-policy');
+
+    Route::post('policies/submit', [PolicySubmissionController::class, 'submit'])
+        ->name('policies.submit');
+
+    Route::resource('announcements', AnnouncementController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class);
+    Route::resource('agents', AgentController::class);
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');

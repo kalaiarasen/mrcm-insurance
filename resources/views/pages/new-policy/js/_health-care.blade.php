@@ -121,6 +121,11 @@
                     practiceAreaSection.style.display = 'block';
                     practiceArea.required = true;
                 }
+                
+                // Update locum extension visibility when cover type changes (for Private GP path)
+                if (typeof window.updateLocumExtensionVisibility === 'function') {
+                    window.updateLocumExtensionVisibility();
+                }
             }
         });
 
@@ -167,6 +172,16 @@
                         showServiceDefinition(selectedValue);
                     }
                     
+                }
+                
+                // Update liability limit options when service type changes
+                if (typeof window.autoSetLiabilityLimit === 'function') {
+                    window.autoSetLiabilityLimit(selectedValue);
+                }
+                
+                // Update locum extension visibility when service type changes
+                if (typeof window.updateLocumExtensionVisibility === 'function') {
+                    window.updateLocumExtensionVisibility();
                 }
             }
         });
@@ -549,6 +564,11 @@
                     coverTypeLabel.innerHTML = 'Select Your Specialist Category <span class="text-danger">*</span>';
                 }
                 coverTypeSelect.innerHTML = '<option value="">Select Your Specialist Category</option>';
+            } else if (specialtyType === 'medical_officer') {
+                if (coverTypeLabel) {
+                    coverTypeLabel.innerHTML = 'Type of cover <span class="text-danger">*</span>';
+                }
+                coverTypeSelect.innerHTML = '<option value="">Select Type of Cover</option>';
             } else {
                 if (coverTypeLabel) {
                     coverTypeLabel.innerHTML = 'Your type of service <span class="text-danger">*</span>';

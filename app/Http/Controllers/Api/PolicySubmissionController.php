@@ -200,6 +200,7 @@ class PolicySubmissionController extends Controller
                 'base_premium' => $applicationData['displayBasePremium'] ?? 0,
                 'gross_premium' => $applicationData['displayGrossPremium'] ?? 0,
                 'locum_addon' => $applicationData['displayLocumAddon'] ?? 0,
+                'locum_extension' => $applicationData['locum_extension'] ?? false,
                 'sst' => $applicationData['displaySST'] ?? 0,
                 'stamp_duty' => $applicationData['displayStampDuty'] ?? 10,
                 'total_payable' => $applicationData['displayTotalPayable'] ?? 0,

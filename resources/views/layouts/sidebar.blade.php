@@ -133,7 +133,7 @@
                             <span>Claims</span>
                         </a>
                     </li>
-                    <li class="sidebar-list">
+                    {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}" href="{{ route('new-policy') }}">
                             <svg class="stroke-icon">
@@ -144,7 +144,7 @@
                             </svg>
                             <span>New Policy</span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">

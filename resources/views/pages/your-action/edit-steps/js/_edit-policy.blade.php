@@ -54,8 +54,6 @@
             gender: data.user?.applicant_profile?.gender || '',
             contact_no: data.user?.applicant_contact?.contact_no || '',
             email_address: data.user?.email || '',
-            password: '********', // Placeholder, won't be updated
-            confirm_password: '********', // Placeholder
             mailing_address: mailingAddress?.address || '',
             mailing_postcode: mailingAddress?.postcode || '',
             mailing_city: mailingAddress?.city || '',
@@ -109,6 +107,7 @@
             policy_start_date: policyPricing?.policy_start_date || '',
             policy_expiry_date: policyPricing?.policy_expiry_date || '',
             liability_limit: liabilityLimitValue,
+            locum_extension: policyPricing?.locum_extension || false,
             displayBasePremium: policyPricing?.base_premium || '0',
             displayGrossPremium: policyPricing?.gross_premium || '0',
             displayLocumAddon: policyPricing?.locum_addon || '0',

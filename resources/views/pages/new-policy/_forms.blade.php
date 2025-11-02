@@ -73,22 +73,10 @@
                                         <input type="tel" class="form-control" id="contactNo" name="contact_no" placeholder="Contact No" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="emailAddress" class="form-label">Email address <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" id="emailAddress" name="email_address" placeholder="Email address" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="mb-3">
-                                        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm Password" autocomplete="new-password" required>
+                                        <input type="email" class="form-control" id="emailAddress" name="email_address" value="{{ auth()->user()->email }}" readonly required>
                                     </div>
                                 </div>
                             </div>
@@ -522,8 +510,13 @@
                                     <label for="policyExpiryDate" class="form-label">Policy Expiry Date</label>
                                     <input type="date" class="form-control" id="policyExpiryDate" name="policy_expiry_date" readonly>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="liabilityLimit" class="form-label">Select Liability Limit <span class="text-danger">*</span></label>
+                                
+                                <!-- Hidden Locum Extension Checkbox (for form submission only) -->
+                                <input type="checkbox" id="locumExtension" name="locum_extension" value="1" style="display: none;">
+                                
+                                <div class="col-md-4 mt-3">
+                                    <label for="liabilityLimit" class="form-label">Liability Limit <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control d-none" id="liabilityLimitDisplay" readonly>
                                     <select class="form-select" id="liabilityLimit" name="liability_limit" required>
                                         <option value="">Select Liability Limit</option>
                                         <option value="1000000">RM 1,000,000</option>
@@ -582,6 +575,23 @@
                                     <div class="col-md-6"><strong>: RM <span id="displayTotalPayable">0.00</span></strong></div>
                                 </div>
                                 
+                                <hr>
+                            </div>
+                            
+                            <!-- Locum Extension Button (Outside pricing breakdown so it's always accessible) -->
+                            <div id="locumExtensionButtonSection" style="display: none;">
+                                <hr>
+                                <div class="alert alert-info">
+                                    <h6><i class="fa fa-info-circle"></i> Locum Extension</h6>
+                                    <p class="mb-0 small">We extend the coverage afforded under this policy for any claim made against you during the period of insurance arising out of malpractice committed or allegedly committed by a locum officer practicing at your clinic.</p>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-outline-primary w-100" id="toggleLocumExtensionBtn">
+                                            <i class="fa fa-plus-circle"></i> Add Locum Extension
+                                        </button>
+                                    </div>
+                                </div>
                                 <hr>
                             </div>
 

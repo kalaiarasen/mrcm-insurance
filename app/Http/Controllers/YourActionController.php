@@ -279,6 +279,7 @@ class YourActionController extends Controller
                     'base_premium' => $data['displayBasePremium'] ?? $user->policyPricing->base_premium,
                     'gross_premium' => $data['displayGrossPremium'] ?? $user->policyPricing->gross_premium,
                     'locum_addon' => $data['displayLocumAddon'] ?? $user->policyPricing->locum_addon,
+                    'locum_extension' => $data['locum_extension'] ?? $user->policyPricing->locum_extension,
                     'sst' => $data['displaySST'] ?? $user->policyPricing->sst,
                     'stamp_duty' => $data['displayStampDuty'] ?? $user->policyPricing->stamp_duty,
                     'total_payable' => $data['displayTotalPayable'] ?? $user->policyPricing->total_payable,
