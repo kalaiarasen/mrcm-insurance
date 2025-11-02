@@ -209,7 +209,7 @@
                             <span>Agent Management</span>
                         </a>
                     </li>
-                    <li class="sidebar-list">
+                    {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="">
                             <svg class="stroke-icon">
@@ -220,7 +220,7 @@
                             </svg>
                             <span>Client Management</span>
                         </a>
-                    </li>
+                    </li> --}}
                     @endhasanyrole
                     {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
