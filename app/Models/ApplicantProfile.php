@@ -9,18 +9,7 @@ class ApplicantProfile extends Model
 {
     protected $table = 'applicant_profiles';
 
-    protected $fillable = [
-        'user_id',
-        'title',
-        'nationality_status',
-        'nric_number',
-        'passport_number',
-        'gender',
-        'registration_council',
-        'other_council',
-        'registration_number',
-        'is_used',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'created_at' => 'datetime',

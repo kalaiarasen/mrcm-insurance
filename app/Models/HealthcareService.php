@@ -9,17 +9,7 @@ class HealthcareService extends Model
 {
     protected $table = 'healthcare_services';
 
-    protected $fillable = [
-        'user_id',
-        'professional_indemnity_type',
-        'employment_status',
-        'specialty_area',
-        'cover_type',
-        'locum_practice_location',
-        'service_type',
-        'practice_area',
-        'is_used',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'created_at' => 'datetime',

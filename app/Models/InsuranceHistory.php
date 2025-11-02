@@ -27,7 +27,6 @@ class InsuranceHistory extends Model
         'previous_claims' => 'boolean',
         'policy_limit_myr' => 'decimal:2',
         'excess_myr' => 'decimal:2',
-        'retroactive_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

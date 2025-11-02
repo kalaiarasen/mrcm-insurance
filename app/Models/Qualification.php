@@ -9,17 +9,9 @@ class Qualification extends Model
 {
     protected $table = 'qualifications';
 
-    protected $fillable = [
-        'user_id',
-        'sequence',
-        'institution',
-        'degree_or_qualification',
-        'year_obtained',
-        'is_used',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
-        'year_obtained' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

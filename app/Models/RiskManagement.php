@@ -9,20 +9,9 @@ class RiskManagement extends Model
 {
     protected $table = 'risk_managements';
 
-    protected $fillable = [
-        'user_id',
-        'medical_records',
-        'informed_consent',
-        'adverse_incidents',
-        'sterilisation_facilities',
-        'is_used',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
-        'medical_records' => 'boolean',
-        'informed_consent' => 'boolean',
-        'adverse_incidents' => 'boolean',
-        'sterilisation_facilities' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

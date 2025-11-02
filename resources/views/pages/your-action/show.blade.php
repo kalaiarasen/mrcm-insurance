@@ -1042,6 +1042,9 @@
                         <a href="{{ route('for-your-action') }}" class="btn btn-secondary me-2">
                             <i class="fa fa-arrow-left me-2"></i>Back to List
                         </a>
+                        <a href="{{ route('for-your-action.edit', $policyApplication->id) }}" class="btn btn-primary">
+                            <i class="fa fa-edit me-2"></i>Edit Application
+                        </a>
                     </div>
                 </div>
             </div>

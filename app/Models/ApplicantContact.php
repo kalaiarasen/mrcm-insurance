@@ -9,12 +9,7 @@ class ApplicantContact extends Model
 {
     protected $table = 'applicant_contacts';
 
-    protected $fillable = [
-        'user_id',
-        'contact_no',
-        'email_address',
-        'is_used',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'created_at' => 'datetime',

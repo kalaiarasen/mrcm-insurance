@@ -31,7 +31,9 @@ Route::get('/', function () {
 Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('for-your-action', [YourActionController::class, 'index'])->middleware(['auth', 'verified'])->name('for-your-action');
 Route::get('for-your-action/{id}', [YourActionController::class, 'show'])->middleware(['auth', 'verified'])->name('for-your-action.show');
+Route::get('for-your-action/{id}/edit', [YourActionController::class, 'edit'])->middleware(['auth', 'verified'])->name('for-your-action.edit');
 Route::put('for-your-action/{id}/update-status', [YourActionController::class, 'updateStatus'])->middleware(['auth', 'verified'])->name('for-your-action.update-status');
+Route::put('for-your-action/{id}/update', [YourActionController::class, 'update'])->middleware(['auth', 'verified'])->name('for-your-action.update');
 
 // Policy Holders routes
 Route::middleware(['auth', 'verified'])->group(function () {
