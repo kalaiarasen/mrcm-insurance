@@ -92,8 +92,26 @@
                     }
                     
                 }
+                else if (selectedValue === 'locum_cover') {
+                    locumPracticeSection.style.display = 'block';
+                    locumPracticeLocation.required = true;
+                } else if (selectedValue === 'general_cover') {
+                    serviceTypeSection.style.display = 'block';
+                    serviceTypeSelection.required = true;
+                    // Check if it's dental or medical practice
+                    if (professionalType === 'dental_practice' && specialtyType === 'general_dentist') {
+                        updateDentalServiceOptions('general_cover');
+                    } else {
+                        updateServiceTypeOptions('general_cover');
+                    }
+                } else if (selectedValue === 'locum_cover_only') {
+                    // For dental locum cover only
+                    serviceTypeSection.style.display = 'block';
+                    serviceTypeSelection.required = true;
+                    updateDentalServiceOptions('locum_cover_only');
+                }
                 else if (professionalType === 'dental_practice' && specialtyType === 'general_dentist') {
-                    
+                    // Handle private dental practice (general_dental_practice, general_dental_practitioners)
                     const servicesWithDefinitions = [
                         'general_dental_practice',
                         'general_dental_practitioners'
@@ -106,14 +124,7 @@
                     setTimeout(() => {
                     }, 100);
                 }
-                else if (selectedValue === 'locum_cover') {
-                    locumPracticeSection.style.display = 'block';
-                    locumPracticeLocation.required = true;
-                } else if (selectedValue === 'general_cover') {
-                    serviceTypeSection.style.display = 'block';
-                    serviceTypeSelection.required = true;
-                    updateServiceTypeOptions('general_cover');
-                } else if (selectedValue === 'low_risk_specialist' || selectedValue === 'medium_risk_specialist') {
+                else if (selectedValue === 'low_risk_specialist' || selectedValue === 'medium_risk_specialist') {
                     serviceTypeSection.style.display = 'block';
                     serviceTypeSelection.required = true;
                     updateSpecialistServiceOptions(selectedValue);
@@ -165,7 +176,9 @@
                         'cosmetic_aesthetic_non_invasive',
                         'cosmetic_aesthetic_non_surgical_invasive',
                         'general_practice',
-                        'general_practice_with_specialized_procedures'
+                        'general_practice_with_specialized_procedures',
+                        'general_dental_practice',
+                        'general_dental_practitioners'
                     ];
                     
                     if (servicesWithDefinitions.includes(selectedValue)) {
@@ -671,13 +684,30 @@
 
         function updateDentalServiceOptions(coverType) {
             const serviceSelect = document.getElementById('serviceTypeSelection');
+            const serviceTypeLabel = document.querySelector('label[for="serviceTypeSelection"]') || document.querySelector('#serviceTypeSection p');
             
-            if (coverType === 'general_cover' || coverType === 'locum_cover_only') {
+            console.log('updateDentalServiceOptions called with:', coverType, 'in restoration');
+            
+            if (serviceTypeLabel) {
+                serviceTypeLabel.innerHTML = 'Your type of service <span class="text-danger">*</span>';
+            }
+            
+            if (coverType === 'general_cover') {
+                // For General Cover - show General Dentist Practice options
+                serviceSelect.innerHTML = `
+                    <option value="">Select</option>
+                    <option value="general_dental_practice">General Dentist Practice</option>
+                    <option value="general_dental_practitioners">General Dentist Practice, practicing accredited specialised procedures</option>
+                `;
+                console.log('Service options populated for general_cover. Current value:', serviceSelect.value);
+            } else if (coverType === 'locum_cover_only') {
+                // For Locum Cover Only - show General Practice options
                 serviceSelect.innerHTML = `
                     <option value="">Select</option>
                     <option value="general_practice">General Practice</option>
                     <option value="general_practice_with_specialized_procedures">General Practice with Specialized Procedures</option>
                 `;
+                console.log('Service options populated for locum_cover_only. Current value:', serviceSelect.value);
             }
         }
 
@@ -765,16 +795,23 @@
             if (coverTypeSelect) {
                 coverTypeSelect.value = savedData.cover_type;
                 
+                console.log('Restoring cover_type:', savedData.cover_type);
+                
                 // Manually handle different cover type scenarios
                 const professionalType = savedData.professional_indemnity_type;
                 const employmentType = savedData.employment_status;
                 const specialtyType = savedData.specialty_area;
                 const selectedValue = savedData.cover_type;
                 
+                console.log('Professional:', professionalType, 'Employment:', employmentType, 'Specialty:', specialtyType);
+                
                 if (professionalType === 'dental_practice' && specialtyType === 'dentist_specialist' && selectedValue === 'dental_specialist_oral_maxillofacial_surgery') {
                     serviceTypeSection.style.display = 'block';
                     serviceTypeSelection.required = true;
                     updateDentalSpecialistFieldOptions();
+                }
+                else if (professionalType === 'dental_practice' && specialtyType === 'dentist_specialist' && selectedValue === 'dental_specialists') {
+                    // Dental Specialists - no additional fields needed
                 }
                 else if (professionalType === 'medical_practice' && employmentType === 'private' && specialtyType === 'general_practitioner') {
                     const servicesWithDefinitions = [
@@ -789,7 +826,28 @@
                         showServiceDefinition(selectedValue);
                     }
                 }
+                else if (selectedValue === 'locum_cover') {
+                    locumPracticeSection.style.display = 'block';
+                    locumPracticeLocation.required = true;
+                } else if (selectedValue === 'general_cover') {
+                    serviceTypeSection.style.display = 'block';
+                    serviceTypeSelection.required = true;
+                    // Check if it's dental or medical practice
+                    if (professionalType === 'dental_practice' && specialtyType === 'general_dentist') {
+                        console.log('Restoration: Calling updateDentalServiceOptions for general_cover');
+                        updateDentalServiceOptions('general_cover');
+                    } else {
+                        updateServiceTypeOptions('general_cover');
+                    }
+                } else if (selectedValue === 'locum_cover_only') {
+                    // For dental locum cover only
+                    console.log('Restoration: Handling locum_cover_only');
+                    serviceTypeSection.style.display = 'block';
+                    serviceTypeSelection.required = true;
+                    updateDentalServiceOptions('locum_cover_only');
+                }
                 else if (professionalType === 'dental_practice' && specialtyType === 'general_dentist') {
+                    // Handle private dental practice (general_dental_practice, general_dental_practitioners)
                     const servicesWithDefinitions = [
                         'general_dental_practice',
                         'general_dental_practitioners'
@@ -799,14 +857,7 @@
                         showServiceDefinition(selectedValue);
                     }
                 }
-                else if (selectedValue === 'locum_cover') {
-                    locumPracticeSection.style.display = 'block';
-                    locumPracticeLocation.required = true;
-                } else if (selectedValue === 'general_cover') {
-                    serviceTypeSection.style.display = 'block';
-                    serviceTypeSelection.required = true;
-                    updateServiceTypeOptions('general_cover');
-                } else if (selectedValue === 'low_risk_specialist' || selectedValue === 'medium_risk_specialist') {
+                else if (selectedValue === 'low_risk_specialist' || selectedValue === 'medium_risk_specialist') {
                     serviceTypeSection.style.display = 'block';
                     serviceTypeSelection.required = true;
                     updateSpecialistServiceOptions(selectedValue);
@@ -847,7 +898,9 @@
                     'cosmetic_aesthetic_non_invasive',
                     'cosmetic_aesthetic_non_surgical_invasive',
                     'general_practice',
-                    'general_practice_with_specialized_procedures'
+                    'general_practice_with_specialized_procedures',
+                    'general_dental_practice',
+                    'general_dental_practitioners'
                 ];
                 
                 if (servicesWithDefinitions.includes(savedData.service_type)) {

@@ -417,7 +417,9 @@
             'core_services_with_procedures',
             'general_practitioner_with_obstetrics',
             'cosmetic_aesthetic_non_invasive',
-            'cosmetic_aesthetic_non_surgical_invasive'
+            'cosmetic_aesthetic_non_surgical_invasive',
+            'general_dental_practice',
+            'general_dental_practitioners'
         ];
         
         // Show locum extension button if:
@@ -494,8 +496,43 @@
             'general_practitioner_private_hospital_emergency': '2000000',
             'general_practitioner_with_obstetrics': '2000000',
             'cosmetic_aesthetic_non_invasive': '2000000',
-            'cosmetic_aesthetic_non_surgical_invasive': '2000000'
+            'cosmetic_aesthetic_non_surgical_invasive': '2000000',
+            'general_practice': '2000000',  // Dental - General Practice
+            'general_practice_with_specialized_procedures': '2000000'  // Dental - General Practice with Specialized Procedures
         };
+        
+        // Low Risk Specialist services - all have 1M and 2M options
+        const lowRiskSpecialistServices = [
+            'occupational_health_physicians',
+            'general_physicians',
+            'dermatology_non_cosmetic',
+            'infections_diseases',
+            'pathology',
+            'psychiatry',
+            'endocrinology',
+            'rehab_medicine',
+            'paediatrics_non_neonatal',
+            'geriatrics',
+            'haemotology',
+            'immunology',
+            'nephrology',
+            'nuclear_medicine',
+            'neurology',
+            'radiology_non_interventional'
+        ];
+        
+        // Medium Risk Specialist services - most have only 2M, except Office/Clinical Gynaecology which has 1M and 2M
+        const mediumRiskSpecialistOnly2M = [
+            'ophthalmology_office_procedures',
+            'office_ent_clinic_based',
+            'ophthalmology_surgeries_non_ga',
+            'ent_surgeries_non_ga',
+            'radiology_interventional',
+            'gastroenterology',
+            'office_clinical_orthopaedics',
+            'cosmetic_aesthetic_non_surgical_invasive',
+            'cosmetic_aesthetic_surgical_invasive'
+        ];
         
         // Format liability limit for display
         const formatLiabilityLimit = (value) => {
@@ -503,9 +540,129 @@
             return 'RM ' + numValue.toLocaleString('en-MY');
         };
         
+        // Check if this is a low risk specialist service
+        if (lowRiskSpecialistServices.includes(serviceType)) {
+            // Show only 1M and 2M options for low-risk specialists
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="1000000">RM 1,000,000</option>
+                <option value="2000000">RM 2,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
+        // Check if this is a medium risk specialist service with only 2M option
+        if (mediumRiskSpecialistOnly2M.includes(serviceType)) {
+            // Show only 2M option
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="2000000">RM 2,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
+        // Office/Clinical Gynaecology has both 1M and 2M options
+        if (serviceType === 'office_clinical_gynaecology') {
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="1000000">RM 1,000,000</option>
+                <option value="2000000">RM 2,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
+        // General Dental Practice (General Cover) - has 1M and 2M options
+        if (serviceType === 'general_dental_practice') {
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="1000000">RM 1,000,000</option>
+                <option value="2000000">RM 2,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
+        // General Dental Practitioners with specialized procedures - has only 2.5M option
+        if (serviceType === 'general_dental_practitioners') {
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="2500000">RM 2,500,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
+        // Dental Specialists - has 2M and 3M options
+        if (coverType === 'dental_specialists') {
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="2000000">RM 2,000,000</option>
+                <option value="3000000">RM 3,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
+        // Dental Specialist OMFS - Clinic based - has 2M and 3M options
+        if (serviceType === 'clinic_based_non_general_anaesthetic') {
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="2000000">RM 2,000,000</option>
+                <option value="3000000">RM 3,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
+        // Dental Specialist OMFS - Hospital based - has 2M and 3M options
+        if (serviceType === 'hospital_based_full_fledged_omfs') {
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="2000000">RM 2,000,000</option>
+                <option value="3000000">RM 3,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            return;
+        }
+        
         // Check if we should set a specific liability limit
-        // Either from General Cover service type OR from cover type itself (Private GP path)
-        const limitKey = (coverType === 'general_cover') ? serviceType : coverType;
+        // Either from General Cover service type OR Dental Locum Cover Only service type OR from cover type itself (Private GP path)
+        const limitKey = (coverType === 'general_cover' || coverType === 'locum_cover_only') ? serviceType : coverType;
         
         if (serviceLiabilityLimits[limitKey]) {
             const limitValue = serviceLiabilityLimits[limitKey];
@@ -651,6 +808,17 @@
         // Get service type and cover type to determine premium
         const serviceType = step2Data.service_type || step2Data.cover_type || '';
         const coverType = step2Data.cover_type || '';
+        const employmentStatus = step2Data.employment_status || '';
+        const specialtyArea = step2Data.specialty_area || '';
+        
+        // Lecturer/Trainee (Non-Practicing) - Based on liability limit
+        if (employmentStatus === 'non_practicing' && specialtyArea === 'lecturer_trainee') {
+            if (liabilityLimit === '2000000') {
+                return 1250;
+            }
+            // Default for other liability limits (1M, 5M, 10M)
+            return 950;
+        }
         
         // Premium rates for General Cover service types
         const generalCoverRates = {
@@ -696,6 +864,137 @@
             return generalCoverRates[serviceType].basePremium;
         }
         
+        // Low Risk Specialist pricing - fixed rates based on liability limit
+        const lowRiskSpecialistServices = [
+            'occupational_health_physicians',
+            'general_physicians',
+            'dermatology_non_cosmetic',
+            'infections_diseases',
+            'pathology',
+            'psychiatry',
+            'endocrinology',
+            'rehab_medicine',
+            'paediatrics_non_neonatal',
+            'geriatrics',
+            'haemotology',
+            'immunology',
+            'nephrology',
+            'nuclear_medicine',
+            'neurology',
+            'radiology_non_interventional'
+        ];
+        
+        if (lowRiskSpecialistServices.includes(serviceType)) {
+            // Fixed pricing for low-risk specialists
+            if (liabilityLimit === '1000000') {
+                return 1700;
+            } else if (liabilityLimit === '2000000') {
+                return 2400;
+            }
+        }
+        
+        // Medium Risk Specialist pricing - fixed rates based on service type and liability limit
+        const mediumRiskSpecialistRates = {
+            'ophthalmology_office_procedures': {
+                '2000000': 2400
+            },
+            'office_ent_clinic_based': {
+                '2000000': 2400
+            },
+            'ophthalmology_surgeries_non_ga': {
+                '2000000': 2750
+            },
+            'ent_surgeries_non_ga': {
+                '2000000': 3500
+            },
+            'radiology_interventional': {
+                '2000000': 3500
+            },
+            'gastroenterology': {
+                '2000000': 3500
+            },
+            'office_clinical_orthopaedics': {
+                '2000000': 5500
+            },
+            'office_clinical_gynaecology': {
+                '1000000': 8250,
+                '2000000': 11000
+            },
+            'cosmetic_aesthetic_non_surgical_invasive': {
+                '2000000': 11550
+            },
+            'cosmetic_aesthetic_surgical_invasive': {
+                '2000000': 19800
+            }
+        };
+        
+        if (mediumRiskSpecialistRates[serviceType]) {
+            const rate = mediumRiskSpecialistRates[serviceType][liabilityLimit];
+            if (rate) {
+                return rate;
+            }
+        }
+        
+        // Dental Practice - Locum Cover Only pricing (fixed liability of 2M)
+        const dentalLocumCoverRates = {
+            'general_practice': 700,  // General Practice (Dental)
+            'general_practice_with_specialized_procedures': 1250  // General Practice with Specialized Procedures
+        };
+        
+        if (dentalLocumCoverRates[serviceType]) {
+            return dentalLocumCoverRates[serviceType];
+        }
+        
+        // Dental Practice - General Cover pricing
+        const dentalGeneralCoverRates = {
+            'general_dental_practice': {
+                '1000000': 1200,  // General Dentist Practice - 1M
+                '2000000': 1400   // General Dentist Practice - 2M
+            },
+            'general_dental_practitioners': {
+                '2500000': 1700   // General Dentist Practice with specialized procedures - 2.5M
+            }
+        };
+        
+        if (dentalGeneralCoverRates[serviceType]) {
+            const rate = dentalGeneralCoverRates[serviceType][liabilityLimit];
+            if (rate) {
+                return rate;
+            }
+        }
+        
+        // Dental Specialists pricing (cover_type based)
+        if (coverType === 'dental_specialists') {
+            const dentalSpecialistsRates = {
+                '2000000': 2200,  // Dental Specialists - 2M
+                '3000000': 2700   // Dental Specialists - 3M
+            };
+            
+            const rate = dentalSpecialistsRates[liabilityLimit];
+            if (rate) {
+                return rate;
+            }
+        }
+        
+        // Dental Specialist OMFS - service_type based pricing
+        const dentalOMFSRates = {
+            'clinic_based_non_general_anaesthetic': {
+                '2000000': 4950,  // Clinic based - 2M
+                '3000000': 6050   // Clinic based - 3M
+            },
+            'hospital_based_full_fledged_omfs': {
+                '2000000': 6600,  // Hospital based - 2M
+                '3000000': 7700   // Hospital based - 3M
+            }
+        };
+        
+        if (dentalOMFSRates[serviceType]) {
+            const rate = dentalOMFSRates[serviceType][liabilityLimit];
+            if (rate) {
+                return rate;
+            }
+        }
+        
         // Original pricing logic for other types (Locum Cover, etc.)
         const servicePremiumRates = {
             'general_practitioner_private_hospital_outpatient': 900,  // Outpatient Service
@@ -725,6 +1024,7 @@
         
         const serviceType = step2Data.service_type || step2Data.cover_type || '';
         const coverType = step2Data.cover_type || '';
+        const liabilityLimit = step3Data.liability_limit || '';
         const locumExtensionRaw = step3Data.locum_extension;
         
         // Convert to boolean properly (handles true, "1", "true", 1)
@@ -733,6 +1033,21 @@
         // If locum extension is not enabled, return 0
         if (!locumExtension) {
             return 0;
+        }
+        
+        // Dental General Cover - Locum Extension rates based on service type and liability limit
+        if (coverType === 'general_cover' && serviceType === 'general_dental_practice') {
+            if (liabilityLimit === '1000000') {
+                return 350;  // 1M liability
+            } else if (liabilityLimit === '2000000') {
+                return 450;  // 2M liability
+            }
+        }
+        
+        if (coverType === 'general_cover' && serviceType === 'general_dental_practitioners') {
+            if (liabilityLimit === '2500000') {
+                return 500;  // 2.5M liability
+            }
         }
         
         // Premium rates for General Cover service types with Locum Extension
