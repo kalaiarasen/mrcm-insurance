@@ -487,13 +487,44 @@
         
         const step2Data = loadFormData(2);
         const coverType = step2Data.cover_type || '';
+        const professionalType = step2Data.professional_indemnity_type || '';
+        
+        console.log('autoSetLiabilityLimit called - professionalType:', professionalType, 'serviceType:', serviceType);
+        
+        // Pharmacist - has 500K and 1M options
+        if (professionalType === 'pharmacist') {
+            console.log('Setting pharmacist liability limits');
+            liabilityLimitSelect.innerHTML = `
+                <option value="">Select Liability Limit</option>
+                <option value="500000">RM 500,000</option>
+                <option value="1000000">RM 1,000,000</option>
+            `;
+            liabilityLimitSelect.classList.remove('d-none');
+            
+            if (liabilityLimitDisplay) {
+                liabilityLimitDisplay.classList.add('d-none');
+            }
+            
+            // Restore saved value for pharmacist
+            const step3Data = loadFormData(3);
+            if (step3Data.liability_limit) {
+                liabilityLimitSelect.value = step3Data.liability_limit;
+            }
+            return;
+        }
+        
+        // If serviceType is not provided and not pharmacist, return early (don't set liability limits yet)
+        if (!serviceType) {
+            console.log('No serviceType provided, skipping liability limit setup');
+            return;
+        }
         
         // Define default liability limits for each service type
         const serviceLiabilityLimits = {
             'core_services': '1000000',
             'core_services_with_procedures': '1000000',
-            'general_practitioner_private_hospital_outpatient': '2000000',
-            'general_practitioner_private_hospital_emergency': '2000000',
+            'general_practitioner_private_hospital_outpatient': '1000000',  // Locum - Private Hospital - Outpatient
+            'general_practitioner_private_hospital_emergency': '1000000',   // Locum - Private Hospital - Emergency
             'general_practitioner_with_obstetrics': '2000000',
             'cosmetic_aesthetic_non_invasive': '2000000',
             'cosmetic_aesthetic_non_surgical_invasive': '2000000',
@@ -540,6 +571,14 @@
             return 'RM ' + numValue.toLocaleString('en-MY');
         };
         
+        // Helper function to restore saved liability limit value
+        const restoreSavedLiabilityLimit = () => {
+            const step3Data = loadFormData(3);
+            if (step3Data.liability_limit) {
+                liabilityLimitSelect.value = step3Data.liability_limit;
+            }
+        };
+        
         // Check if this is a low risk specialist service
         if (lowRiskSpecialistServices.includes(serviceType)) {
             // Show only 1M and 2M options for low-risk specialists
@@ -553,6 +592,7 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
@@ -568,6 +608,7 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
@@ -583,6 +624,7 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
@@ -598,6 +640,7 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
@@ -612,6 +655,7 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
@@ -627,6 +671,7 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
@@ -642,6 +687,7 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
@@ -657,12 +703,13 @@
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
+            restoreSavedLiabilityLimit();
             return;
         }
         
         // Check if we should set a specific liability limit
-        // Either from General Cover service type OR Dental Locum Cover Only service type OR from cover type itself (Private GP path)
-        const limitKey = (coverType === 'general_cover' || coverType === 'locum_cover_only') ? serviceType : coverType;
+        // Either from General Cover service type OR Locum Cover service type OR Dental Locum Cover Only service type OR from cover type itself (Private GP path)
+        const limitKey = (coverType === 'general_cover' || coverType === 'locum_cover' || coverType === 'locum_cover_only') ? serviceType : coverType;
         
         if (serviceLiabilityLimits[limitKey]) {
             const limitValue = serviceLiabilityLimits[limitKey];
@@ -694,6 +741,12 @@
             
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
+            }
+            
+            // Restore previously selected liability limit from localStorage
+            const step3Data = loadFormData(3);
+            if (step3Data.liability_limit) {
+                liabilityLimitSelect.value = step3Data.liability_limit;
             }
         }
     }
@@ -810,6 +863,20 @@
         const coverType = step2Data.cover_type || '';
         const employmentStatus = step2Data.employment_status || '';
         const specialtyArea = step2Data.specialty_area || '';
+        const professionalType = step2Data.professional_indemnity_type || '';
+        
+        // Pharmacist pricing based on liability limit
+        if (professionalType === 'pharmacist') {
+            const pharmacistRates = {
+                '500000': 750,   // 500K liability
+                '1000000': 1000  // 1M liability
+            };
+            
+            const rate = pharmacistRates[liabilityLimit];
+            if (rate) {
+                return rate;
+            }
+        }
         
         // Lecturer/Trainee (Non-Practicing) - Based on liability limit
         if (employmentStatus === 'non_practicing' && specialtyArea === 'lecturer_trainee') {
@@ -1225,9 +1292,8 @@
                     const step2Data = loadFormData(2);
                     // Check service_type OR cover_type for liability limit setting
                     const serviceOrCover = step2Data.service_type || step2Data.cover_type;
-                    if (serviceOrCover) {
-                        autoSetLiabilityLimit(serviceOrCover);
-                    }
+                    // Always call autoSetLiabilityLimit (for pharmacist, medical, dental, etc.)
+                    autoSetLiabilityLimit(serviceOrCover);
                     updateLocumExtensionVisibility();
                     updateExpiryDate();
                     calculatePremium();
@@ -1247,9 +1313,8 @@
                     const step2Data = loadFormData(2);
                     // Check service_type OR cover_type for liability limit setting
                     const serviceOrCover = step2Data.service_type || step2Data.cover_type;
-                    if (serviceOrCover) {
-                        autoSetLiabilityLimit(serviceOrCover);
-                    }
+                    // Always call autoSetLiabilityLimit (for pharmacist, medical, dental, etc.)
+                    autoSetLiabilityLimit(serviceOrCover);
                     updateLocumExtensionVisibility();
                     updateExpiryDate();
                     calculatePremium();
