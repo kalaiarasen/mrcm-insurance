@@ -124,11 +124,6 @@ class YourActionController extends Controller
                     // Admin Status → not_paid (waiting for payment)
                     $policyApplication->customer_status = 'pay_now';
                     $policyApplication->admin_status = 'not_paid';
-                    
-                    // Generate reference number if not exists
-                    if (!$policyApplication->reference_number) {
-                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
-                    }
                     $policyApplication->approved_at = now();
                     break;
 
@@ -140,7 +135,7 @@ class YourActionController extends Controller
                     $policyApplication->admin_status = 'active';
                     $policyApplication->activated_at = now();
                     
-                    // Ensure reference number exists for active policies
+                    // Generate reference number ONLY when status becomes active
                     if (!$policyApplication->reference_number) {
                         $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
                     }
@@ -407,12 +402,17 @@ class YourActionController extends Controller
 
     /**
      * Generate a unique reference number for the application
+     * Format: MRCM#YY-XXXX where YY is policy year (e.g., 26 for 2025-2026 policy)
      * 
      * @param int $userId
      * @return string
      */
     private function generateReferenceNumber($userId)
     {
-        return 'POL-' . date('Ymd') . '-' . str_pad($userId, 6, '0', STR_PAD_LEFT);
+        // Get the last 2 digits of current year + 1 for policy year
+        // For 2025, policy year is 2025-2026, so we use 26
+        $policyYear = substr((string)(date('Y') + 1), -2);
+        
+        return 'MRCM#' . $policyYear . '-' . str_pad($userId, 4, '0', STR_PAD_LEFT);
     }
 }

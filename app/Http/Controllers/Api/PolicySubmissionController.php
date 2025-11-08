@@ -268,12 +268,17 @@ class PolicySubmissionController extends Controller
 
     /**
      * Generate a unique reference number for the application
+     * Format: MRCM#YY-XXXX where YY is policy year (e.g., 26 for 2025-2026 policy)
      * 
      * @param int $userId
      * @return string
      */
     private function generateReferenceNumber($userId)
     {
-        return 'POL-' . date('Ymd') . '-' . str_pad($userId, 6, '0', STR_PAD_LEFT);
+        // Get the last 2 digits of current year + 1 for policy year
+        // For 2025, policy year is 2025-2026, so we use 26
+        $policyYear = substr((string)(date('Y') + 1), -2);
+        
+        return 'MRCM#' . $policyYear . '-' . str_pad($userId, 4, '0', STR_PAD_LEFT);
     }
 }
