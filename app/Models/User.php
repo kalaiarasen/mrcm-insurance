@@ -146,4 +146,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(PolicyApplication::class)->where('is_used', true);
     }
+
+    /**
+     * Get all of the user's policy applications (history).
+     */
+    public function policyApplications(): HasMany
+    {
+        return $this->hasMany(PolicyApplication::class);
+    }
 }

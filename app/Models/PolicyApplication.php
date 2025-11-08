@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PolicyApplication extends Model
 {
@@ -38,5 +39,21 @@ class PolicyApplication extends Model
     public function actionBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'action_by');
+    }
+
+    /**
+     * Get the policy pricing for this application.
+     */
+    public function policyPricing(): HasOne
+    {
+        return $this->hasOne(PolicyPricing::class, 'user_id', 'user_id')->where('is_used', true);
+    }
+
+    /**
+     * Get the healthcare service for this application.
+     */
+    public function healthcareService(): HasOne
+    {
+        return $this->hasOne(HealthcareService::class, 'user_id', 'user_id')->where('is_used', true);
     }
 }

@@ -113,4 +113,39 @@ class DiscountController extends Controller
                 ->with('error', 'Failed to delete discount. Please try again.');
         }
     }
+
+    /**
+     * Get active discount for a specific date (API endpoint)
+     */
+    public function getActiveDiscount(Request $request)
+    {
+        $validated = $request->validate([
+            'date' => 'required|date',
+        ]);
+
+        $date = $validated['date'];
+
+        // Find discount where the date falls within start_date and end_date
+        $discount = Discount::whereDate('start_date', '<=', $date)
+            ->whereDate('end_date', '>=', $date)
+            ->first();
+
+        if ($discount) {
+            return response()->json([
+                'success' => true,
+                'discount' => [
+                    'id' => $discount->id,
+                    'percentage' => $discount->percentage,
+                    'description' => $discount->description,
+                    'start_date' => $discount->start_date->format('Y-m-d'),
+                    'end_date' => $discount->end_date->format('Y-m-d'),
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'No active discount found for the selected date.'
+        ]);
+    }
 }

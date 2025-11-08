@@ -124,26 +124,50 @@ class PolicyHolderController extends Controller
     {
         // Verify user has submitted an application (has applicant profile)
         if (!$user->relationLoaded('applicantProfile')) {
-            $user->load('applicantProfile');
+            $user->load([
+                'applicantProfile',
+                'applicantContact',
+                'policyApplications.policyPricing',
+                'policyApplications.healthcareService',
+            ]);
         }
         
         if (!$user->applicantProfile) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User does not have an applicant profile'
-            ], 403);
+            return redirect()->route('policy-holder')->with('error', 'User does not have an applicant profile');
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'contact_no' => $user->contact_no,
-                'created_at' => $user->created_at->format('M d, Y'),
-                'submission_version' => $user->submission_version ?? 0,
-            ]
-        ]);
+        // Get all policy applications for this user (including drafts), ordered by newest first
+        $policyApplications = $user->policyApplications()
+            ->with(['policyPricing', 'healthcareService'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('pages.policy-holder.show', compact('user', 'policyApplications'));
+    }
+
+    /**
+     * Display a specific policy application for a policy holder.
+     */
+    public function showApplication(User $user, $application)
+    {
+        // Find the policy application and verify it belongs to this user
+        $policyApplication = \App\Models\PolicyApplication::where('id', $application)
+            ->where('user_id', $user->id)
+            ->with([
+                'user.applicantProfile',
+                'user.qualifications',
+                'user.addresses',
+                'user.applicantContact',
+                'user.healthcareService',
+                'user.policyPricing',
+                'user.riskManagement',
+                'user.insuranceHistory',
+                'user.claimsExperience',
+                'actionBy'
+            ])
+            ->firstOrFail();
+
+        // Use the same view as for-your-action but in read-only mode from policy holder context
+        return view('pages.your-action.show', compact('policyApplication'));
     }
 }

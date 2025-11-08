@@ -640,6 +640,13 @@
                                                 </div>
                                             @endif
                                             
+                                            @if($pricing->discount_percentage > 0)
+                                                <div class="pricing-row d-flex justify-content-between info-label">
+                                                    <span>Discount ({{ number_format($pricing->discount_percentage, 2) }}%)</span>
+                                                    <span class="text-success">- RM {{ number_format($pricing->discount_amount ?? 0, 2) }}</span>
+                                                </div>
+                                            @endif
+                                            
                                             <div class="pricing-row d-flex justify-content-between info-label">
                                                 <span>8% SST</span>
                                                 <span>RM {{ number_format($pricing->sst ?? 0, 2) }}</span>

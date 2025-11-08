@@ -807,52 +807,123 @@
         const totalAnnualPremium = annualPremium + locumExtensionPremium;
         const grossPremium = (totalAnnualPremium * numberOfDays) / daysInYear;
         
-        // Discount percentage (currently 0%)
-        const discountPercentage = 0;
-        const discountedPremium = grossPremium * (1 - discountPercentage);
-        
-        // SST = 8% of discounted premium
-        const sstPercentage = 0.08;
-        const sst = discountedPremium * sstPercentage;
-        
-        // Stamp duty = RM10
-        const stampDuty = 10.00;
-        
-        // Total to pay = Discounted Premium + SST + Stamp Duty
-        const totalPayable = discountedPremium + sst + stampDuty;
-        
-        // Format amounts with thousands separator
-        const formatCurrency = (value) => {
-            return parseFloat(value).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        };
-        
-        document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
-        document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
-        document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
-        document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
-        document.getElementById('displaySST').textContent = formatCurrency(sst);
-        document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
-        document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
-        
-        // Show/hide locum addon row based on whether it's applicable
-        const locumAddonRow = document.getElementById('locumAddonRow');
-        if (locumExtensionPremium > 0) {
-            locumAddonRow.style.display = 'flex'; // Use flex for Bootstrap row
-        } else {
-            locumAddonRow.style.display = 'none';
-        }
-        
-        // Also populate hidden fields for form submission
-        document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
-        document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
-        document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
-        document.getElementById('displaySSTInput').value = sst.toFixed(2);
-        document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
-        document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
-        
-        document.getElementById('pricingBreakdown').style.display = 'block';
-        const hr = document.getElementById('amountHr');
-        if (hr) hr.style.display = 'block';
+        // Fetch active discount for the policy start date
+        fetch(`/discounts-api/active?date=${policyStartDate}`)
+            .then(response => response.json())
+            .then(data => {
+                let discountPercentage = 0;
+                let discountAmount = 0;
+                let discountDescription = '';
+                
+                if (data.success && data.discount) {
+                    discountPercentage = parseFloat(data.discount.percentage);
+                    discountAmount = grossPremium * (discountPercentage / 100);
+                    discountDescription = data.discount.description || '';
+                }
+                
+                const discountedPremium = grossPremium - discountAmount;
+                
+                // SST = 8% of discounted premium
+                const sstPercentage = 0.08;
+                const sst = discountedPremium * sstPercentage;
+                
+                // Stamp duty = RM10
+                const stampDuty = 10.00;
+                
+                // Total to pay = Discounted Premium + SST + Stamp Duty
+                const totalPayable = discountedPremium + sst + stampDuty;
+                
+                // Format amounts with thousands separator
+                const formatCurrency = (value) => {
+                    return parseFloat(value).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                };
+                
+                document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
+                document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
+                document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
+                document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
+                
+                // Show/hide discount row
+                const discountRow = document.getElementById('discountRow');
+                if (discountPercentage > 0) {
+                    document.getElementById('displayDiscountPercentage').textContent = discountPercentage.toFixed(2);
+                    document.getElementById('displayDiscountAmount').textContent = formatCurrency(discountAmount);
+                    if (discountRow) discountRow.style.display = 'flex';
+                } else {
+                    if (discountRow) discountRow.style.display = 'none';
+                }
+                
+                document.getElementById('displaySST').textContent = formatCurrency(sst);
+                document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
+                document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
+                
+                // Show/hide locum addon row based on whether it's applicable
+                const locumAddonRow = document.getElementById('locumAddonRow');
+                if (locumExtensionPremium > 0) {
+                    locumAddonRow.style.display = 'flex'; // Use flex for Bootstrap row
+                } else {
+                    locumAddonRow.style.display = 'none';
+                }
+                
+                // Also populate hidden fields for form submission
+                document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
+                document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
+                document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
+                document.getElementById('displayDiscountPercentageInput').value = discountPercentage.toFixed(2);
+                document.getElementById('displayDiscountAmountInput').value = discountAmount.toFixed(2);
+                document.getElementById('displaySSTInput').value = sst.toFixed(2);
+                document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
+                document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
+                
+                document.getElementById('pricingBreakdown').style.display = 'block';
+                const hr = document.getElementById('amountHr');
+                if (hr) hr.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching discount:', error);
+                // If error, calculate without discount
+                const discountedPremium = grossPremium;
+                const sstPercentage = 0.08;
+                const sst = discountedPremium * sstPercentage;
+                const stampDuty = 10.00;
+                const totalPayable = discountedPremium + sst + stampDuty;
+                
+                const formatCurrency = (value) => {
+                    return parseFloat(value).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                };
+                
+                document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
+                document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
+                document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
+                document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
+                document.getElementById('displaySST').textContent = formatCurrency(sst);
+                document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
+                document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
+                
+                // Hide discount row
+                const discountRow = document.getElementById('discountRow');
+                if (discountRow) discountRow.style.display = 'none';
+                
+                const locumAddonRow = document.getElementById('locumAddonRow');
+                if (locumExtensionPremium > 0) {
+                    locumAddonRow.style.display = 'flex';
+                } else {
+                    locumAddonRow.style.display = 'none';
+                }
+                
+                document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
+                document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
+                document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
+                document.getElementById('displayDiscountPercentageInput').value = '0';
+                document.getElementById('displayDiscountAmountInput').value = '0';
+                document.getElementById('displaySSTInput').value = sst.toFixed(2);
+                document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
+                document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
+                
+                document.getElementById('pricingBreakdown').style.display = 'block';
+                const hr = document.getElementById('amountHr');
+                if (hr) hr.style.display = 'block';
+            });
     }
 
     function getBasePremium(liabilityLimit) {

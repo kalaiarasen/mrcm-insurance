@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('policy-holders/{user}/edit', [PolicyHolderController::class, 'edit'])->name('policy-holders.edit');
     Route::get('policy-holders/{user}', [PolicyHolderController::class, 'show'])->name('policy-holders.show');
     Route::put('policy-holders/{user}', [PolicyHolderController::class, 'update'])->name('policy-holders.update');
+    Route::get('policy-holders/{user}/application/{application}', [PolicyHolderController::class, 'showApplication'])->name('policy-holders.application.show');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('client-policy/{id}', [DashboardController::class, 'showPolicy'])->name('client-policy.show');
@@ -58,6 +59,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('agents', AgentController::class);
     Route::resource('discounts', DiscountController::class);
+    
+    // Get active discount by date
+    Route::get('discounts-api/active', [DiscountController::class, 'getActiveDiscount'])->name('discounts.active');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');

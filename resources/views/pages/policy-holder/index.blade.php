@@ -216,7 +216,7 @@
                                                         </a>
                                                     </li>
                                                     <li class="view">
-                                                        <a href="#" onclick="viewPolicyHolder({{ $holder->id }}); return false;" title="View Details">
+                                                        <a href="{{ route('policy-holders.show', $holder->id) }}" title="View Details">
                                                             <i class="fa-regular fa-eye"></i>
                                                         </a>
                                                     </li>
@@ -232,26 +232,6 @@
             </div>
         </div>
     </div><!-- Container-fluid Ends-->
-
-    <!-- View Details Modal -->
-    <div class="modal fade" id="viewPolicyHolderModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewModalLabel">Policy Holder Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="viewDetailsContent">
-                        <!-- Content will be loaded here -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Edit Modal -->
     <div class="modal fade" id="editPolicyHolderModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -560,57 +540,6 @@
         // Clear custom search when clearing filter
         function clearCustomSearch() {
             $.fn.dataTable.ext.search = [];
-        }
-
-        // View Policy Holder Details
-        function viewPolicyHolder(holderId) {
-            $.ajax({
-                url: `/policy-holders/${holderId}`,
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        const data = response.data;
-                        
-                        // Helper function to convert to title case (ucwords equivalent)
-                        const ucwords = (str) => {
-                            if (!str) return str;
-                            return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
-                        };
-                        
-                        const detailsHTML = `
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <p><strong>Full Name:</strong></p>
-                                    <p>${data.name}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong>Email:</strong></p>
-                                    <p>${data.email}</p>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <p><strong>Contact No:</strong></p>
-                                    <p>${data.contact_no}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong>Joined Date:</strong></p>
-                                    <p>${data.created_at}</p>
-                                </div>
-                            </div>
-                        `;
-                        
-                        document.getElementById('viewDetailsContent').innerHTML = detailsHTML;
-                        const modal = new bootstrap.Modal(document.getElementById('viewPolicyHolderModal'));
-                        modal.show();
-                    }
-                },
-                error: function(xhr) {
-                    showNotification('Error loading policy holder details', 'error');
-                    console.error(xhr);
-                }
-            });
         }
 
         // Edit Policy Holder

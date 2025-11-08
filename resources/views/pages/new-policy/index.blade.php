@@ -631,6 +631,11 @@
                                     <div class="col-md-6"><span>: RM <span id="displayLocumAddon">0.00</span></span></div>
                                 </div>
                                 
+                                <div class="row mb-2" id="discountRow" style="display: none;">
+                                    <div class="col-md-6"><span>Discount (<span id="displayDiscountPercentage">0</span>%)</span></div>
+                                    <div class="col-md-6"><span class="text-success">: - RM <span id="displayDiscountAmount">0.00</span></span></div>
+                                </div>
+                                
                                 <div class="row mb-2">
                                     <div class="col-md-6"><span id="sstLabel">8% SST</span></div>
                                     <div class="col-md-6"><span>: RM <span id="displaySST">0.00</span></span></div>
@@ -672,6 +677,8 @@
                             <input type="hidden" id="displayBasePremiumInput" name="displayBasePremium" value="0">
                             <input type="hidden" id="displayGrossPremiumInput" name="displayGrossPremium" value="0">
                             <input type="hidden" id="displayLocumAddonInput" name="displayLocumAddon" value="0">
+                            <input type="hidden" id="displayDiscountPercentageInput" name="displayDiscountPercentage" value="0">
+                            <input type="hidden" id="displayDiscountAmountInput" name="displayDiscountAmount" value="0">
                             <input type="hidden" id="displaySSTInput" name="displaySST" value="0">
                             <input type="hidden" id="displayStampDutyInput" name="displayStampDuty" value="10">
                             <input type="hidden" id="displayTotalPayableInput" name="displayTotalPayable" value="0">
