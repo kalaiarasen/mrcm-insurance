@@ -2073,7 +2073,7 @@
         };
 
         console.log('[Submit] Submitting form data:', submissionData);
-
+        
         // Get CSRF token - works for both authenticated and guest users
         const getCsrfToken = function() {
             // Try to get from meta tag first (works for guests)
@@ -2083,7 +2083,6 @@
             }
             
             // Fallback to blade template (works for authenticated users)
-            // In Blade: {{ csrf_token() }}
             const templateToken = document.querySelector('[data-csrf-token]');
             if (templateToken) {
                 return templateToken.getAttribute('data-csrf-token');
@@ -2091,6 +2090,11 @@
             
             return '';
         };
+        
+        // Log CSRF token for debugging
+        const csrfToken = getCsrfToken();
+        console.log('[Submit] CSRF Token:', csrfToken ? 'Found' : 'NOT FOUND');
+        console.log('[Submit] Route URL:', '{{ route("policies.submit") }}');
 
         // Send AJAX request to server
         $.ajax({
@@ -2099,7 +2103,7 @@
             contentType: 'application/json',
             data: JSON.stringify(submissionData),
             headers: {
-                'X-CSRF-TOKEN': getCsrfToken(),
+                'X-CSRF-TOKEN': csrfToken,
                 'Accept': 'application/json'
             },
             timeout: 30000, // 30 second timeout
@@ -2112,7 +2116,6 @@
                         icon: 'success',
                         title: 'Application Submitted Successfully!',
                         html: '<p>Thank you for submitting your application.</p>' +
-                              '<p>Reference Number: <strong>' + (response.reference_number || 'N/A') + '</strong></p>' +
                               '<p>We will review your application and contact you shortly.</p>',
                         confirmButtonText: 'Go to Dashboard',
                         allowOutsideClick: false,
@@ -2126,7 +2129,7 @@
                     });
                 } else {
                     // Fallback if SweetAlert not available
-                    alert('Application Submitted Successfully!\n\nReference Number: ' + (response.reference_number || 'N/A') + '\n\nWe will review your application and contact you shortly.');
+                    alert('Application Submitted Successfully!\n\nWe will review your application and contact you shortly.');
                     clearAllSavedData();
                     window.location.href = '{{ route("dashboard") }}';
                 }

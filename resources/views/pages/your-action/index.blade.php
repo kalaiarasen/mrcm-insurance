@@ -302,7 +302,7 @@
                                 <thead>
                                     <tr>
                                         <th>Policy ID</th>
-                                        <th>Type</th>
+                                        {{-- <th>Type</th> --}}
                                         <th>Status</th>
                                         <th>Expiry Date</th>
                                         <th>Name</th>
@@ -319,9 +319,9 @@
                                             <td>
                                                 <small>{{ $policy['policy_id'] ?? '' }}</small>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 <span class="badge bg-primary">{{ $policy['type'] }}</span>
-                                            </td>
+                                            </td> --}}
                                             <td>
                                                 @if($policy['status'] === 'approved')
                                                     <span class="badge bg-success">Approved</span>

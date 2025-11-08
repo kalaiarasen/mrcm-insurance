@@ -933,8 +933,7 @@
                 </div>
             </div>
 
-            <!-- Payment Document Section -->
-            @if($policyApplication->payment_document || $policyApplication->customer_status === 'paid' || $policyApplication->admin_status === 'paid')
+            <!-- Payment Upload Section -->
             <div class="col-12">
                 <div class="card info-card mb-3">
                     <div class="card-body">
@@ -942,286 +941,84 @@
                             <i class="fa fa-credit-card me-2"></i>Payment Information
                         </h5>
 
-                        <div class="row">
+                        <!-- Policy Status Display -->
+                        <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="info-label">Payment Status</div>
-                                <div class="info-value">
-                                    @if($policyApplication->customer_status === 'paid' && $policyApplication->admin_status === 'paid')
-                                        <span class="badge bg-success fs-6">
-                                            <i class="fa fa-check-circle me-1"></i>Payment Received
-                                        </span>
-                                    @elseif($policyApplication->customer_status === 'pay_now')
-                                        <span class="badge bg-warning text-dark fs-6">
-                                            <i class="fa fa-clock me-1"></i>Awaiting Payment
-                                        </span>
-                                    @else
-                                        <span class="badge bg-secondary fs-6">
-                                            <i class="fa fa-info-circle me-1"></i>{{ ucfirst(str_replace('_', ' ', $policyApplication->customer_status)) }}
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="info-label">Payment Received Date</div>
-                                <div class="info-value">
-                                    @if($policyApplication->payment_received_at)
-                                        <i class="fa fa-calendar-check text-success me-1"></i>
-                                        {{ $policyApplication->payment_received_at->format('d M Y, h:i A') }}
-                                    @else
-                                        <span class="text-muted">Not yet received</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        @if($policyApplication->payment_document)
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <div class="alert alert-success">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="mb-2">
-                                                    <i class="fa fa-file-pdf text-danger me-2"></i>
-                                                    Payment Document Uploaded
-                                                </h6>
-                                                <p class="mb-0 small">
-                                                    <strong>File:</strong> {{ basename($policyApplication->payment_document) }}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <a href="{{ Storage::url($policyApplication->payment_document) }}" 
-                                                   target="_blank" 
-                                                   class="btn btn-primary btn-sm">
-                                                    <i class="fa fa-eye me-1"></i>View Document
-                                                </a>
-                                                <a href="{{ Storage::url($policyApplication->payment_document) }}" 
-                                                   download 
-                                                   class="btn btn-success btn-sm">
-                                                    <i class="fa fa-download me-1"></i>Download
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <div class="alert alert-warning">
-                                        <i class="fa fa-exclamation-triangle me-2"></i>
-                                        <strong>No payment document uploaded yet.</strong>
-                                        <p class="mb-0 mt-1 small">Client will upload payment proof once they complete the payment.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="row mt-3">
-                            <div class="col-md-4">
-                                <div class="info-label">Total Amount</div>
-                                <div class="info-value">
-                                    <span class="text-success fw-bold fs-5">
-                                        RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-label">Customer Status</div>
-                                <div class="info-value">
-                                    @php
-                                        $customerStatusBadges = [
-                                            'submitted' => ['bg-secondary', 'Submitted'],
-                                            'pay_now' => ['bg-warning text-dark', 'Pay Now'],
-                                            'paid' => ['bg-info', 'Paid'],
-                                            'processing' => ['bg-primary', 'Processing'],
-                                            'active' => ['bg-success', 'Active'],
-                                        ];
-                                        $cs = $customerStatusBadges[$policyApplication->customer_status] ?? ['bg-secondary', ucfirst($policyApplication->customer_status)];
-                                    @endphp
-                                    <span class="badge {{ $cs[0] }}">{{ $cs[1] }}</span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-label">Admin Status</div>
-                                <div class="info-value">
-                                    @php
-                                        $adminStatusBadges = [
-                                            'new_case' => ['bg-light text-dark', 'New Case'],
-                                            'new_renewal' => ['bg-light text-dark', 'New Renewal'],
-                                            'not_paid' => ['bg-warning text-dark', 'Not Paid'],
-                                            'paid' => ['bg-info', 'Paid'],
-                                            'sent_uw' => ['bg-primary', 'Sent UW'],
-                                            'active' => ['bg-success', 'Active'],
-                                        ];
-                                        $as = $adminStatusBadges[$policyApplication->admin_status] ?? ['bg-secondary', ucfirst($policyApplication->admin_status)];
-                                    @endphp
-                                    <span class="badge {{ $as[0] }}">{{ $as[1] }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            <!-- Admin Action Section -->
-            <div class="col-12">
-                <div class="card info-card mb-3">
-                    <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-user-shield me-2"></i>Admin Action
-                        </h5>
-
-                        <form action="{{ route('for-your-action.update-status', $policyApplication->id) }}" method="POST" id="adminActionForm">
-                            @csrf
-                            @method('PUT')
-                            
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <label for="status" class="form-label fw-bold">
-                                        <i class="fa fa-flag me-2"></i>Update Application Status <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="status" name="status" required>
-                                        <option value="">Select Status</option>
-                                        <option value="new" {{ $policyApplication->status === 'new' ? 'selected' : '' }}>New</option>
-                                        <option value="approved" {{ $policyApplication->status === 'approved' ? 'selected' : '' }}>Approved</option>
-                                        <option value="send_uw" {{ $policyApplication->status === 'send_uw' ? 'selected' : '' }}>Send UW</option>
-                                        <option value="active" {{ $policyApplication->status === 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="processing" {{ $policyApplication->status === 'processing' ? 'selected' : '' }}>Processing</option>
-                                        <option value="rejected" {{ $policyApplication->status === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        <option value="cancelled" {{ $policyApplication->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                    </select>
-                                    <small class="text-muted d-block mt-1">
-                                        <strong>C.S:</strong> 
+                                <div class="alert alert-info">
+                                    <h6 class="mb-2"><i class="fa fa-info-circle me-2"></i>Policy Status</h6>
+                                    <p class="mb-1"><strong>Reference Number:</strong> {{ $policyApplication->reference_number ?? 'N/A' }}</p>
+                                    <p class="mb-1">
+                                        <strong>Current Status:</strong> 
                                         @php
                                             $customerStatusBadges = [
                                                 'submitted' => ['bg-secondary', 'Submitted'],
-                                                'pay_now' => ['bg-warning', 'Pay Now'],
-                                                'paid' => ['bg-info', 'Paid'],
+                                                'pay_now' => ['bg-warning text-dark', 'Payment Required'],
+                                                'paid' => ['bg-info', 'Payment Received'],
                                                 'processing' => ['bg-primary', 'Processing'],
                                                 'active' => ['bg-success', 'Active'],
                                             ];
                                             $cs = $customerStatusBadges[$policyApplication->customer_status] ?? ['bg-secondary', ucfirst($policyApplication->customer_status)];
                                         @endphp
                                         <span class="badge {{ $cs[0] }}">{{ $cs[1] }}</span>
-                                    </small>
-                                    <small class="text-muted d-block">
-                                        <strong>A.S:</strong> 
-                                        @php
-                                            $adminStatusBadges = [
-                                                'new_case' => ['bg-light text-dark', 'New Case'],
-                                                'new_renewal' => ['bg-light text-dark', 'New Renewal'],
-                                                'not_paid' => ['bg-warning', 'Not Paid'],
-                                                'paid' => ['bg-info', 'Paid'],
-                                                'sent_uw' => ['bg-primary', 'Sent UW'],
-                                                'active' => ['bg-success', 'Active'],
-                                            ];
-                                            $as = $adminStatusBadges[$policyApplication->admin_status] ?? ['bg-secondary', ucfirst($policyApplication->admin_status)];
-                                        @endphp
-                                        <span class="badge {{ $as[0] }}">{{ $as[1] }}</span>
-                                    </small>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label fw-bold">
-                                        <i class="fa fa-user me-2"></i>Customer Status (C.S)
-                                    </label>
-                                    <input type="text" class="form-control" value="{{ ucfirst(str_replace('_', ' ', $policyApplication->customer_status ?? 'submitted')) }}" disabled>
-                                    <small class="text-muted">Status visible to customer</small>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label fw-bold">
-                                        <i class="fa fa-user-shield me-2"></i>Admin Status (A.S)
-                                    </label>
-                                    <input type="text" class="form-control" value="{{ ucfirst(str_replace('_', ' ', $policyApplication->admin_status ?? 'new_case')) }}" disabled>
-                                    <small class="text-muted">Internal admin status</small>
+                                    </p>
+                                    <p class="mb-0"><strong>Total Amount Due:</strong> <span class="text-success fs-5">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span></p>
                                 </div>
                             </div>
-
-                            <div class="row mb-4">
-                                <div class="col-md-12">
-                                    <label class="form-label fw-bold">
-                                        <i class="fa fa-info-circle me-2"></i>Reference Number
-                                    </label>
-                                    <input type="text" class="form-control" value="{{ $policyApplication->reference_number ?? 'Will be auto-generated on approval' }}" disabled>
-                                    <small class="text-muted">Reference number is auto-assigned when status is changed to "Approved"</small>
+                            <div class="col-md-6">
+                                <div class="alert alert-warning">
+                                    <h6 class="mb-2"><i class="fa fa-exclamation-triangle me-2"></i>Payment Instructions</h6>
+                                    <p class="mb-1">1. Make payment to the account details provided</p>
+                                    <p class="mb-1">2. Upload your payment receipt/proof below</p>
+                                    <p class="mb-0">3. Your policy will be processed once payment is verified</p>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <label for="remarks" class="form-label fw-bold">
-                                        <i class="fa fa-comment-dots me-2"></i>Admin Remarks / Notes
-                                    </label>
-                                    <textarea class="form-control" id="remarks" name="remarks" rows="4" placeholder="Enter remarks, notes, or reason for status change...">{{ $policyApplication->remarks }}</textarea>
-                                    <small class="text-muted">Add any notes or comments about this application status change</small>
-                                </div>
-                            </div>
-
-                            @if($policyApplication->remarks)
+                        @if($policyApplication->customer_status === 'pay_now')
+                            <!-- Payment Upload Form -->
+                            <form action="{{ route('client-policy.upload-payment', $policyApplication->id) }}" method="POST" enctype="multipart/form-data" id="paymentUploadForm">
+                                @csrf
+                                
                                 <div class="row mb-4">
-                                    <div class="col-12">
-                                        <div class="alert alert-info">
-                                            <strong><i class="fa fa-info-circle me-2"></i>Previous Remarks:</strong>
-                                            <p class="mb-0 mt-2">{{ $policyApplication->remarks }}</p>
-                                        </div>
+                                    <div class="col-md-12">
+                                        <label for="payment_document" class="form-label fw-bold">
+                                            <i class="fa fa-upload me-2"></i>Upload Payment Proof <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="file" class="form-control" id="payment_document" name="payment_document" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <small class="text-muted">Accepted formats: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
                                     </div>
                                 </div>
-                            @endif
 
-                            @if($policyApplication->action_by)
-                                <div class="row mb-4">
-                                    <div class="col-12">
-                                        <div class="card bg-light">
-                                            <div class="card-body">
-                                                <h6 class="mb-3"><i class="fa fa-history me-2"></i>Action History</h6>
-                                                <p class="mb-1">
-                                                    <strong>Last Action By:</strong> {{ $policyApplication->actionBy->name ?? 'N/A' }}
-                                                </p>
-                                                @if($policyApplication->action_at)
-                                                    <p class="mb-1">
-                                                        <strong>Action Date:</strong> {{ $policyApplication->action_at->format('d M Y, h:i A') }}
-                                                    </p>
-                                                @endif
-                                                <p class="mb-0">
-                                                    <strong>Current Status:</strong> 
-                                                    @if($policyApplication->status === 'approved')
-                                                        <span class="badge bg-success">Approved</span>
-                                                    @elseif($policyApplication->status === 'rejected')
-                                                        <span class="badge bg-danger">Rejected</span>
-                                                    @elseif($policyApplication->status === 'active')
-                                                        <span class="badge bg-primary">Active</span>
-                                                    @elseif($policyApplication->status === 'processing')
-                                                        <span class="badge bg-info">Processing</span>
-                                                    @elseif($policyApplication->status === 'send_uw')
-                                                        <span class="badge bg-warning">Send UW</span>
-                                                    @elseif($policyApplication->status === 'cancelled')
-                                                        <span class="badge bg-secondary">Cancelled</span>
-                                                    @elseif($policyApplication->status === 'new')
-                                                        <span class="badge bg-light text-dark">New</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">{{ ucfirst($policyApplication->status) }}</span>
-                                                    @endif
-                                                </p>
-                                            </div>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-12 text-end">
+                                        <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary me-2">
+                                            <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
+                                        </a>
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fa fa-check me-2"></i>Submit Payment Proof
+                                        </button>
                                     </div>
                                 </div>
-                            @endif
-
+                            </form>
+                        @elseif($policyApplication->payment_document)
+                            <!-- Payment Already Uploaded -->
+                            <div class="alert alert-success">
+                                <h6 class="mb-2"><i class="fa fa-check-circle me-2"></i>Payment Document Uploaded</h6>
+                                <p class="mb-1">Your payment proof has been received and is being processed.</p>
+                                <p class="mb-1"><strong>Uploaded:</strong> {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</p>
+                                <a href="{{ Storage::url($policyApplication->payment_document) }}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                    <i class="fa fa-eye me-1"></i>View Payment Document
+                                </a>
+                            </div>
+                            
                             <div class="row">
                                 <div class="col-12 text-end">
-                                    <button type="button" class="btn btn-outline-secondary me-2" onclick="resetForm()">
-                                        <i class="fa fa-undo me-2"></i>Reset
-                                    </button>
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fa fa-save me-2"></i>Update Status
-                                    </button>
+                                    <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                                        <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
+                                    </a>
                                 </div>
                             </div>
-                        </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -1230,11 +1027,8 @@
             <div class="col-12 mb-4">
                 <div class="card">
                     <div class="card-body text-center">
-                        <a href="{{ route('for-your-action') }}" class="btn btn-secondary me-2">
-                            <i class="fa fa-arrow-left me-2"></i>Back to List
-                        </a>
-                        <a href="{{ route('for-your-action.edit', $policyApplication->id) }}" class="btn btn-primary">
-                            <i class="fa fa-edit me-2"></i>Edit Application
+                        <a href="{{ route('dashboard') }}" class="btn btn-secondary me-2">
+                            <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
                         </a>
                     </div>
                 </div>

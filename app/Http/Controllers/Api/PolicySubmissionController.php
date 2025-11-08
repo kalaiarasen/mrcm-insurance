@@ -42,62 +42,30 @@ class PolicySubmissionController extends Controller
 
             $applicationData = $request->input('application_data');
 
-            $applicantEmail = $applicationData['email_address'] ?? null;
             $applicantTitle = $applicationData['title'] ?? null;
             $applicantFullName = $applicationData['full_name'] ?? null;
             $applicantName = $applicantTitle && $applicantFullName 
                 ? strtoupper($applicantTitle) . '. ' . $applicantFullName 
                 : ($applicantFullName ?? 'Applicant');
             $applicantContactNo = $applicationData['contact_no'] ?? null;
-            $applicantPassword = $applicationData['password'] ?? null;
-            $applicantConfirmPassword = $applicationData['confirm_password'] ?? null;
 
-            if (!$applicantEmail) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Applicant email address is required',
-                ], 422);
-            }
-
-            if (!$applicantPassword) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Password is required',
-                ], 422);
-            }
-
-            if ($applicantPassword !== $applicantConfirmPassword) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Passwords do not match',
-                ], 422);
-            }
-
-            if (strlen($applicantPassword) < 8) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Password must be at least 8 characters long',
-                ], 422);
-            }
-
-            $currentUser = User::where('email', $applicantEmail)->first();
+            // Get the authenticated user
+            $currentUser = Auth::user();
 
             if (!$currentUser) {
-                $currentUser = User::create([
-                    'name' => $applicantName,
-                    'email' => $applicantEmail,
-                    'contact_no' => $applicantContactNo,
-                    'application_status' => 'submitted',
-                    'application_submitted_at' => now(),
-                ]);
-            } else {
-                $currentUser->update([
-                    'name' => $applicantName,
-                    'contact_no' => $applicantContactNo,
-                    'application_status' => 'submitted',
-                    'application_submitted_at' => now(),
-                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User must be logged in to submit an application',
+                ], 401);
             }
+
+            // Update the user's information
+            $currentUser->update([
+                'name' => $applicantName,
+                'contact_no' => $applicantContactNo,
+                'application_status' => 'submitted',
+                'application_submitted_at' => now(),
+            ]);
 
             ApplicantProfile::where('user_id', $currentUser->id)->update(['is_used' => false]);
             $applicantProfile = ApplicantProfile::create([
@@ -254,6 +222,8 @@ class PolicySubmissionController extends Controller
                 'agree_declaration' => $applicationData['agree_declaration_final'] === 'yes',
                 'signature_data' => $applicationData['signature'] ?? null,
                 'status' => 'submitted',
+                'customer_status' => 'submitted',  // C.S: submitted
+                'admin_status' => 'new_case',      // A.S: New case (or new_renewal for renewals)
                 'submitted_at' => now(),
                 'is_used' => true,
             ]);

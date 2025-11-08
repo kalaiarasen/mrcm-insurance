@@ -12,6 +12,14 @@ class PolicyApplication extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'agree_data_protection' => 'boolean',
+        'agree_declaration' => 'boolean',
+        'submitted_at' => 'datetime',
+        'approved_at' => 'datetime',
+        'action_at' => 'datetime',
+        'payment_received_at' => 'datetime',
+        'sent_to_underwriter_at' => 'datetime',
+        'activated_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

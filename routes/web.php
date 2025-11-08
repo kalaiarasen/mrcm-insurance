@@ -35,6 +35,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('policy-holders/{user}', [PolicyHolderController::class, 'update'])->name('policy-holders.update');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('client-policy/{id}', [DashboardController::class, 'showPolicy'])->name('client-policy.show');
+    Route::post('client-policy/{id}/upload-payment', [DashboardController::class, 'uploadPayment'])->name('client-policy.upload-payment');
+    
     Route::get('for-your-action', [YourActionController::class, 'index'])->name('for-your-action');
     Route::get('for-your-action/{id}', [YourActionController::class, 'show'])->name('for-your-action.show');
     Route::get('for-your-action/{id}/edit', [YourActionController::class, 'edit'])->name('for-your-action.edit');

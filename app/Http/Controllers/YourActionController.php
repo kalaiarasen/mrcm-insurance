@@ -15,10 +15,10 @@ class YourActionController extends Controller
      */
     public function index()
     {
-        // Count policies by status (only is_used = true)
-        $newPolicies = PolicyApplication::where('status', 'submitted')->where('is_used', true)->count();
-        $activePolicies = PolicyApplication::where('status', 'approved')->where('is_used', true)->count();
-        $pendingPolicies = PolicyApplication::where('status', 'submitted')->where('is_used', true)->count();
+        // Count policies by admin_status (only is_used = true)
+        $newPolicies = PolicyApplication::where('admin_status', 'new_case')->where('is_used', true)->count();
+        $activePolicies = PolicyApplication::where('admin_status', 'active')->where('is_used', true)->count();
+        $pendingPolicies = PolicyApplication::where('admin_status', 'not_paid')->where('is_used', true)->count();
         $rejectedPolicies = PolicyApplication::where('status', 'rejected')->where('is_used', true)->count();
 
         // Get all policies with related user data for the table (only is_used = true)
@@ -27,11 +27,28 @@ class YourActionController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($policy) {
+                // Determine type based on submission_version or if it's a renewal
+                $type = $policy->submission_version > 1 ? 'Renewal' : 'New';
+                
+                // Map admin_status to readable status
+                $statusMap = [
+                    'new_case' => 'New Case',
+                    'new_renewal' => 'New Renewal',
+                    'not_paid' => 'Not Paid',
+                    'paid' => 'Paid',
+                    'sent_uw' => 'Sent UW',
+                    'active' => 'Active',
+                ];
+                
+                $displayStatus = $statusMap[$policy->admin_status] ?? ucfirst($policy->admin_status ?? 'N/A');
+                
                 return [
                     'id' => $policy->id,
                     'policy_id' => $policy->reference_number ?? null,
-                    'type' => 'New', // You can adjust this based on submission_version
-                    'status' => $policy->status,
+                    'type' => $type,
+                    'status' => $displayStatus,
+                    'customer_status' => $policy->customer_status,
+                    'admin_status' => $policy->admin_status,
                     'expiry_date' => $policy->user?->policyPricing?->policy_expiry_date ?? 'N/A',
                     'name' => $policy->user?->name ?? 'Unknown',
                     'policy_no' => $policy->reference_number ?? null,
@@ -99,9 +116,15 @@ class YourActionController extends Controller
             $policyApplication->action_by = Auth::id();
             $policyApplication->action_at = now();
 
-            // Handle status-specific actions
+            // Handle status-specific actions and update dual status system
             switch ($newStatus) {
                 case 'approved':
+                    // When admin approves:
+                    // Customer Status → pay_now (client gets email and pay now appears)
+                    // Admin Status → not_paid (waiting for payment)
+                    $policyApplication->customer_status = 'pay_now';
+                    $policyApplication->admin_status = 'not_paid';
+                    
                     // Generate reference number if not exists
                     if (!$policyApplication->reference_number) {
                         $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
@@ -110,10 +133,26 @@ class YourActionController extends Controller
                     break;
 
                 case 'active':
+                    // When policy becomes active:
+                    // Customer Status → active
+                    // Admin Status → active
+                    $policyApplication->customer_status = 'active';
+                    $policyApplication->admin_status = 'active';
+                    $policyApplication->activated_at = now();
+                    
                     // Ensure reference number exists for active policies
                     if (!$policyApplication->reference_number) {
                         $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
                     }
+                    break;
+                    
+                case 'send_uw':
+                    // When sent to underwriter:
+                    // Customer Status → processing
+                    // Admin Status → sent_uw
+                    $policyApplication->customer_status = 'processing';
+                    $policyApplication->admin_status = 'sent_uw';
+                    $policyApplication->sent_to_underwriter_at = now();
                     break;
             }
 
