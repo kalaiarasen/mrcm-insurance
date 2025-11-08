@@ -944,32 +944,36 @@
                         <!-- Policy Status Display -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="alert alert-info">
-                                    <h6 class="mb-2"><i class="fa fa-info-circle me-2"></i>Policy Status</h6>
-                                    <p class="mb-1"><strong>Reference Number:</strong> {{ $policyApplication->reference_number ?? 'N/A' }}</p>
-                                    <p class="mb-1">
-                                        <strong>Current Status:</strong> 
-                                        @php
-                                            $customerStatusBadges = [
-                                                'submitted' => ['bg-secondary', 'Submitted'],
-                                                'pay_now' => ['bg-warning text-dark', 'Payment Required'],
-                                                'paid' => ['bg-info', 'Payment Received'],
-                                                'processing' => ['bg-primary', 'Processing'],
-                                                'active' => ['bg-success', 'Active'],
-                                            ];
-                                            $cs = $customerStatusBadges[$policyApplication->customer_status] ?? ['bg-secondary', ucfirst($policyApplication->customer_status)];
-                                        @endphp
-                                        <span class="badge {{ $cs[0] }}">{{ $cs[1] }}</span>
-                                    </p>
-                                    <p class="mb-0"><strong>Total Amount Due:</strong> <span class="text-success fs-5">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span></p>
+                                <div class="card border">
+                                    <div class="card-body">
+                                        <h6 class="mb-3"><i class="fa fa-info-circle me-2"></i>Policy Status</h6>
+                                        <p class="mb-2"><strong>Reference Number:</strong> {{ $policyApplication->reference_number ?? 'N/A' }}</p>
+                                        <p class="mb-2">
+                                            <strong>Current Status:</strong> 
+                                            @php
+                                                $customerStatusBadges = [
+                                                    'submitted' => ['bg-secondary', 'Submitted'],
+                                                    'pay_now' => ['bg-warning text-dark', 'Payment Required'],
+                                                    'paid' => ['bg-info', 'Payment Received'],
+                                                    'processing' => ['bg-primary', 'Processing'],
+                                                    'active' => ['bg-success', 'Active'],
+                                                ];
+                                                $cs = $customerStatusBadges[$policyApplication->customer_status] ?? ['bg-secondary', ucfirst($policyApplication->customer_status)];
+                                            @endphp
+                                            <span class="badge {{ $cs[0] }}">{{ $cs[1] }}</span>
+                                        </p>
+                                        <p class="mb-0"><strong>Total Amount Due:</strong> <span class="text-success fs-5">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span></p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="alert alert-warning">
-                                    <h6 class="mb-2"><i class="fa fa-exclamation-triangle me-2"></i>Payment Instructions</h6>
-                                    <p class="mb-1">1. Make payment to the account details provided</p>
-                                    <p class="mb-1">2. Upload your payment receipt/proof below</p>
-                                    <p class="mb-0">3. Your policy will be processed once payment is verified</p>
+                                <div class="card border">
+                                    <div class="card-body">
+                                        <h6 class="mb-3"><i class="fa fa-file-invoice me-2"></i>Payment Instructions</h6>
+                                        <p class="mb-2">1. Make payment to the account details provided</p>
+                                        <p class="mb-2">2. Upload your payment receipt/proof below</p>
+                                        <p class="mb-0">3. Your policy will be processed once payment is verified</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1002,13 +1006,15 @@
                             </form>
                         @elseif($policyApplication->payment_document)
                             <!-- Payment Already Uploaded -->
-                            <div class="alert alert-success">
-                                <h6 class="mb-2"><i class="fa fa-check-circle me-2"></i>Payment Document Uploaded</h6>
-                                <p class="mb-1">Your payment proof has been received and is being processed.</p>
-                                <p class="mb-1"><strong>Uploaded:</strong> {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</p>
-                                <a href="{{ Storage::url($policyApplication->payment_document) }}" target="_blank" class="btn btn-sm btn-primary mt-2">
-                                    <i class="fa fa-eye me-1"></i>View Payment Document
-                                </a>
+                            <div class="card border border-success">
+                                <div class="card-body">
+                                    <h6 class="mb-3"><i class="fa fa-check-circle text-success me-2"></i>Payment Document Uploaded</h6>
+                                    <p class="mb-2">Your payment proof has been received and is being processed.</p>
+                                    <p class="mb-3"><strong>Uploaded:</strong> {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</p>
+                                    <a href="{{ Storage::url($policyApplication->payment_document) }}" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-eye me-1"></i>View Payment Document
+                                    </a>
+                                </div>
                             </div>
                             
                             <div class="row">
