@@ -47,9 +47,9 @@
                         </div>
                         
                         <!-- Debug Panel (for testing) -->
-                        <div class="mt-3">
+                        {{-- <div class="mt-3">
                             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleDebugPanel()">Toggle Debug Panel</button>
-                        </div>
+                        </div> --}}
                         <div id="debugPanel" class="mt-3" style="display: none;">
                             <div class="card bg-light">
                                 <div class="card-body">

@@ -135,6 +135,27 @@
             color: #fff !important;
         }
         
+        /* Form Label Color Fix for Light Background Cards */
+        .card.bg-light .form-label {
+            color: #333 !important;
+            font-weight: 500;
+        }
+        
+        .card.bg-light h6 {
+            color: #333 !important;
+        }
+        
+        /* Dark Mode Support for Light Background Cards */
+        body.dark-only .card.bg-light .form-label,
+        body.dark-sidebar .card.bg-light .form-label {
+            color: var(--body-font-color) !important;
+        }
+        
+        body.dark-only .card.bg-light h6,
+        body.dark-sidebar .card.bg-light h6 {
+            color: var(--body-font-color) !important;
+        }
+        
         /* Dark Mode Specific Overrides */
         body.dark-only .info-card,
         body.dark-sidebar .info-card {
@@ -979,28 +1000,123 @@
                         </div>
 
                         @if($policyApplication->customer_status === 'pay_now')
+                            <!-- Payment Method Selection -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <h6 class="mb-3"><i class="fa fa-coins me-2"></i>Select Payment Method</h6>
+                                    <div class="btn-group w-100" role="group">
+                                        <input type="radio" class="btn-check" name="payment_method" id="payment_proof_method" value="proof" checked>
+                                        <label class="btn btn-outline-primary" for="payment_proof_method">
+                                            <i class="fa fa-file-upload me-2"></i>Upload Payment Proof
+                                        </label>
+                                        
+                                        <input type="radio" class="btn-check" name="payment_method" id="credit_card_method" value="credit_card">
+                                        <label class="btn btn-outline-primary" for="credit_card_method">
+                                            <i class="fa fa-credit-card me-2"></i>Credit Card Payment
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Payment Upload Form -->
                             <form action="{{ route('client-policy.upload-payment', $policyApplication->id) }}" method="POST" enctype="multipart/form-data" id="paymentUploadForm">
                                 @csrf
+                                <input type="hidden" name="payment_type" id="payment_type" value="proof">
                                 
-                                <div class="row mb-4">
-                                    <div class="col-md-12">
-                                        <label for="payment_document" class="form-label fw-bold">
-                                            <i class="fa fa-upload me-2"></i>Upload Payment Proof <span class="text-danger">*</span>
-                                        </label>
-                                        <input type="file" class="form-control" id="payment_document" name="payment_document" accept=".pdf,.jpg,.jpeg,.png" required>
-                                        <small class="text-muted">Accepted formats: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
+                                <!-- Payment Proof Upload Section -->
+                                <div id="proofPaymentSection" class="payment-section">
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <label for="payment_document" class="form-label fw-bold">
+                                                <i class="fa fa-upload me-2"></i>Upload Payment Proof <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="file" class="form-control" id="payment_document" name="payment_document" accept=".pdf,.jpg,.jpeg,.png">
+                                            <small class="text-muted">Accepted formats: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 text-end">
+                                            <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary me-2">
+                                                <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
+                                            </a>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fa fa-check me-2"></i>Submit Payment Proof
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-12 text-end">
-                                        <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary me-2">
-                                            <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
-                                        </a>
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="fa fa-check me-2"></i>Submit Payment Proof
-                                        </button>
+                                <!-- Credit Card Payment Section -->
+                                <div id="creditCardSection" class="payment-section d-none">
+                                    <div class="card bg-light mb-4">
+                                        <div class="card-body">
+                                            <h6 class="mb-3"><i class="fa fa-lock me-2"></i>Credit Card Details</h6>
+                                            
+                                            <div class="row mb-3">
+                                                <div class="col-md-12">
+                                                    <label for="cardholder_name" class="form-label">
+                                                        Cardholder Name <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="cardholder_name" name="cardholder_name" placeholder="Full name as it appears on card">
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-12">
+                                                    <label for="card_number" class="form-label">
+                                                        Card Number <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" maxlength="19">
+                                                    <small class="text-muted">Enter 16 digits (spaces optional)</small>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label for="expiry_date" class="form-label">
+                                                        Expiry Date <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="expiry_date" name="expiry_date" placeholder="MM/YY" maxlength="5">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="cvv" class="form-label">
+                                                        CVV <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="4">
+                                                </div>
+                                            </div>
+
+                                            <div class="alert alert-info mb-0">
+                                                <i class="fa fa-info-circle me-2"></i>
+                                                <strong>Security Notice:</strong> Your card details will be encrypted and processed securely.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card border border-warning mb-3">
+                                                <div class="card-body">
+                                                    <h6 class="mb-2"><i class="fa fa-money-bill-wave me-2"></i>Payment Summary</h6>
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <span>Total Amount:</span>
+                                                        <strong class="text-success">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 text-end">
+                                            <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary me-2">
+                                                <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
+                                            </a>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fa fa-lock me-2"></i>Pay RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -1014,6 +1130,57 @@
                                     <a href="{{ Storage::url($policyApplication->payment_document) }}" target="_blank" class="btn btn-sm btn-primary">
                                         <i class="fa fa-eye me-1"></i>View Payment Document
                                     </a>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12 text-end">
+                                    <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                                        <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        @elseif($policyApplication->payment_method === 'credit_card' && $policyApplication->card_last_four)
+                            <!-- Credit Card Payment Received -->
+                            <div class="card border border-success">
+                                <div class="card-body">
+                                    <h6 class="mb-3"><i class="fa fa-check-circle text-success me-2"></i>Credit Card Payment Received</h6>
+                                    <p class="mb-2">Your payment has been successfully processed via credit card.</p>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Payment Method:</strong> Credit Card</p>
+                                            <p class="mb-1"><strong>Card Holder:</strong> {{ $policyApplication->card_holder_name ?? 'N/A' }}</p>
+                                            <p class="mb-1"><strong>Card Last 4 Digits:</strong> **** **** **** {{ $policyApplication->card_last_four }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Payment Date:</strong> {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</p>
+                                            <p class="mb-0"><strong>Amount Paid:</strong> <span class="text-success fw-bold">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12 text-end">
+                                    <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                                        <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Generic Payment Received (when status is paid but no specific document/card data) -->
+                            <div class="card border border-success">
+                                <div class="card-body">
+                                    <h6 class="mb-3"><i class="fa fa-check-circle text-success me-2"></i>Payment Received</h6>
+                                    <p class="mb-2">Your payment has been successfully received and processed.</p>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-0"><strong>Payment Date:</strong> {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-0"><strong>Amount Paid:</strong> <span class="text-success fw-bold">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -1061,6 +1228,91 @@
                     bsAlert.close();
                 });
             }, 5000);
+
+            // Payment method toggle
+            const proofMethod = document.getElementById('payment_proof_method');
+            const creditCardMethod = document.getElementById('credit_card_method');
+            const proofSection = document.getElementById('proofPaymentSection');
+            const creditCardSection = document.getElementById('creditCardSection');
+            const paymentTypeInput = document.getElementById('payment_type');
+            const paymentDocument = document.getElementById('payment_document');
+            const cardholderName = document.getElementById('cardholder_name');
+            const cardNumber = document.getElementById('card_number');
+            const expiryDate = document.getElementById('expiry_date');
+            const cvvInput = document.getElementById('cvv');
+
+            // Debug log
+            console.log('Payment Method Elements:', {
+                proofMethod,
+                creditCardMethod,
+                proofSection,
+                creditCardSection,
+                paymentTypeInput
+            });
+
+            if (proofMethod && creditCardMethod && proofSection && creditCardSection) {
+                proofMethod.addEventListener('change', function() {
+                    if (this.checked) {
+                        console.log('Proof method selected');
+                        proofSection.classList.remove('d-none');
+                        creditCardSection.classList.add('d-none');
+                        if (paymentTypeInput) paymentTypeInput.value = 'proof';
+                        // Update required validation
+                        if (paymentDocument) paymentDocument.setAttribute('required', 'required');
+                        if (cardholderName) cardholderName.removeAttribute('required');
+                        if (cardNumber) cardNumber.removeAttribute('required');
+                        if (expiryDate) expiryDate.removeAttribute('required');
+                        if (cvvInput) cvvInput.removeAttribute('required');
+                    }
+                });
+
+                creditCardMethod.addEventListener('change', function() {
+                    if (this.checked) {
+                        console.log('Credit card method selected');
+                        creditCardSection.classList.remove('d-none');
+                        proofSection.classList.add('d-none');
+                        if (paymentTypeInput) paymentTypeInput.value = 'credit_card';
+                        // Update required validation
+                        if (paymentDocument) paymentDocument.removeAttribute('required');
+                        if (cardholderName) cardholderName.setAttribute('required', 'required');
+                        if (cardNumber) cardNumber.setAttribute('required', 'required');
+                        if (expiryDate) expiryDate.setAttribute('required', 'required');
+                        if (cvvInput) cvvInput.setAttribute('required', 'required');
+                    }
+                });
+            } else {
+                console.error('Payment method elements not found!');
+            }
+
+            // Format card number input
+            const cardNumberInput = document.getElementById('card_number');
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                    let formattedValue = value.replace(/\B(?=(\d{4})+(?!\d))/g, ' ');
+                    e.target.value = formattedValue;
+                });
+            }
+
+            // Format expiry date input
+            const expiryDateInput = document.getElementById('expiry_date');
+            if (expiryDateInput) {
+                expiryDateInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) {
+                        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // CVV input - only numbers
+            const cvvInputField = document.getElementById('cvv');
+            if (cvvInputField) {
+                cvvInputField.addEventListener('input', function(e) {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                });
+            }
         });
     </script>
 @endsection

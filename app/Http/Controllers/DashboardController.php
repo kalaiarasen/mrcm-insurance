@@ -23,12 +23,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-            // Get policies awaiting payment for the current user
+            // Get all policies for the current user
             $policies = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'user.policyPricing'])
                 ->where('user_id', auth()->id())
-                ->where('customer_status', 'pay_now')
-                ->where('is_used', true)
-                ->orderBy('created_at', 'desc')
+                ->orderBy('updated_at', 'DESC')
                 ->get();
 
             $totalUsers = User::count();
@@ -96,19 +94,37 @@ class DashboardController extends Controller
     {
         $policyApplication = PolicyApplication::where('id', $id)
             ->where('user_id', auth()->id()) // Ensure user can only update their own policies
-            ->where('is_used', true)
             ->firstOrFail();
 
-        // Validate the payment document
-        $request->validate([
-            'payment_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
-        ]);
+        // Validate based on payment type
+        $paymentType = $request->input('payment_type', 'proof');
+
+        if ($paymentType === 'proof') {
+            // Validate the payment document
+            $request->validate([
+                'payment_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
+                'payment_type' => 'required|in:proof,credit_card',
+            ]);
+        } else {
+            // Validate credit card details
+            $request->validate([
+                'cardholder_name' => 'required|string|max:100',
+                'card_number' => ['required', 'regex:#^(\d{4}\s\d{4}\s\d{4}\s\d{4}|\d{16})$#'],
+                'expiry_date' => ['required', 'regex:#^\d{2}/\d{2}$#'],
+                'cvv' => ['required', 'regex:#^\d{3,4}$#'],
+                'payment_type' => 'required|in:proof,credit_card',
+            ], [
+                'card_number.regex' => 'Please enter a valid 16-digit card number.',
+                'expiry_date.regex' => 'Please enter expiry date in MM/YY format.',
+                'cvv.regex' => 'Please enter a valid CVV (3-4 digits).',
+            ]);
+        }
 
         DB::beginTransaction();
 
         try {
-            // Store the payment document
-            if ($request->hasFile('payment_document')) {
+            if ($paymentType === 'proof' && $request->hasFile('payment_document')) {
+                // Store the payment document
                 $file = $request->file('payment_document');
                 $filename = 'payment_' . $policyApplication->id . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $path = $file->storeAs('payment-documents', $filename, 'public');
@@ -118,37 +134,50 @@ class DashboardController extends Controller
                     Storage::disk('public')->delete($policyApplication->payment_document);
                 }
 
-                // Update policy application with payment document and change both statuses to 'paid'
                 $policyApplication->payment_document = $path;
-                $policyApplication->customer_status = 'paid';
-                $policyApplication->admin_status = 'paid';
-                $policyApplication->payment_received_at = now();
-                $policyApplication->save();
-
-                DB::commit();
-
-                return redirect()
-                    ->route('dashboard')
-                    ->with('success', 'Payment document uploaded successfully! Your policy status has been updated to Paid.');
+            } elseif ($paymentType === 'credit_card') {
+                // Store masked credit card info
+                $cardNumber = str_replace(' ', '', $request->input('card_number'));
+                $maskedCard = substr($cardNumber, -4);
+                $maskedCard = str_repeat('*', 12) . $maskedCard;
+                
+                // Store credit card info (in production, use tokenization)
+                $policyApplication->payment_method = 'credit_card';
+                $policyApplication->card_holder_name = $request->input('cardholder_name');
+                $policyApplication->card_last_four = substr($cardNumber, -4);
+                // Note: In production, never store full card details in the database
+                // Use a payment gateway like Stripe or 2Checkout
             }
 
-            DB::rollBack();
+            // Update policy application with payment status
+            $policyApplication->customer_status = 'paid';
+            $policyApplication->admin_status = 'paid';
+            $policyApplication->payment_received_at = now();
+            $policyApplication->save();
+
+            DB::commit();
+
+            $message = $paymentType === 'proof' 
+                ? 'Payment document uploaded successfully! Your policy status has been updated to Paid.'
+                : 'Credit card payment received successfully! Your policy status has been updated to Paid.';
+
             return redirect()
-                ->back()
-                ->with('error', 'Failed to upload payment document. Please try again.');
+                ->route('dashboard')
+                ->with('success', $message);
 
         } catch (\Exception $e) {
             DB::rollBack();
             
-            Log::error('Failed to upload payment document', [
+            Log::error('Failed to process payment', [
                 'policy_id' => $id,
                 'user_id' => auth()->id(),
+                'payment_type' => $paymentType,
                 'error' => $e->getMessage(),
             ]);
 
             return redirect()
                 ->back()
-                ->with('error', 'Failed to upload payment document. Please try again.');
+                ->with('error', 'Failed to process payment. Please try again.');
         }
     }
 }

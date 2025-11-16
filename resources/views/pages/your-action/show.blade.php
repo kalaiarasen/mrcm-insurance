@@ -1013,15 +1013,39 @@
                                 </div>
                             </div>
                         @else
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <div class="alert alert-warning">
-                                        <i class="fa fa-exclamation-triangle me-2"></i>
-                                        <strong>No payment document uploaded yet.</strong>
-                                        <p class="mb-0 mt-1 small">Client will upload payment proof once they complete the payment.</p>
+                            @if($policyApplication->payment_method === 'credit_card' && $policyApplication->card_last_four)
+                                <!-- Credit Card Payment Info -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="mb-3"><i class="fa fa-check-circle text-success me-2"></i>Credit Card Payment Received</h6>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Payment Method:</strong> Credit Card</p>
+                                                        <p class="mb-1"><strong>Card Holder:</strong> {{ $policyApplication->card_holder_name ?? 'N/A' }}</p>
+                                                        <p class="mb-0"><strong>Card Last 4:</strong> **** **** **** {{ $policyApplication->card_last_four }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Payment Date:</strong> {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</p>
+                                                        <p class="mb-0"><strong>Amount:</strong> <span class="text-success fw-bold">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @else
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="alert alert-warning">
+                                            <i class="fa fa-exclamation-triangle me-2"></i>
+                                            <strong>No payment document uploaded yet.</strong>
+                                            <p class="mb-0 mt-1 small">Client will upload payment proof once they complete the payment.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @endif
 
                         <div class="row mt-3">

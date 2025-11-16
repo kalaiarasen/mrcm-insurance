@@ -167,14 +167,14 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
-                        <h5>Policies Awaiting Payment</h5>
-                        <p class="f-m-light mt-1">Complete your payment to activate your policy</p>
+                        <h5>Policies</h5>
+                        <p class="f-m-light mt-1">View all your insurance policies</p>
                     </div>
                     <div class="card-body">
                         @if($policies->isEmpty())
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle me-2"></i>
-                                You have no policies awaiting payment at the moment.
+                                You have no policies at the moment.
                             </div>
                         @else
                             <div class="table-responsive">
@@ -194,20 +194,45 @@
                                     <tbody>
                                         @foreach($policies as $policy)
                                             <tr>
-                                                <td><strong>{{ $policy->reference_number ?? 'N/A' }}</strong></td>
+                                                <td><strong>{{ $policy->reference_number ?? '-'}}</strong></td>
                                                 <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}</td>
                                                 <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->cover_type ?? 'N/A')) }}</td>
                                                 <td>RM {{ number_format(($policy->user->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M</td>
                                                 <td>RM {{ number_format($policy->user->policyPricing->total_payable ?? 0, 2) }}</td>
                                                 <td>
-                                                    <span class="badge bg-warning text-dark">
-                                                        <i class="fa fa-clock me-1"></i>Payment Required
-                                                    </span>
+                                                    @if($policy->customer_status === 'pay_now')
+                                                        <span class="badge bg-warning text-dark">
+                                                            <i class="fa fa-clock me-1"></i>Payment Required
+                                                        </span>
+                                                    @elseif($policy->customer_status === 'paid')
+                                                        <span class="badge bg-success">
+                                                            <i class="fa fa-check me-1"></i>Paid
+                                                        </span>
+                                                    @elseif($policy->customer_status === 'approved')
+                                                        <span class="badge bg-info">
+                                                            <i class="fa fa-check-circle me-1"></i>Approved
+                                                        </span>
+                                                    @elseif($policy->customer_status === 'active')
+                                                        <span class="badge bg-success">
+                                                            <i class="fa fa-check-circle me-1"></i>Active
+                                                        </span>
+                                                    @elseif($policy->customer_status === 'processing')
+                                                        <span class="badge bg-info">
+                                                            <i class="fa fa-spinner me-1"></i>Processing
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-secondary">
+                                                            {{ ucfirst(str_replace('_', ' ', $policy->customer_status)) }}
+                                                        </span>
+                                                    @endif
                                                 </td>
                                                 <td>{{ $policy->created_at->format('d M Y') }}</td>
                                                 <td>
                                                     <a href="{{ route('client-policy.show', $policy->id) }}" class="btn btn-primary btn-sm">
-                                                        <i class="fa fa-eye me-1"></i>View & Pay
+                                                        <i class="fa fa-eye me-1"></i>View
+                                                        @if($policy->customer_status === 'pay_now')
+                                                            & Pay
+                                                        @endif
                                                     </a>
                                                 </td>
                                             </tr>
@@ -467,7 +492,9 @@
     <script src="{{ asset('assets/js/datatable/datatables/datatable.custom2.js') }}"></script>
     <script>
         $(document).ready(function () {
-            $(".datatable").DataTable();
+            $(".datatable").DataTable({
+                "order": [[6, "desc"]]  // Sort by Submitted Date column (index 6) in descending order
+            });
         });
     </script>
 @endsection
