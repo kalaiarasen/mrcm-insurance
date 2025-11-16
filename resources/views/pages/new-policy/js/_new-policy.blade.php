@@ -403,6 +403,7 @@
         const step2Data = loadFormData(2);
         const serviceType = step2Data.service_type || '';
         const coverType = step2Data.cover_type || '';
+        const specialtyArea = step2Data.specialty_area || '';
         
         const locumExtensionButtonSection = document.getElementById('locumExtensionButtonSection');
         
@@ -424,9 +425,11 @@
         
         // Show locum extension button if:
         // 1. It's General Cover (Government Medical Officer) and service supports it, OR
-        // 2. The cover_type itself is one of the services with locum (Private General Practitioner)
+        // 2. The cover_type itself is one of the services with locum (Private General Practitioner), OR
+        // 3. It's Private General Practitioner (specialtyArea) with specific service types
         const shouldShowLocum = (coverType === 'general_cover' && servicesWithLocum.includes(serviceType)) || 
-                                servicesWithLocum.includes(coverType);
+                                servicesWithLocum.includes(coverType) ||
+                                (specialtyArea === 'general_practitioner' && servicesWithLocum.includes(serviceType));
         
         if (shouldShowLocum) {
             locumExtensionButtonSection.style.display = 'block';
@@ -949,6 +952,19 @@
             }
         }
         
+        // General Practitioner + specific service types pricing
+        // Check if specialty is General Practitioner
+        if (specialtyArea === 'general_practitioner') {
+            // Core Services: RM 950
+            if (serviceType === 'core_services') {
+                return 950;
+            }
+            // Core Services with Procedures: RM 1,250
+            if (serviceType === 'core_services_with_procedures') {
+                return 1250;
+            }
+        }
+        
         // Lecturer/Trainee (Non-Practicing) - Based on liability limit
         if (employmentStatus === 'non_practicing' && specialtyArea === 'lecturer_trainee') {
             if (liabilityLimit === '2000000') {
@@ -999,6 +1015,11 @@
         
         // If it's General Cover, use the specific rates
         if (coverType === 'general_cover' && generalCoverRates[serviceType]) {
+            return generalCoverRates[serviceType].basePremium;
+        }
+        
+        // If it's Private General Practitioner with specific service types, use the generalCoverRates
+        if (specialtyArea === 'general_practitioner' && generalCoverRates[serviceType]) {
             return generalCoverRates[serviceType].basePremium;
         }
         
@@ -1162,6 +1183,7 @@
         
         const serviceType = step2Data.service_type || step2Data.cover_type || '';
         const coverType = step2Data.cover_type || '';
+        const specialtyArea = step2Data.specialty_area || '';
         const liabilityLimit = step3Data.liability_limit || '';
         const locumExtensionRaw = step3Data.locum_extension;
         
@@ -1171,6 +1193,25 @@
         // If locum extension is not enabled, return 0
         if (!locumExtension) {
             return 0;
+        }
+        
+        // Private General Practitioner with specialty - Locum Extension rates
+        if (specialtyArea === 'general_practitioner') {
+            if (serviceType === 'core_services') {
+                return 350;  // Core Services: RM 1,300 total (950 + 350)
+            }
+            if (serviceType === 'core_services_with_procedures') {
+                return 450;  // Core Services with Procedures: RM 1,700 total (1250 + 450)
+            }
+            if (serviceType === 'general_practitioner_with_obstetrics') {
+                return 450;  // General Practitioner with Obstetrics: RM 4,250 total (3800 + 450)
+            }
+            if (serviceType === 'cosmetic_aesthetic_non_invasive') {
+                return 400;  // Cosmetic & Aesthetic Non-Invasive: RM 2,400 total (2000 + 400)
+            }
+            if (serviceType === 'cosmetic_aesthetic_non_surgical_invasive') {
+                return 450;  // Cosmetic & Aesthetic Non-Surgical Invasive: RM 4,250 total (3800 + 450)
+            }
         }
         
         // Dental General Cover - Locum Extension rates based on service type and liability limit
@@ -1212,11 +1253,9 @@
             }
         };
         
-        // Check both General Cover path and Private GP path
-        const checkService = (coverType === 'general_cover') ? serviceType : coverType;
-        
-        if (generalCoverRates[checkService]) {
-            const rates = generalCoverRates[checkService];
+        // Check General Cover path only (not Private GP path anymore)
+        if (coverType === 'general_cover' && generalCoverRates[serviceType]) {
+            const rates = generalCoverRates[serviceType];
             if (rates.withLocum) {
                 const additionalCost = rates.withLocum - rates.basePremium;
                 return additionalCost;
