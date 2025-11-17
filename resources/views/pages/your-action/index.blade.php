@@ -369,12 +369,12 @@
                                             </td>
                                             <td>
                                                 <ul class="action">
-                                                    <li class="view">
+                                                    <li class="view me-2">
                                                         <a href="{{ route('for-your-action.show', $policy['id']) }}" title="View Details">
                                                             <i class="fa-regular fa-eye"></i>
                                                         </a>
                                                     </li>
-                                                    @if(in_array($policy['status'], ['Rejected', 'Submitted']))
+                                                    @if(in_array($policy['status'], ['New Case', 'Rejected']))
                                                     <li class="delete">
                                                         <form action="{{ route('for-your-action.destroy', $policy['id']) }}" 
                                                             method="POST" 
@@ -382,7 +382,7 @@
                                                             onsubmit="return confirm('Are you sure you want to delete this policy application?');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="border-0 bg-transparent p-0" title="Delete">
+                                                            <button type="submit" class="border-0 bg-transparent p-0" onclick="return confirm('Are you sure')" title="Delete">
                                                                 <i class="fa-regular fa-trash-can"></i>
                                                             </button>
                                                         </form>

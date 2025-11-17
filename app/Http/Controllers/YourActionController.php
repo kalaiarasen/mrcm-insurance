@@ -402,19 +402,10 @@ class YourActionController extends Controller
     {
         $policyApplication = PolicyApplication::findOrFail($id);
 
-        // Only allow deletion for rejected and submitted status
-        if (!in_array($policyApplication->status, ['rejected', 'submitted'])) {
-            return redirect()
-                ->back()
-                ->with('error', 'Only applications with "Rejected" or "Submitted" status can be deleted.');
-        }
-
         DB::beginTransaction();
 
         try {
             $userId = $policyApplication->user_id;
-            
-            // Delete the policy application
             $policyApplication->delete();
 
             DB::commit();

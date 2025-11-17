@@ -245,7 +245,7 @@ class ClaimsController extends Controller
             $claim = Claim::findOrFail($id);
             
             // Update claim
-            $claim->status = $validated['status'];
+            $claim->status = $request->status;
             if (isset($validated['admin_notes'])) {
                 $claim->admin_notes = $validated['admin_notes'];
             }

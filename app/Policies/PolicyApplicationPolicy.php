@@ -39,7 +39,7 @@ class PolicyApplicationPolicy
     public function update(User $user, PolicyApplication $policyApplication): bool
     {
         // Check if user has admin role or permission
-        return $user->hasRole('admin') || $user->hasRole('super-admin');
+        return $user->hasAnyRole(['Super Admin', 'Admin', 'Agent']);
     }
 
     /**
