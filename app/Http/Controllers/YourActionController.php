@@ -15,15 +15,14 @@ class YourActionController extends Controller
      */
     public function index()
     {
-        // Count policies by admin_status (only is_used = true)
-        $newPolicies = PolicyApplication::where('admin_status', 'new_case')->where('is_used', true)->count();
-        $activePolicies = PolicyApplication::where('admin_status', 'active')->where('is_used', true)->count();
-        $pendingPolicies = PolicyApplication::where('admin_status', 'not_paid')->where('is_used', true)->count();
-        $rejectedPolicies = PolicyApplication::where('status', 'rejected')->where('is_used', true)->count();
+        // Count policies by admin_status (show all, no is_used filter)
+        $newPolicies = PolicyApplication::where('admin_status', 'new_case')->count();
+        $activePolicies = PolicyApplication::where('admin_status', 'active')->count();
+        $pendingPolicies = PolicyApplication::where('admin_status', 'not_paid')->count();
+        $rejectedPolicies = PolicyApplication::where('status', 'rejected')->count();
 
-        // Get all policies with related user data for the table (only is_used = true)
+        // Get all policies with related user data for the table (show all, no is_used filter)
         $policies = PolicyApplication::with('user')
-            ->where('is_used', true)
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($policy) {
@@ -66,7 +65,7 @@ class YourActionController extends Controller
      */
     public function show($id)
     {
-        // Find the policy application with all related data
+        // Find the policy application with all related data (no is_used filter)
         $policyApplication = PolicyApplication::with([
             'user.applicantProfile',
             'user.qualifications',
@@ -80,7 +79,6 @@ class YourActionController extends Controller
             'actionBy'
         ])
         ->where('id', $id)
-        ->where('is_used', true)
         ->firstOrFail();
 
         return view('pages.your-action.show', compact('policyApplication'));
@@ -92,7 +90,6 @@ class YourActionController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $policyApplication = PolicyApplication::where('id', $id)
-            ->where('is_used', true)
             ->firstOrFail();
 
         // Validate request
@@ -183,7 +180,7 @@ class YourActionController extends Controller
      */
     public function edit($id)
     {
-        // Find the policy application with all related data
+        // Find the policy application with all related data (no is_used filter)
         $policyApplication = PolicyApplication::with([
             'user.applicantProfile',
             'user.qualifications',
@@ -196,7 +193,6 @@ class YourActionController extends Controller
             'user.claimsExperience',
         ])
         ->where('id', $id)
-        ->where('is_used', true)
         ->firstOrFail();
 
         return view('pages.your-action.edit', compact('policyApplication'));
@@ -208,7 +204,6 @@ class YourActionController extends Controller
     public function update(Request $request, $id)
     {
         $policyApplication = PolicyApplication::where('id', $id)
-            ->where('is_used', true)
             ->firstOrFail();
 
         // Start transaction
@@ -397,6 +392,48 @@ class YourActionController extends Controller
                 'message' => 'Failed to update application. Please try again.',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    /**
+     * Delete a policy application (only for rejected and submitted status)
+     */
+    public function destroy($id)
+    {
+        $policyApplication = PolicyApplication::findOrFail($id);
+
+        // Only allow deletion for rejected and submitted status
+        if (!in_array($policyApplication->status, ['rejected', 'submitted'])) {
+            return redirect()
+                ->back()
+                ->with('error', 'Only applications with "Rejected" or "Submitted" status can be deleted.');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $userId = $policyApplication->user_id;
+            
+            // Delete the policy application
+            $policyApplication->delete();
+
+            DB::commit();
+
+            return redirect()
+                ->route('for-your-action')
+                ->with('success', 'Policy application deleted successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Failed to delete policy application', [
+                'policy_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to delete application. Please try again.');
         }
     }
 

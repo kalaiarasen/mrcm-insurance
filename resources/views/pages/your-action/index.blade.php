@@ -374,6 +374,20 @@
                                                             <i class="fa-regular fa-eye"></i>
                                                         </a>
                                                     </li>
+                                                    @if(in_array($policy['status'], ['Rejected', 'Submitted']))
+                                                    <li class="delete">
+                                                        <form action="{{ route('for-your-action.destroy', $policy['id']) }}" 
+                                                            method="POST" 
+                                                            class="d-inline"
+                                                            onsubmit="return confirm('Are you sure you want to delete this policy application?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="border-0 bg-transparent p-0" title="Delete">
+                                                                <i class="fa-regular fa-trash-can"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    @endif
                                                 </ul>
                                             </td>
                                         </tr>
