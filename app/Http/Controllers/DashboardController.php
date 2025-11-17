@@ -99,7 +99,6 @@ class DashboardController extends Controller
         ])
         ->where('id', $id)
         ->where('user_id', auth()->id()) // Ensure user can only view their own policies
-        ->where('is_used', true)
         ->firstOrFail();
 
         return view('pages.client-policy.show', compact('policyApplication'));
