@@ -103,7 +103,7 @@
                             <a href="#" class="btn btn-outline-success">
                                 <i class="fa fa-file-text me-2"></i>View My Policies
                             </a>
-                            <a href="#" class="btn btn-outline-info">
+                            <a href="#" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#fileClaimModal">
                                 <i class="fa fa-exclamation-triangle me-2"></i>File a Claim
                             </a>
                             <a href="#" class="btn btn-outline-secondary">
@@ -246,237 +246,201 @@
             </div>
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header pb-0 card-no-border">
-                        <h5>Claims Notification</h5>
-                        <p class="f-m-light mt-1">Claims and Notifications History</p>
+                    <div class="card-header pb-0 card-no-border d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5>Claims Notification</h5>
+                            <p class="f-m-light mt-1">Claims and Notifications History</p>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="display table-striped border datatable">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Office</th>
-                                        <th>Age</th>
-                                        <th>Start date</th>
-                                        <th>Salary</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Tiger Nixon</td>
-                                        <td>System Architect</td>
-                                        <td>Edinburgh</td>
-                                        <td>61</td>
-                                        <td>25/04/2011</td>
-                                        <td>$320,800</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Garrett Winters</td>
-                                        <td>Accountant</td>
-                                        <td>Tokyo</td>
-                                        <td>63</td>
-                                        <td>25/07/2015</td>
-                                        <td>$170,750</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Ashton Cox</td>
-                                        <td>Junior Technical Author</td>
-                                        <td>San Francisco</td>
-                                        <td>66</td>
-                                        <td>12/01/2009</td>
-                                        <td>$86,000</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Cedric Kelly</td>
-                                        <td>Senior Javascript Developer</td>
-                                        <td>Edinburgh</td>
-                                        <td>22</td>
-                                        <td>29/03/2016</td>
-                                        <td>$433,060</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Airi Satou</td>
-                                        <td>Accountant</td>
-                                        <td>Tokyo</td>
-                                        <td>33</td>
-                                        <td>28/11/2008</td>
-                                        <td>$162,700</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Brielle Williamson</td>
-                                        <td>Integration Specialist</td>
-                                        <td>New York</td>
-                                        <td>61</td>
-                                        <td>02/12/2012</td>
-                                        <td>$372,000</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Herrod Chandler</td>
-                                        <td>Sales Assistant</td>
-                                        <td>San Francisco</td>
-                                        <td>59</td>
-                                        <td>06/08/2012</td>
-                                        <td>$137,500</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rhona Davidson</td>
-                                        <td>Integration Specialist</td>
-                                        <td>Tokyo</td>
-                                        <td>55</td>
-                                        <td>14/10/2010</td>
-                                        <td>$327,900</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Colleen Hurst</td>
-                                        <td>Javascript Developer</td>
-                                        <td>San Francisco</td>
-                                        <td>39</td>
-                                        <td>15/09/2009</td>
-                                        <td>$205,500</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sonya Frost</td>
-                                        <td>Software Engineer</td>
-                                        <td>Edinburgh</td>
-                                        <td>23</td>
-                                        <td>13/12/2008</td>
-                                        <td>$103,600</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jena Gaines</td>
-                                        <td>Office Manager</td>
-                                        <td>London</td>
-                                        <td>30</td>
-                                        <td>19/12/2008</td>
-                                        <td>$90,560</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Quinn Flynn</td>
-                                        <td>Support Lead</td>
-                                        <td>Edinburgh</td>
-                                        <td>22</td>
-                                        <td>03/03/2013</td>
-                                        <td>$342,000</td>
-                                        <td>
-                                            <ul class="action">
-                                                <li class="edit"> <a href="#!"><i
-                                                            class="fa-regular fa-pen-to-square"></i></a>
-                                                </li>
-                                                <li class="delete"><a href="#!"><i
-                                                            class="fa-solid fa-trash-can"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        @if($claims->count() > 0)
+                            <div class="table-responsive">
+                                <table class="display table-striped border datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>Claim Title</th>
+                                            <th>Policy</th>
+                                            <th>Incident Date</th>
+                                            <th>Status</th>
+                                            <th>Documents</th>
+                                            <th>Created Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($claims as $claim)
+                                            <tr>
+                                                <td><strong>{{ $claim->claim_title }}</strong></td>
+                                                <td>
+                                                    @if($claim->policyApplication)
+                                                        <small class="text-muted">{{ $claim->policyApplication->reference_number ?? 'N/A' }}</small>
+                                                    @else
+                                                        <span class="badge bg-secondary">No Policy</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $claim->incident_date?->format('d M Y') ?? 'N/A' }}</td>
+                                                <td>
+                                                    @php
+                                                        $statusColors = [
+                                                            'pending' => 'warning',
+                                                            'approved' => 'success',
+                                                            'rejected' => 'danger',
+                                                            'closed' => 'secondary',
+                                                        ];
+                                                        $statusColor = $statusColors[$claim->status] ?? 'secondary';
+                                                    @endphp
+                                                    <span class="badge bg-{{ $statusColor }}">
+                                                        {{ ucfirst($claim->status) }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info">{{ $claim->claimDocuments->count() }}</span>
+                                                </td>
+                                                <td>{{ $claim->created_at->format('d M Y') }}</td>
+                                                <td>
+                                                    <ul class="action">
+                                                        <li class="edit">
+                                                            <a href="{{ route('claims.show', $claim->id) }}" title="View">
+                                                                <i class="fa fa-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center py-4">
+                                <i class="fa fa-inbox fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No claims filed yet.</p>
+                                <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#fileClaimModal">
+                                    <i class="fa fa-file-alt me-1"></i>File Your First Claim
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div><!-- Container-fluid Ends-->
+
+<!-- File Claim Modal -->
+<div class="modal fade" id="fileClaimModal" tabindex="-1" aria-labelledby="fileClaimModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="fileClaimModalLabel">
+                    <i class="fa fa-file-alt me-2"></i>File a Claim
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('claims.store') }}" method="POST" enctype="multipart/form-data" id="fileClaimForm">
+                @csrf
+                <div class="modal-body">
+                    @if($activePoliciesForClaims->isEmpty())
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            <strong>No Active Policies Available</strong>
+                            <p class="mb-0">You need an active policy from this year to file a claim. Please create or activate a policy first.</p>
+                        </div>
+                    @else
+                        <!-- Policy Selection -->
+                        <div class="mb-3">
+                            <label for="policy_id" class="form-label fw-bold">
+                                Select Policy <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="policy_id" name="policy_application_id" required>
+                                <option value="">-- Choose a Policy --</option>
+                                @foreach($activePoliciesForClaims as $policy)
+                                    <option value="{{ $policy->id }}">
+                                        {{ $policy->reference_number }} - {{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Only active policies created in {{ now()->year }} are shown</small>
+                        </div>
+
+                        <!-- Action Type -->
+                        <div class="mb-3">
+                            <label for="action" class="form-label fw-bold">
+                                Action <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="action" name="action" required>
+                                <option value="new" selected>New</option>
+                            </select>
+                            <small class="text-muted">This will be the status of your claim</small>
+                        </div>
+
+                        <hr>
+
+                        <!-- Incident Details -->
+                        <h6 class="mb-3 text-primary">
+                            <i class="fa fa-calendar-alt me-2"></i>Claim Internation Details
+                        </h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="incident_date" class="form-label fw-bold">
+                                    Incident Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="incident_date" name="incident_date" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="notification_date" class="form-label fw-bold">
+                                    Notification Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="notification_date" name="notification_date" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="claim_title" class="form-label fw-bold">
+                                Claim Title <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="claim_title" name="claim_title" placeholder="e.g., Lip paraesthesia after extraction" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="claim_description" class="form-label fw-bold">
+                                Claim Detail Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="claim_description" name="claim_description" rows="4" placeholder="Describe the incident details..." required></textarea>
+                        </div>
+
+                        <hr>
+
+                        <!-- Document Upload -->
+                        <h6 class="mb-3 text-primary">
+                            <i class="fa fa-upload me-2"></i>Uploaded Claim Internation Documents
+                        </h6>
+
+                        <div class="mb-3">
+                            <label for="claim_documents" class="form-label fw-bold">
+                                Upload Documents <span class="text-muted">(Optional)</span>
+                            </label>
+                            <input type="file" class="form-control" id="claim_documents" name="claim_documents[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small class="text-muted">You can upload multiple files (PDF, DOC, DOCX, JPG, PNG). Max 5MB per file.</small>
+                            <div id="fileList" class="mt-2"></div>
+                        </div>
+                    @endif
+                </div>
+                @if(!$activePoliciesForClaims->isEmpty())
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-info">
+                            <i class="fa fa-paper-plane me-2"></i>Submit Claim
+                        </button>
+                    </div>
+                @endif
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 @section('scripts')
     <script src="{{ asset('assets/js/clock.js') }}"></script>
@@ -495,6 +459,32 @@
             $(".datatable").DataTable({
                 "order": [[6, "desc"]]  // Sort by Submitted Date column (index 6) in descending order
             });
+
+            // File upload preview
+            document.getElementById('claim_documents').addEventListener('change', function(e) {
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = '';
+                
+                Array.from(this.files).forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'alert alert-light d-flex justify-content-between align-items-center mb-2';
+                    fileItem.innerHTML = `
+                        <span>
+                            <i class="fa fa-file me-2"></i>${file.name}
+                            <small class="text-muted ms-2">(${(file.size / 1024 / 1024).toFixed(2)} MB)</small>
+                        </span>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            });
+
+            // Set today's date as default for dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('incident_date').value = today;
+            document.getElementById('notification_date').value = today;
         });
     </script>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Claim;
 use App\Models\User;
 use App\Models\PolicyApplication;
 use Illuminate\Http\Request;
@@ -23,20 +24,37 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-            // Get all policies for the current user
+            // Get all policies for the current user (for display table)
             $policies = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'user.policyPricing'])
                 ->where('user_id', auth()->id())
                 ->orderBy('updated_at', 'DESC')
                 ->get();
 
+            // Get active policies from this year for claims modal (only active, created in current year)
+            $activePoliciesForClaims = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'user.policyPricing'])
+                ->where('user_id', auth()->id())
+                ->where('customer_status', 'active')
+                ->whereYear('created_at', now()->year)
+                ->orderBy('reference_number', 'ASC')
+                ->get();
+
+            // Get all claims for the current user
+            $claims = Claim::with(['policyApplication', 'claimDocuments'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->take(10)
+                ->get();
+
             $totalUsers = User::count();
             $totalPolicies = PolicyApplication::where('user_id', auth()->id())->where('is_used', true)->count();
-            $totalClaims = 0;
+            $totalClaims = Claim::where('user_id', auth()->id())->count();
             $monthlyRevenue = 0;
 
             return view('dashboard-client', compact(
                 'announcements',
                 'policies',
+                'activePoliciesForClaims',
+                'claims',
                 'totalUsers',
                 'totalPolicies',
                 'totalClaims',

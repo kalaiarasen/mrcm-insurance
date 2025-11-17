@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\ClaimsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PolicyController;
@@ -48,7 +49,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::redirect('settings', 'settings/profile');
 
-    Route::view('claims', 'pages.claim.index')->name('claim');
+    Route::resource('claims', ClaimsController::class);
+    Route::get('claims/{claim}/documents/{document}/download', [ClaimsController::class, 'downloadDocument'])->name('claims.documents.download');
+    Route::put('claims/{claim}/status', [ClaimsController::class, 'updateStatus'])->name('claims.updateStatus');
     Route::get('new-policy', [PolicyController::class, 'newPolicy'])->name('new-policy');
 
     Route::post('policies/submit', [PolicySubmissionController::class, 'submit'])

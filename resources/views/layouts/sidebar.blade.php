@@ -123,14 +123,14 @@
                     </li>
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('claim') ? 'active' : '' }}" href="{{ route('claim') }}">
+                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('claims.*') ? 'active' : '' }}" href="{{ route('claims.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-email') }}"></use>
                             </svg>
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-email') }}"></use>
                             </svg>
-                            <span>Claims</span>
+                            <span>Claims Management</span>
                         </a>
                     </li>
                     {{-- <li class="sidebar-list">
