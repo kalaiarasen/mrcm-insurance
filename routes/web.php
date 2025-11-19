@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('for-your-action', [YourActionController::class, 'index'])->name('for-your-action');
     Route::get('for-your-action/{id}', [YourActionController::class, 'show'])->name('for-your-action.show');
+    Route::get('for-your-action/{id}/export-pdf', [YourActionController::class, 'exportPdf'])->name('for-your-action.export-pdf');
     Route::get('for-your-action/{id}/edit', [YourActionController::class, 'edit'])->name('for-your-action.edit');
     Route::put('for-your-action/{id}/update-status', [YourActionController::class, 'updateStatus'])->name('for-your-action.update-status');
     Route::put('for-your-action/{id}/update', [YourActionController::class, 'update'])->name('for-your-action.update');

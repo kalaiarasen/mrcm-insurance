@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class YourActionController extends Controller
 {
@@ -434,6 +435,61 @@ class YourActionController extends Controller
                 ->back()
                 ->with('error', 'Failed to delete application. Please try again.');
         }
+    }
+
+    /**
+     * Export policy application as PDF
+     */
+    public function exportPdf($id)
+    {
+        // Find the policy application with all related data
+        $policyApplication = PolicyApplication::with([
+            'user.applicantProfile',
+            'user.qualifications',
+            'user.addresses',
+            'user.applicantContact',
+            'user.healthcareService',
+            'user.policyPricing',
+            'user.riskManagement',
+            'user.insuranceHistory',
+            'user.claimsExperience',
+        ])
+        ->where('id', $id)
+        ->firstOrFail();
+
+        // Extract related data for easier access in the view
+        $profile = $policyApplication->user->applicantProfile;
+        $qualifications = $policyApplication->user->qualifications;
+        $addresses = $policyApplication->user->addresses;
+        $contact = $policyApplication->user->applicantContact;
+        $healthcare = $policyApplication->user->healthcareService;
+        $pricing = $policyApplication->user->policyPricing;
+        $risk = $policyApplication->user->riskManagement;
+        $insurance = $policyApplication->user->insuranceHistory;
+        $claims = $policyApplication->user->claimsExperience;
+
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.policy-application', compact(
+            'policyApplication',
+            'profile',
+            'qualifications',
+            'addresses',
+            'contact',
+            'healthcare',
+            'pricing',
+            'risk',
+            'insurance',
+            'claims'
+        ));
+
+        // Set paper size and orientation
+        $pdf->setPaper('A4', 'portrait');
+
+        // Generate filename
+        $filename = 'Policy_Application_' . ($policyApplication->reference_number ?? 'MRCM#' . $policyApplication->id) . '.pdf';
+
+        // Stream the PDF (display in browser)
+        return $pdf->stream($filename);
     }
 
     /**
