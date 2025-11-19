@@ -23,7 +23,7 @@ class YourActionController extends Controller
 
         // Get all policies with related user data for the table (show all, no is_used filter)
         $policies = PolicyApplication::with('user')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc')
             ->get()
             ->map(function ($policy) {
                 // Determine type based on submission_version or if it's a renewal
@@ -146,6 +146,14 @@ class YourActionController extends Controller
                     $policyApplication->admin_status = 'sent_uw';
                     $policyApplication->sent_to_underwriter_at = now();
                     break;
+                    
+                case 'rejected':
+                    // When admin rejects:
+                    // Customer Status → rejected
+                    // Admin Status → rejected
+                    $policyApplication->customer_status = 'rejected';
+                    $policyApplication->admin_status = 'rejected';
+                    break;
             }
 
             $policyApplication->save();
@@ -158,7 +166,7 @@ class YourActionController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('for-your-action.show', $policyApplication->id)
+                ->route('for-your-action')
                 ->with('success', "Application status updated from '{$oldStatus}' to '{$newStatus}' successfully!");
 
         } catch (\Exception $e) {

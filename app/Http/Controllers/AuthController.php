@@ -38,7 +38,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'))->with('success', 'Welcome back!');
+            
+            // Check user role and redirect accordingly
+            $user = Auth::user();
+            if ($user->hasRole('Client')) {
+                return redirect()->intended(route('dashboard'))->with('success', 'Welcome back!');
+            } else {
+                // For Super Admin, Admin, Agent - redirect to for-your-action
+                return redirect()->intended(route('for-your-action'))->with('success', 'Welcome back!');
+            }
         }
 
         return back()->withErrors([

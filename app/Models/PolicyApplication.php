@@ -23,6 +23,9 @@ class PolicyApplication extends Model
         'activated_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'card_type' => 'array',
+        'relationship' => 'array',
+        'authorize_payment' => 'boolean',
     ];
 
     /**

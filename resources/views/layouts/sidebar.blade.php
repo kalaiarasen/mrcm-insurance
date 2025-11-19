@@ -22,7 +22,7 @@
                             <h6>Pinned</h6>
                         </div>
                     </li>
-                    <li class="sidebar-list">
+                    {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             <svg class="stroke-icon">
@@ -33,7 +33,7 @@
                             </svg>
                             <span>Dashboard</span>
                         </a>
-                    </li>
+                    </li> --}}
                     @role('Client')
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>

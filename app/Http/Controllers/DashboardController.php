@@ -125,15 +125,19 @@ class DashboardController extends Controller
         } else {
             // Validate credit card details
             $request->validate([
-                'cardholder_name' => 'required|string|max:100',
-                'card_number' => ['required', 'regex:#^(\d{4}\s\d{4}\s\d{4}\s\d{4}|\d{16})$#'],
-                'expiry_date' => ['required', 'regex:#^\d{2}/\d{2}$#'],
-                'cvv' => ['required', 'regex:#^\d{3,4}$#'],
+                'name_on_card' => 'nullable|string|max:100',
+                'nric_no' => 'nullable|string|max:50',
+                'card_no' => 'nullable|string|max:50',
+                'card_issuing_bank' => 'nullable|string|max:100',
+                'card_type' => 'nullable|array',
+                'expiry_month' => 'nullable|string',
+                'expiry_year' => 'nullable|string',
+                'relationship' => 'nullable|array',
+                'authorize_payment' => 'required|accepted',
                 'payment_type' => 'required|in:proof,credit_card',
             ], [
-                'card_number.regex' => 'Please enter a valid 16-digit card number.',
-                'expiry_date.regex' => 'Please enter expiry date in MM/YY format.',
-                'cvv.regex' => 'Please enter a valid CVV (3-4 digits).',
+                'authorize_payment.required' => 'You must authorize the payment.',
+                'authorize_payment.accepted' => 'You must agree to the authorization terms.',
             ]);
         }
 
@@ -153,17 +157,18 @@ class DashboardController extends Controller
 
                 $policyApplication->payment_document = $path;
             } elseif ($paymentType === 'credit_card') {
-                // Store masked credit card info
-                $cardNumber = str_replace(' ', '', $request->input('card_number'));
-                $maskedCard = substr($cardNumber, -4);
-                $maskedCard = str_repeat('*', 12) . $maskedCard;
-                
-                // Store credit card info (in production, use tokenization)
+                // Store credit card info
                 $policyApplication->payment_method = 'credit_card';
-                $policyApplication->card_holder_name = $request->input('cardholder_name');
-                $policyApplication->card_last_four = substr($cardNumber, -4);
-                // Note: In production, never store full card details in the database
-                // Use a payment gateway like Stripe or 2Checkout
+                $policyApplication->name_on_card = $request->input('name_on_card');
+                $policyApplication->nric_no = $request->input('nric_no');
+                $policyApplication->card_no = $request->input('card_no');
+                $policyApplication->card_issuing_bank = $request->input('card_issuing_bank');
+                $policyApplication->card_type = $request->input('card_type');
+                $policyApplication->expiry_month = $request->input('expiry_month');
+                $policyApplication->expiry_year = $request->input('expiry_year');
+                $policyApplication->relationship = $request->input('relationship');
+                $policyApplication->authorize_payment = $request->input('authorize_payment') ? true : false;
+                // Note: Card details will be submitted to Great Eastern for processing
             }
 
             // Update policy application with payment status

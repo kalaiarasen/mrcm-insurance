@@ -1013,22 +1013,84 @@
                                 </div>
                             </div>
                         @else
-                            @if($policyApplication->payment_method === 'credit_card' && $policyApplication->card_last_four)
+                            @if($policyApplication->payment_method === 'credit_card' && $policyApplication->card_no)
                                 <!-- Credit Card Payment Info -->
                                 <div class="row mt-3">
                                     <div class="col-12">
                                         <div class="card bg-light">
                                             <div class="card-body">
-                                                <h6 class="mb-3"><i class="fa fa-check-circle text-success me-2"></i>Credit Card Payment Received</h6>
+                                                <h6 class="mb-3"><i class="fa fa-credit-card text-success me-2"></i>Credit Card Payment Details</h6>
+                                                <hr style="color:black">
                                                 <div class="row">
-                                                    <div class="col-md-6">
-                                                        <p class="mb-1"><strong>Payment Method:</strong> Credit Card</p>
-                                                        <p class="mb-1"><strong>Card Holder:</strong> {{ $policyApplication->card_holder_name ?? 'N/A' }}</p>
-                                                        <p class="mb-0"><strong>Card Last 4:</strong> **** **** **** {{ $policyApplication->card_last_four }}</p>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Payment Method</div>
+                                                        <div class="info-value">Credit Card</div>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <p class="mb-1"><strong>Payment Date:</strong> {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</p>
-                                                        <p class="mb-0"><strong>Amount:</strong> <span class="text-success fw-bold">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span></p>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Payment Date</div>
+                                                        <div class="info-value">{{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}</div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Name On Card</div>
+                                                        <div class="info-value">{{ $policyApplication->name_on_card ?? 'N/A' }}</div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">NRIC NO</div>
+                                                        <div class="info-value">{{ $policyApplication->nric_no ?? 'N/A' }}</div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Card No</div>
+                                                        <div class="info-value">{{ $policyApplication->card_no ?? 'N/A' }}</div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Card Issuing Bank</div>
+                                                        <div class="info-value">{{ $policyApplication->card_issuing_bank ?? 'N/A' }}</div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Card Type</div>
+                                                        <div class="info-value">
+                                                            @if($policyApplication->card_type && is_array($policyApplication->card_type))
+                                                                {{ implode(', ', array_map('ucfirst', $policyApplication->card_type)) }}
+                                                            @else
+                                                                N/A
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Card Expiry</div>
+                                                        <div class="info-value">
+                                                            @if($policyApplication->expiry_month && $policyApplication->expiry_year)
+                                                                {{ $policyApplication->expiry_month }}/{{ $policyApplication->expiry_year }}
+                                                            @else
+                                                                N/A
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Relationship To Policy Holder</div>
+                                                        <div class="info-value">
+                                                            @if($policyApplication->relationship && is_array($policyApplication->relationship))
+                                                                {{ implode(', ', array_map('ucfirst', str_replace('_', ' ', $policyApplication->relationship))) }}
+                                                            @else
+                                                                N/A
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="info-label">Authorization Status</div>
+                                                        <div class="info-value">
+                                                            @if($policyApplication->authorize_payment)
+                                                                <span class="badge bg-success"><i class="fa fa-check"></i> Authorized</span>
+                                                            @else
+                                                                <span class="badge bg-secondary">Not Authorized</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="info-label">Amount</div>
+                                                        <div class="info-value">
+                                                            <span class="text-success fw-bold fs-5">RM {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
