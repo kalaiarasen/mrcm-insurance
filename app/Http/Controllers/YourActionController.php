@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\PolicyApplication;
+use App\Mail\SendToUnderwriting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class YourActionController extends Controller
@@ -146,6 +148,21 @@ class YourActionController extends Controller
                     $policyApplication->customer_status = 'processing';
                     $policyApplication->admin_status = 'sent_uw';
                     $policyApplication->sent_to_underwriter_at = now();
+                    
+                    // Send email to underwriting with PDF attachment
+                    try {
+                        Mail::send(new SendToUnderwriting($policyApplication));
+                        Log::info('Underwriting email sent successfully', [
+                            'policy_id' => $id,
+                            'reference' => $policyApplication->reference_number,
+                        ]);
+                    } catch (\Exception $mailException) {
+                        Log::error('Failed to send underwriting email', [
+                            'policy_id' => $id,
+                            'error' => $mailException->getMessage(),
+                        ]);
+                        // Continue with status update even if email fails
+                    }
                     break;
                     
                 case 'rejected':
@@ -166,9 +183,14 @@ class YourActionController extends Controller
 
             DB::commit();
 
+            $successMessage = "Application status updated from '{$oldStatus}' to '{$newStatus}' successfully!";
+            if ($newStatus === 'send_uw') {
+                $successMessage .= " Email sent to underwriting department.";
+            }
+
             return redirect()
                 ->route('for-your-action')
-                ->with('success', "Application status updated from '{$oldStatus}' to '{$newStatus}' successfully!");
+                ->with('success', $successMessage);
 
         } catch (\Exception $e) {
             DB::rollBack();
