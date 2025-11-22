@@ -1327,12 +1327,56 @@
                 </div>
             @endif
 
+            <!-- Policy Documents (Tax Receipt & Policy Schedule) -->
+            @if($policyApplication->admin_status === 'active' && ($policyApplication->tax_receipt_path || $policyApplication->policy_schedule_path))
+            <div class="col-12">
+                <div class="card info-card mb-3">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fa fa-file-alt me-2"></i>Policy Documents
+                        </h5>
+
+                        <div class="row">
+                            @if($policyApplication->tax_receipt_path)
+                            <div class="col-md-6 mb-3">
+                                <div class="alert alert-success">
+                                    <h6 class="mb-2 text-dark">
+                                        <i class="fa fa-file-invoice me-2"></i><strong>Tax Receipt</strong>
+                                    </h6>
+                                    <a href="{{ Storage::url($policyApplication->tax_receipt_path) }}" target="_blank" class="btn btn-sm btn-success text-white">
+                                        <i class="fa fa-download me-2"></i>Download Tax Receipt
+                                    </a>
+                                </div>
+                            </div>
+                            @endif
+
+                            @if($policyApplication->policy_schedule_path)
+                            <div class="col-md-6 mb-3">
+                                <div class="alert alert-info">
+                                    <h6 class="mb-2 text-dark">
+                                        <i class="fa fa-file-contract me-2"></i><strong>Policy Schedule</strong>
+                                    </h6>
+                                    <a href="{{ Storage::url($policyApplication->policy_schedule_path) }}" target="_blank" class="btn btn-sm btn-info text-white">
+                                        <i class="fa fa-download me-2"></i>Download Policy Schedule
+                                    </a>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Action Buttons -->
             <div class="col-12 mb-4">
                 <div class="card">
                     <div class="card-body text-center">
                         <a href="{{ route('dashboard') }}" class="btn btn-secondary me-2">
                             <i class="fa fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <a href="{{ route('for-your-action.export-pdf', $policyApplication->id) }}" class="btn btn-danger" target="_blank">
+                            <i class="fa fa-file-pdf me-2"></i>Export PDF
                         </a>
                     </div>
                 </div>

@@ -1319,6 +1319,67 @@
                 </div>
             </div>
 
+            <!-- Upload Tax Receipt & Policy Schedule (Only for Active Policies) -->
+            @if($policyApplication->admin_status === 'active')
+            <div class="col-12">
+                <div class="card info-card mb-3">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fa fa-upload me-2"></i>Upload Documents
+                        </h5>
+
+                        <form action="{{ route('for-your-action.upload-documents', $policyApplication->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            
+                            <div class="row mb-4">
+                                <!-- Tax Receipt Upload -->
+                                <div class="col-md-6">
+                                    <label for="tax_receipt" class="form-label fw-bold">
+                                        <i class="fa fa-file-invoice me-2"></i>Tax Receipt
+                                    </label>
+                                    @if($policyApplication->tax_receipt_path)
+                                        <div class="alert alert-success mb-2">
+                                            <i class="fa fa-check-circle me-2"></i>
+                                            <a href="{{ Storage::url($policyApplication->tax_receipt_path) }}" target="_blank" class="text-decoration-none">
+                                                View Current Tax Receipt
+                                            </a>
+                                        </div>
+                                    @endif
+                                    <input type="file" class="form-control" id="tax_receipt" name="tax_receipt" accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="text-muted">Upload tax receipt (PDF, JPG, PNG - Max 5MB)</small>
+                                </div>
+
+                                <!-- Policy Schedule Upload -->
+                                <div class="col-md-6">
+                                    <label for="policy_schedule" class="form-label fw-bold">
+                                        <i class="fa fa-file-contract me-2"></i>Policy Schedule
+                                    </label>
+                                    @if($policyApplication->policy_schedule_path)
+                                        <div class="alert alert-success mb-2">
+                                            <i class="fa fa-check-circle me-2"></i>
+                                            <a href="{{ Storage::url($policyApplication->policy_schedule_path) }}" target="_blank" class="text-decoration-none">
+                                                View Current Policy Schedule
+                                            </a>
+                                        </div>
+                                    @endif
+                                    <input type="file" class="form-control" id="policy_schedule" name="policy_schedule" accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="text-muted">Upload policy schedule (PDF, JPG, PNG - Max 5MB)</small>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-upload me-2"></i>Upload Documents
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Action Buttons -->
             <div class="col-12 mb-4">
                 <div class="card">

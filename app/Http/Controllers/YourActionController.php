@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class YourActionController extends Controller
@@ -512,6 +513,78 @@ class YourActionController extends Controller
 
         // Stream the PDF (display in browser)
         return $pdf->stream($filename);
+    }
+
+    /**
+     * Upload tax receipt and policy schedule documents
+     */
+    public function uploadDocuments(Request $request, $id)
+    {
+        $policyApplication = PolicyApplication::where('id', $id)->firstOrFail();
+
+        // Validate request
+        $validated = $request->validate([
+            'tax_receipt' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
+            'policy_schedule' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Handle Tax Receipt Upload
+            if ($request->hasFile('tax_receipt')) {
+                // Delete old file if exists
+                if ($policyApplication->tax_receipt_path) {
+                    Storage::disk('public')->delete($policyApplication->tax_receipt_path);
+                }
+
+                // Store new file
+                $taxReceiptPath = $request->file('tax_receipt')->store('tax-receipts', 'public');
+                $policyApplication->tax_receipt_path = $taxReceiptPath;
+                
+                Log::info('Tax receipt uploaded', [
+                    'policy_id' => $id,
+                    'path' => $taxReceiptPath,
+                ]);
+            }
+
+            // Handle Policy Schedule Upload
+            if ($request->hasFile('policy_schedule')) {
+                // Delete old file if exists
+                if ($policyApplication->policy_schedule_path) {
+                    Storage::disk('public')->delete($policyApplication->policy_schedule_path);
+                }
+
+                // Store new file
+                $policySchedulePath = $request->file('policy_schedule')->store('policy-schedules', 'public');
+                $policyApplication->policy_schedule_path = $policySchedulePath;
+                
+                Log::info('Policy schedule uploaded', [
+                    'policy_id' => $id,
+                    'path' => $policySchedulePath,
+                ]);
+            }
+
+            $policyApplication->save();
+
+            DB::commit();
+
+            return redirect()
+                ->route('for-your-action.show', $id)
+                ->with('success', 'Documents uploaded successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Failed to upload documents', [
+                'policy_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to upload documents. Please try again.');
+        }
     }
 
     /**
