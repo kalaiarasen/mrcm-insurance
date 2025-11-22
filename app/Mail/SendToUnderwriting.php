@@ -63,7 +63,7 @@ class SendToUnderwriting extends Mailable
                 'MRCM Insurance'
             ),
             to: [env('MAIL_NEW_POLICY', 'nurmaisarahmasaaud@greateasterngeneral.com')],
-            // cc: $ccEmails,
+            cc: $ccEmails,
             subject: $subject
         );
     }
