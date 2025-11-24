@@ -8,6 +8,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyHolderController;
 use App\Http\Controllers\YourActionController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\Api\PolicySubmissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -65,6 +66,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('agents', AgentController::class);
     Route::resource('discounts', DiscountController::class);
+    
+    // Wallet Management
+    Route::get('wallet', [WalletController::class, 'index'])->name('wallet.index');
+    Route::post('wallet/add-amount', [WalletController::class, 'addAmount'])->name('wallet.add-amount');
+    Route::post('wallet/deduct-amount', [WalletController::class, 'deductAmount'])->name('wallet.deduct-amount');
     
     // Get active discount by date
     Route::get('discounts-api/active', [DiscountController::class, 'getActiveDiscount'])->name('discounts.active');

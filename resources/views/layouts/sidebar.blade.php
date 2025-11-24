@@ -187,7 +187,7 @@
                     @hasanyrole('Super Admin|Admin')
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="">
+                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('wallet.*') ? 'active' : '' }}" href="{{ route('wallet.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
                             </svg>

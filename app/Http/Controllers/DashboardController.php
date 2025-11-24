@@ -49,6 +49,7 @@ class DashboardController extends Controller
             $totalPolicies = PolicyApplication::where('user_id', auth()->id())->where('is_used', true)->count();
             $totalClaims = Claim::where('user_id', auth()->id())->count();
             $monthlyRevenue = 0;
+            $walletAmount = auth()->user()->wallet_amount ?? 0;
 
             return view('dashboard-client', compact(
                 'announcements',
@@ -58,7 +59,8 @@ class DashboardController extends Controller
                 'totalUsers',
                 'totalPolicies',
                 'totalClaims',
-                'monthlyRevenue'
+                'monthlyRevenue',
+                'walletAmount'
             ));
         }
 

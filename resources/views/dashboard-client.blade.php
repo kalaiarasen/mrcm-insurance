@@ -113,7 +113,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card widget-1">
                             <div class="card-body">
                                 <div class="widget-content">
@@ -125,36 +125,10 @@
                                             </svg></div>
                                     </div>
                                     <div>
-                                        <h4>$<span class="counter" data-target="45195">0</span></h4><span
-                                            class="f-light">Revenue</span>
+                                        <h4>RM <span>{{ number_format($walletAmount, 2) }}</span></h4><span
+                                            class="f-light">Wallet Amount</span>
                                     </div>
                                 </div>
-                                <div class="font-success f-w-500"><i class="bookmark-search me-1"
-                                        data-feather="trending-up"></i><span class="txt-success">+50%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card widget-1">
-                            <div class="card-body">
-                                <div class="widget-content">
-                                    <div class="widget-round success">
-                                        <div class="bg-round"><svg>
-                                                <use href="{{ asset('assets/svg/icon-sprite.svg#c-customer') }}">
-                                                </use>
-                                            </svg><svg class="half-circle svg-fill">
-                                                <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}">
-                                                </use>
-                                            </svg></div>
-                                    </div>
-                                    <div>
-                                        <h4> <span class="counter" data-target="845">0</span>+</h4><span
-                                            class="f-light">Customers</span>
-                                    </div>
-                                </div>
-                                <div class="font-danger f-w-500"><i class="bookmark-search me-1"
-                                        data-feather="trending-down"></i><span class="txt-danger">-40%</span></div>
                             </div>
                         </div>
                     </div>
