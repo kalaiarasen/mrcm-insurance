@@ -160,6 +160,38 @@ class PolicySubmissionController extends Controller
             ]);
 
             PolicyPricing::where('user_id', $currentUser->id)->update(['is_used' => false]);
+            
+            // Handle wallet usage
+            $walletUsed = floatval($applicationData['wallet_used'] ?? 0);
+            $originalTotalPayable = floatval($applicationData['displayTotalPayable'] ?? 0);
+            $finalTotalPayable = $originalTotalPayable; // Default to original amount
+            
+            if ($walletUsed > 0) {
+                // Validate wallet has sufficient balance
+                if ($currentUser->wallet_amount < $walletUsed) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Insufficient wallet balance',
+                    ], 400);
+                }
+                
+                // Calculate final payable after wallet deduction
+                $finalTotalPayable = max(0, $originalTotalPayable - $walletUsed);
+                
+                // Deduct from wallet
+                $currentUser->wallet_amount -= $walletUsed;
+                $currentUser->save();
+                
+                \Log::info('Wallet deducted for policy submission', [
+                    'user_id' => $currentUser->id,
+                    'original_total' => $originalTotalPayable,
+                    'wallet_used' => $walletUsed,
+                    'final_total' => $finalTotalPayable,
+                    'remaining_balance' => $currentUser->wallet_amount,
+                ]);
+            }
+            
             PolicyPricing::create([
                 'user_id' => $currentUser->id,
                 'policy_start_date' => $applicationData['policy_start_date'] ?? null,
@@ -171,9 +203,10 @@ class PolicySubmissionController extends Controller
                 'locum_extension' => $applicationData['locum_extension'] ?? false,
                 'discount_percentage' => $applicationData['displayDiscountPercentage'] ?? 0,
                 'discount_amount' => $applicationData['displayDiscountAmount'] ?? 0,
+                'wallet_used' => $walletUsed,
                 'sst' => $applicationData['displaySST'] ?? 0,
                 'stamp_duty' => $applicationData['displayStampDuty'] ?? 10,
-                'total_payable' => $applicationData['displayTotalPayable'] ?? 0,
+                'total_payable' => $finalTotalPayable, // Store the final amount after wallet deduction
                 'is_used' => true,
             ]);
 

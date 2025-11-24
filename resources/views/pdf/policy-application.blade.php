@@ -296,6 +296,12 @@
             <td class="label">Stamp Duty</td>
             <td>RM{{ number_format($pricing->stamp_duty ?? 10, 2) }}</td>
         </tr>
+        @if(($pricing->wallet_used ?? 0) > 0)
+        <tr>
+            <td class="label">Wallet Amount Used</td>
+            <td class="text-success">- RM{{ number_format($pricing->wallet_used, 2) }}</td>
+        </tr>
+        @endif
         <tr class="total-row">
             <td class="label">Total Payable</td>
             <td>RM{{ number_format($pricing->total_payable ?? 0, 0) }}</td>

@@ -3,11 +3,15 @@
 @section('title', 'New Policy')
 
 @section('main_content')
+    @php
+        $hasExistingData = isset($existingData) && !empty(array_filter($existingData ?? []));
+    @endphp
+    
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3>New Policy</h3>
+                    <h3>{{ $hasExistingData ? 'Renew Policy' : 'New Policy' }}</h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb">
@@ -19,11 +23,23 @@
                             </a>
                         </li>
                         <li class="breadcrumb-item">Dashboard</li>
-                        <li class="breadcrumb-item active">New Policy</li>
+                        <li class="breadcrumb-item active">{{ $hasExistingData ? 'Renew Policy' : 'New Policy' }}</li>
                     </ol>
                 </div>
             </div>
         </div>
+        
+        @if($hasExistingData)
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="fa fa-info-circle me-2"></i>
+                        <strong>Renewal Mode:</strong> Your form has been pre-filled with your previous policy data. Please review and update any information as needed.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        @endif
         
         <!-- Progress Indicator -->
         <div class="row">
@@ -653,6 +669,35 @@
                                     <div class="col-md-6"><strong>: RM <span id="displayTotalPayable">0.00</span></strong></div>
                                 </div>
                                 
+                                @if($walletBalance > 0)
+                                    <div class="row mb-2" id="walletBalanceRow">
+                                        <div class="col-md-6">
+                                            <span>Available Wallet Balance</span>
+                                            <button type="button" class="btn btn-sm btn-outline-success ms-2" id="applyWalletBtn" onclick="toggleWalletUsage()">
+                                                <i class="fa fa-wallet"></i> Apply Wallet
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6"><span>: RM <span id="displayWalletBalance">{{ number_format($walletBalance, 2) }}</span></span></div>
+                                    </div>
+                                    
+                                    <div class="row mb-2" id="walletUsedRow" style="display: none;">
+                                        <div class="col-md-6">
+                                            <span>Wallet Amount Used</span>
+                                            <button type="button" class="btn btn-sm btn-outline-danger ms-2" id="removeWalletBtn" onclick="toggleWalletUsage()">
+                                                <i class="fa fa-times"></i> Remove
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6"><span class="text-success">: - RM <span id="displayWalletUsed">0.00</span></span></div>
+                                    </div>
+                                    
+                                    <hr id="walletHr" style="display: none;">
+                                    
+                                    <div class="row mb-3" id="finalPayableRow" style="display: none;">
+                                        <div class="col-md-6"><strong>Final Amount to Pay</strong></div>
+                                        <div class="col-md-6"><strong>: RM <span id="displayFinalPayable">0.00</span></strong></div>
+                                    </div>
+                                @endif
+                                
                                 <hr>
                             </div>
                             
@@ -682,6 +727,8 @@
                             <input type="hidden" id="displaySSTInput" name="displaySST" value="0">
                             <input type="hidden" id="displayStampDutyInput" name="displayStampDuty" value="10">
                             <input type="hidden" id="displayTotalPayableInput" name="displayTotalPayable" value="0">
+                            <input type="hidden" id="walletUsedInput" name="wallet_used" value="0">
+                            <input type="hidden" id="walletBalanceValue" value="{{ $walletBalance ?? 0 }}">
 
                             <div class="row mt-4">
                                 <div class="col-md-12 text-end">
@@ -1264,6 +1311,127 @@
 @endsection
 
 @section('scripts')
+    <script>
+        // Wallet usage toggle function
+        function toggleWalletUsage() {
+            const walletUsedRow = document.getElementById('walletUsedRow');
+            const walletBalanceRow = document.getElementById('walletBalanceRow');
+            const finalPayableRow = document.getElementById('finalPayableRow');
+            const walletHr = document.getElementById('walletHr');
+            const applyBtn = document.getElementById('applyWalletBtn');
+            
+            if (walletUsedRow.style.display === 'none') {
+                // Apply wallet
+                const totalPayable = parseFloat(document.getElementById('displayTotalPayable').textContent.replace(/,/g, ''));
+                const walletBalance = parseFloat(document.getElementById('walletBalanceValue').value);
+                
+                // Calculate wallet usage (use min of wallet balance or total payable)
+                const walletUsed = Math.min(walletBalance, totalPayable);
+                const finalPayable = Math.max(0, totalPayable - walletUsed);
+                
+                // Update display
+                document.getElementById('displayWalletUsed').textContent = walletUsed.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('displayFinalPayable').textContent = finalPayable.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('walletUsedInput').value = walletUsed.toFixed(2);
+                
+                // Show/hide elements
+                walletUsedRow.style.display = '';
+                finalPayableRow.style.display = '';
+                walletHr.style.display = '';
+                applyBtn.textContent = ' Wallet Applied';
+                applyBtn.innerHTML = '<i class="fa fa-check-circle"></i> Wallet Applied';
+                applyBtn.disabled = true;
+                applyBtn.classList.remove('btn-outline-success');
+                applyBtn.classList.add('btn-success');
+                
+                console.log('Wallet applied:', walletUsed, 'Final payable:', finalPayable);
+            } else {
+                // Remove wallet
+                walletUsedRow.style.display = 'none';
+                finalPayableRow.style.display = 'none';
+                walletHr.style.display = 'none';
+                document.getElementById('walletUsedInput').value = '0';
+                applyBtn.textContent = ' Apply Wallet';
+                applyBtn.innerHTML = '<i class="fa fa-wallet"></i> Apply Wallet';
+                applyBtn.disabled = false;
+                applyBtn.classList.remove('btn-success');
+                applyBtn.classList.add('btn-outline-success');
+                
+                console.log('Wallet removed');
+            }
+        }
+    </script>
+    
+    @if($existingData)
+    <script>
+        // Pre-fill Step 1 form with existing data for renewal
+        document.addEventListener('DOMContentLoaded', function() {
+            const existingData = @json($existingData);
+            
+            console.log('Pre-filling Step 1 with existing data:', existingData);
+            
+            // Populate all form fields in Step 1
+            Object.keys(existingData).forEach(function(fieldName) {
+                const value = existingData[fieldName];
+                
+                if (value === null || value === undefined) {
+                    return;
+                }
+                
+                // Find the form element
+                const elements = document.querySelectorAll(`[name="${fieldName}"]`);
+                
+                if (elements.length === 0) {
+                    return;
+                }
+                
+                const element = elements[0];
+                
+                // Handle different input types
+                if (element.type === 'radio') {
+                    // Find the specific radio button with this value
+                    const radioButton = document.querySelector(`[name="${fieldName}"][value="${value}"]`);
+                    if (radioButton) {
+                        radioButton.checked = true;
+                        console.log(`✓ Pre-filled radio: ${fieldName} = ${value}`);
+                    }
+                } else if (element.type === 'checkbox') {
+                    element.checked = (value === 'yes' || value === '1' || value === true);
+                    console.log(`✓ Pre-filled checkbox: ${fieldName} = ${element.checked}`);
+                } else {
+                    // Text inputs, selects, etc.
+                    element.value = value;
+                    console.log(`✓ Pre-filled ${element.type}: ${fieldName} = ${value}`);
+                }
+                
+                // Trigger change event for dropdowns that might have dependent fields
+                if (element.tagName === 'SELECT') {
+                    const event = new Event('change', { bubbles: true });
+                    element.dispatchEvent(event);
+                }
+            });
+            
+            // Show/hide the "Other Council" field if "Others" is selected
+            const registrationCouncil = document.getElementById('registrationCouncil');
+            if (registrationCouncil && registrationCouncil.value === 'others') {
+                const otherCouncilField = document.getElementById('otherCouncilField');
+                if (otherCouncilField) {
+                    otherCouncilField.style.display = 'block';
+                }
+            }
+            
+            // Handle nationality status to show/hide NRIC/Passport required indicators
+            const nationalityStatus = document.getElementById('nationalityStatus');
+            if (nationalityStatus && nationalityStatus.value) {
+                const event = new Event('change', { bubbles: true });
+                nationalityStatus.dispatchEvent(event);
+            }
+            
+            console.log('Step 1 pre-fill complete!');
+        });
+    </script>
+    @endif
+    
     @include('pages.new-policy.js._new-policy')
     @include('pages.new-policy.js._health-care')
 @endsection

@@ -657,9 +657,16 @@
                                                 <span>RM {{ number_format($pricing->stamp_duty ?? 10, 2) }}</span>
                                             </div>
                                             
+                                            @if(($pricing->wallet_used ?? 0) > 0)
+                                            <div class="pricing-row d-flex justify-content-between info-label text-success">
+                                                <span>Wallet Amount Used</span>
+                                                <span>- RM {{ number_format($pricing->wallet_used, 2) }}</span>
+                                            </div>
+                                            @endif
+                                            
                                             <div class="pricing-row d-flex justify-content-between info-label">
-                                                <span>Total Payable</span>
-                                                <span>RM {{ number_format($pricing->total_payable ?? 0, 2) }}</span>
+                                                <span><strong>Total Payable</strong></span>
+                                                <span><strong>RM {{ number_format($pricing->total_payable ?? 0, 2) }}</strong></span>
                                             </div>
                                         </div>
                                     </div>
