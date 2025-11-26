@@ -4,12 +4,14 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use DB;
 
 class UsersOldDataSeeder extends Seeder
 {
+    // Store old_user_id → new user.id mapping
+//    public static array $userMap = [];
+
     public function run(): void
     {
         $path = storage_path('app/import/TBL_Users_MST.csv');
@@ -20,7 +22,7 @@ class UsersOldDataSeeder extends Seeder
 
         $file = fopen($path, 'r');
 
-        // Skip header row
+        // Skip header
         fgetcsv($file);
 
         while (($row = fgetcsv($file)) !== false) {
@@ -35,49 +37,42 @@ class UsersOldDataSeeder extends Seeder
                 $tnyStatus
             ] = $row;
 
-            // Map tnyUserType to role_id
             $roleId = match ((int)$tnyUserType) {
-                1 => 2,  // admin → role ID 2
-                2 => 3,  // client → role ID 3
+                1 => 2,  // admin
+                2 => 3,  // client
                 default => 3,
             };
 
-            // Prevent duplicate emails: create placeholder if no email exists
-            $email = $chvUserName;
-            $existingUser = User::where('email', $email)
-                ->where('id', '<>', $numUserID)
-                ->first();
-
-            if ($existingUser) {
-                // Skip this row because email is already used
-                continue;
+            // Prevent duplicate emails
+            $email = $chvUserName; // or generate placeholder if empty
+            if (User::where('email', $email)->exists()) {
+                continue; // skip duplicates
             }
-            $user = User::updateOrCreate(
-                [
-                    'id' => $numUserID,
-                ],
-                [
-                    'name' => $chvUserName,
-                    'email' => $email,
-                    'password' => Hash::make($chvPassword),
-                    'status' => (int) $tnyStatus,
-                ]
-            );
 
-            // Assign role in model_has_roles
+            // Create user and save old_user_id / old_member_id
+            $user = User::create([
+                'name' => $chvUserName,
+                'email' => $email,
+                'password' => Hash::make($chvPassword),
+                'status' => (int)$tnyStatus,
+                'old_user_id' => $numUserID,
+                'old_member_id' => $numMemberID,
+            ]);
+
+            // Assign role
             DB::table('model_has_roles')->updateOrInsert(
                 [
                     'model_id' => $user->id,
                     'model_type' => 'App\\Models\\User',
                 ],
-                [
-                    'role_id' => $roleId
-                ]
+                ['role_id' => $roleId]
             );
+
+//             Save mapping for other seeders
+//            self::$userMap[$numUserID] = $user->id;
         }
 
         fclose($file);
-
-        echo "Users imported successfully.\n";
+        $this->command->info("Users imported successfully.");
     }
 }

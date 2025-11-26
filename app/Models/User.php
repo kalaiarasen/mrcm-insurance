@@ -29,6 +29,9 @@ class User extends Authenticatable
         'application_status',
         'application_submitted_at',
         'submission_version',
+        'status',
+        'old_user_id',
+        'old_member_id'
     ];
 
     /**
