@@ -91,4 +91,128 @@ class TBLMemberMSTSeeder extends Seeder
                 // -------------------------
                 $secondaryType     = trim($row[23] ?? '');
                 $secondaryClinic   = trim($row[24] ?? '');
-                $secondaryAddress  = trim($row[25]
+                $secondaryAddress  = trim($row[25] ?? '');
+                $secondaryPostcode = trim($row[26] ?? '');
+                $secondaryState    = trim($row[27] ?? '');
+                $secondaryCity     = trim($row[28] ?? '');
+                $secondaryCountry  = trim($row[29] ?? '');
+
+                if ($secondaryAddress) {
+                    DB::table('addresses')->updateOrInsert(
+                        ['user_id' => $userId, 'type' => $secondaryType, 'clinic_name' => $secondaryClinic],
+                        [
+                            'address'    => $secondaryAddress,
+                            'postcode'   => $secondaryPostcode,
+                            'state'      => $secondaryState,
+                            'city'       => $secondaryCity,
+                            'country'    => $secondaryCountry,
+                            'is_used'    => 1,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]
+                    );
+                }
+
+                // -------------------------
+                // 4. QUALIFICATIONS
+                // -------------------------
+                $qualifications = [
+                    [trim($row[30] ?? ''), trim($row[31] ?? ''), trim($row[32] ?? '')],
+                    [trim($row[33] ?? ''), trim($row[34] ?? ''), trim($row[35] ?? '')],
+                    [trim($row[36] ?? ''), trim($row[37] ?? ''), trim($row[38] ?? '')],
+                ];
+
+                DB::table('qualifications')->where('user_id', $userId)->delete();
+
+                foreach ($qualifications as [$institution, $degree, $year]) {
+                    if (!$institution && !$degree) continue;
+                    DB::table('qualifications')->insert([
+                        'user_id'       => $userId,
+                        'institution'   => $institution,
+                        'degree_or_qualification' => $degree,
+                        'year_obtained' => $year ?: null,
+                        'created_at'    => now(),
+                        'updated_at'    => now(),
+                    ]);
+                }
+
+                // -------------------------
+                // 5. RISK MANAGEMENT
+                // -------------------------
+                DB::table('risk_managements')->updateOrInsert(
+                    ['user_id' => $userId],
+                    [
+                        'medical_records'  => $this->yesNoToBool($row[41] ?? ''),
+                        'informed_consent' => $this->yesNoToBool($row[42] ?? ''),
+                        'adverse_incidents'=> $this->yesNoToBool($row[43] ?? ''),
+                        'sterilisation_facilities' => $this->yesNoToBool($row[44] ?? ''),
+                        'is_used'          => 1,
+                        'created_at'       => now(),
+                        'updated_at'       => now(),
+                    ]
+                );
+
+                // -------------------------
+                // 6. INSURANCE HISTORIES
+                // -------------------------
+                DB::table('insurance_histories')->updateOrInsert(
+                    ['user_id' => $userId],
+                    [
+                        'current_insurance'   => $this->yesNoToBool($row[45] ?? ''),
+                        'period_of_insurance' => $row[46] ?? null,
+                        'insurer_name'        => $row[47] ?? null,
+                        'policy_limit_myr'    => $row[48] ?? null,
+                        'excess_myr'          => $row[49] ?? null,
+                        'retroactive_date'    => $row[50] ?? null,
+                        'is_used'             => 1,
+                        'created_at'          => now(),
+                        'updated_at'          => now(),
+                    ]
+                );
+
+                // -------------------------
+                // 7. CLAIMS EXPERIENCES
+                // -------------------------
+                DB::table('claims_experiences')->updateOrInsert(
+                    ['user_id' => $userId],
+                    [
+                        'claims_made'        => $this->yesNoToBool($row[53] ?? ''),
+                        'aware_of_errors'    => $this->yesNoToBool($row[54] ?? ''),
+                        'disciplinary_action'=> $this->yesNoToBool($row[55] ?? ''),
+                        'is_used'            => 1,
+                        'created_at'         => now(),
+                        'updated_at'         => now(),
+                    ]
+                );
+
+                // -------------------------
+                // 8. CLAIM DOCUMENTS
+                // -------------------------
+                if (!empty($row[62] ?? '')) {
+                    DB::table('claim_documents')->updateOrInsert(
+                        ['user_id' => $userId, 'document_path' => $row[62]],
+                        [
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]
+                    );
+                }
+            }
+
+            DB::commit();
+            fclose($handle);
+            $this->command->info("TBL_Member_MST.csv has been successfully imported!");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            fclose($handle);
+            $this->command->error("Seeder failed: " . $e->getMessage());
+        }
+    }
+
+    private function yesNoToBool($value)
+    {
+        $v = strtolower(trim($value));
+        return ($v === 'yes' || $v === '1') ? 1 : 0;
+    }
+}
