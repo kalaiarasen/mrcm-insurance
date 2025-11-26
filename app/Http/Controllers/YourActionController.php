@@ -21,8 +21,7 @@ class YourActionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = PolicyApplication::with('user')
-                ->orderBy('updated_at', 'desc');
+            $query = PolicyApplication::with('user');
 
             return DataTables::of($query)
                 ->addColumn('policy_id', function ($policy) {
@@ -104,6 +103,29 @@ class YourActionController extends Controller
                     
                     $html .= '</ul>';
                     return $html;
+                })
+                ->filterColumn('status', function($query, $keyword) {
+                    // Map status keywords to admin_status values for searching
+                    $statusMap = [
+                        'new case' => 'new_case',
+                        'new renewal' => 'new_renewal',
+                        'not paid' => 'not_paid',
+                        'paid' => 'paid',
+                        'sent uw' => 'sent_uw',
+                        'send uw' => 'sent_uw',
+                        'active' => 'active',
+                    ];
+                    
+                    $searchTerm = strtolower($keyword);
+                    $adminStatus = $statusMap[$searchTerm] ?? $searchTerm;
+                    
+                    $query->where(function($q) use ($adminStatus, $keyword) {
+                        $q->where('admin_status', 'like', "%{$adminStatus}%")
+                          ->orWhere('status', 'like', "%{$keyword}%");
+                    });
+                })
+                ->orderColumn('policy_id', function ($query, $order) {
+                    $query->orderBy('reference_number', $order);
                 })
                 ->rawColumns(['policy_id', 'status', 'name', 'action'])
                 ->make(true);

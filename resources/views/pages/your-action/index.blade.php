@@ -291,7 +291,7 @@
                         data: 'status',
                         name: 'status',
                         orderable: false,
-                        searchable: false
+                        searchable: true
                     },
                     {
                         data: 'expiry_date',
