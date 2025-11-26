@@ -6,21 +6,74 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Yajra\DataTables\Facades\DataTables;
 
 class PolicyHolderController extends Controller
 {
     /**
      * Display a listing of all policy holders.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Get all users who have submitted applications (have applicant profiles)
-        $policyHolders = User::whereHas('applicantProfile')
-            ->with(['applicantProfile', 'applicantContact'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        if ($request->ajax()) {
+            $query = User::whereHas('applicantProfile')
+                ->with(['applicantProfile', 'applicantContact'])
+                ->orderBy('created_at', 'desc');
 
-        return view('pages.policy-holder.index', compact('policyHolders'));
+            // Apply date range filter if provided
+            if ($request->has('start_date') && $request->get('start_date')) {
+                $query->whereDate('created_at', '>=', $request->get('start_date'));
+            }
+
+            if ($request->has('end_date') && $request->get('end_date')) {
+                $query->whereDate('created_at', '<=', $request->get('end_date'));
+            }
+
+            return DataTables::of($query)
+                ->addColumn('date', function ($holder) {
+                    return '<small>' . $holder->created_at->format('d-M-Y') . '</small>';
+                })
+                ->addColumn('name', function ($holder) {
+                    $title = $holder->applicantProfile?->title ?? '';
+                    return '<strong>' . e($title . ($title ? '. ' : '') . $holder->name) . '</strong>';
+                })
+                ->addColumn('gender', function ($holder) {
+                    return ucwords($holder->applicantProfile?->gender ?? '-');
+                })
+                ->addColumn('nation_status', function ($holder) {
+                    $status = ucwords($holder->applicantProfile?->nationality_status ?? '-');
+                    return '<span class="badge bg-info">' . e($status) . '</span>';
+                })
+                ->addColumn('nric_no', function ($holder) {
+                    return $holder->applicantProfile?->nric_number ?? $holder->applicantProfile?->passport_number ?? '-';
+                })
+                ->addColumn('email', function ($holder) {
+                    return e($holder->email);
+                })
+                ->addColumn('contact_no', function ($holder) {
+                    return e($holder->contact_no);
+                })
+                ->addColumn('action', function ($holder) {
+                    return '
+                        <ul class="action">
+                            <li class="edit">
+                                <a href="#" onclick="editPolicyHolder(' . $holder->id . '); return false;" title="Edit">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </a>
+                            </li>
+                            <li class="view">
+                                <a href="' . route('policy-holders.show', $holder->id) . '" title="View Details">
+                                    <i class="fa-regular fa-eye"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    ';
+                })
+                ->rawColumns(['date', 'name', 'nation_status', 'action'])
+                ->make(true);
+        }
+
+        return view('pages.policy-holder.index');
     }
 
     /**
