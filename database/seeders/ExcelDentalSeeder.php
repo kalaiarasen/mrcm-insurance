@@ -30,7 +30,7 @@ class ExcelDentalSeeder extends Seeder
             // 1. USERS TABLE
             // ============================
             $email = trim($data['Email Address']);
-            $name  = trim($data['Name']);
+            $name = trim($data['Name']);
             $contact = trim($data['Contact No']);
 
             if (!$email && !$name) {
@@ -47,8 +47,8 @@ class ExcelDentalSeeder extends Seeder
             // If still not found → create new
             if (!$user) {
                 $user = User::create([
-                    'name'     => $name ?: 'Unknown',
-                    'email'    => $email ?: strtolower(str_replace(' ', '_', $name)) . '@imported.local',
+                    'name' => $name ?: 'Unknown',
+                    'email' => $email ?: strtolower(str_replace(' ', '_', $name)) . '@imported.local',
                     'contact_no' => $contact,
                     'password' => Hash::make('Default123!'), // default
                 ]);
@@ -60,17 +60,17 @@ class ExcelDentalSeeder extends Seeder
 
             // ============================
             // 2. APPLICANT PROFILES
-            ============================
+            // ============================
             DB::table('applicant_profiles')->updateOrInsert(
                 ['user_id' => $user->id],
                 [
                     'nationality_status' => $data['Nationality Status'] ?? null,
-                    'nric_number'        => $data['NRIC Number'] ?? null,
-                    'passport_number'    => $data['Passport Number'] ?? null,
-                    'gender'             => $data['Gender'] ?? null,
-                    'is_used'            => 1,
-                    'updated_at'         => now(),
-                    'created_at'         => now(),
+                    'nric_number' => $data['NRIC Number'] ?? null,
+                    'passport_number' => $data['Passport Number'] ?? null,
+                    'gender' => $data['Gender'] ?? null,
+                    'is_used' => 1,
+                    'updated_at' => now(),
+                    'created_at' => now(),
                 ]
             );
 
@@ -84,9 +84,9 @@ class ExcelDentalSeeder extends Seeder
                 ],
                 [
                     'email_address' => $email,
-                    'is_used'       => 1,
-                    'updated_at'    => now(),
-                    'created_at'    => now(),
+                    'is_used' => 1,
+                    'updated_at' => now(),
+                    'created_at' => now(),
                 ]
             );
 
@@ -126,7 +126,7 @@ class ExcelDentalSeeder extends Seeder
                 if (!empty($data[$col['inst']]) || !empty($data[$col['deg']])) {
                     DB::table('qualifications')->updateOrInsert(
                         [
-                            'user_id'  => $user->id,
+                            'user_id' => $user->id,
                             'sequence' => $seq,
                         ],
                         [
@@ -147,10 +147,10 @@ class ExcelDentalSeeder extends Seeder
                 ['user_id' => $user->id],
                 [
                     'employment_status' => $data['Employment status'] ?? null,
-                    'specialty_area'    => $data['Specialty'] ?? null,
-                    'is_used'           => 1,
-                    'updated_at'        => now(),
-                    'created_at'        => now(),
+                    'specialty_area' => $data['Specialty'] ?? null,
+                    'is_used' => 1,
+                    'updated_at' => now(),
+                    'created_at' => now(),
                 ]
             );
 
@@ -161,11 +161,11 @@ class ExcelDentalSeeder extends Seeder
                 ['user_id' => $user->id],
                 [
                     'policy_expiry_date' => $data['Expiry date'] ?? null,
-                    'gross_premium'      => $data['Premium'] ?? null,
-                    'liability_limit'    => $data['Policy limit'] ?? null,
-                    'is_used'            => 1,
-                    'updated_at'         => now(),
-                    'created_at'         => now(),
+                    'gross_premium' => $data['Premium'] ?? null,
+                    'liability_limit' => $data['Policy limit'] ?? null,
+                    'is_used' => 1,
+                    'updated_at' => now(),
+                    'created_at' => now(),
                 ]
             );
         }
