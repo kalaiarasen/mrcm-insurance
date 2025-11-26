@@ -163,6 +163,15 @@ class TBLMemberMSTSeeder extends Seeder
                 } else {
                     $policyLimit = (float) $policyLimit;
                 }
+                $excess = trim($row[49] ?? '');
+                if (strtolower($excess) === 'yes' || strtolower($excess) === '-' || strtolower($excess) === 'unlimited') {
+                    $excess = 0; // or null if you prefer
+                } elseif (!is_numeric($excess)) {
+                    $excess = null;
+                } else {
+                    $excess = (float) $excess;
+                }
+
 
                 DB::table('insurance_histories')->updateOrInsert(
                     ['user_id' => $userId],
@@ -171,7 +180,7 @@ class TBLMemberMSTSeeder extends Seeder
                         'period_of_insurance' => $row[46] ?? null,
                         'insurer_name'        => $row[47] ?? null,
                         'policy_limit_myr'    => $policyLimit,
-                        'excess_myr'          => $row[49] ?? null,
+                        'excess_myr'          => $excess,
                         'retroactive_date'    => $row[50] ?? null,
                         'is_used'             => 1,
                         'created_at'          => now(),
