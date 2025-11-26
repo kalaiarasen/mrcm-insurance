@@ -11,7 +11,7 @@ class ExcelMedicalSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = storage_path('app/Excel_Medical.csv');
+        $path = storage_path('app/import/Excel_Medical.csv');
 
         if (!file_exists($path)) {
             $this->command->error("Excel_Medical.csv not found in storage/app/");

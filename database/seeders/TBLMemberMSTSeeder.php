@@ -10,7 +10,7 @@ class TBLMemberMSTSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = storage_path('app/TBL_Member_MST.csv');
+        $path = storage_path('app/import/TBL_Member_MST.csv');
 
         if (!file_exists($path)) {
             $this->command->error("TBL_Member_MST.csv not found in storage/app/");

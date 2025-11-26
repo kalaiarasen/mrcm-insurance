@@ -12,7 +12,7 @@ class AllCSVSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UsersOldDataSeeder::class,          // TBL_Users_MST.csv
+//            UsersOldDataSeeder::class,          // TBL_Users_MST.csv
             TBLMemberMSTSeeder::class,   // TBL_Member_MST.csv
             TBLPolicyMSTSeeder::class,   // TBL_Policy_MST.csv
             ExcelDentalSeeder::class,         // Excel_Dental.csv

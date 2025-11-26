@@ -9,7 +9,7 @@ class TBLPolicyMSTSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = storage_path('app/TBL_Policy_MST.csv');
+        $path = storage_path('app/import/TBL_Policy_MST.csv');
 
         if (!file_exists($path)) {
             $this->command->error("TBL_Policy_MST.csv not found in storage/app/");

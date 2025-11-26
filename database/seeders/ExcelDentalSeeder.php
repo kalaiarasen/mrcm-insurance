@@ -11,7 +11,7 @@ class ExcelDentalSeeder extends Seeder
 {
     public function run()
     {
-        $file = storage_path('app/Excel_Dental.csv');
+        $file = storage_path('app/import/Excel_Dental.csv');
 
         if (!file_exists($file)) {
             dd("CSV file not found: " . $file);

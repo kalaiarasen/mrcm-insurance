@@ -9,7 +9,7 @@ class ExcelPolicyDetailsSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = storage_path('app/Excel_PolicyDetails.csv');
+        $path = storage_path('app/import/Excel_PolicyDetails.csv');
 
         if (!file_exists($path)) {
             $this->command->error("Excel_PolicyDetails.csv not found in storage/app/");
