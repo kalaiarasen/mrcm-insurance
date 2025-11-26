@@ -124,15 +124,16 @@ class TBLMemberMSTSeeder extends Seeder
 
                 DB::table('qualifications')->where('user_id', $userId)->delete();
 
-                foreach ($qualifications as [$institution, $degree, $year]) {
+                foreach ($qualifications as $index => [$institution, $degree, $year]) {
                     if (!$institution && !$degree) continue;
                     DB::table('qualifications')->insert([
-                        'user_id'       => $userId,
-                        'institution'   => $institution,
+                        'user_id'                 => $userId,
+                        'sequence'                => $index + 1, // 1, 2, 3
+                        'institution'             => $institution,
                         'degree_or_qualification' => $degree,
-                        'year_obtained' => $year ?: null,
-                        'created_at'    => now(),
-                        'updated_at'    => now(),
+                        'year_obtained'           => $year ?: null,
+                        'created_at'              => now(),
+                        'updated_at'              => now(),
                     ]);
                 }
 
