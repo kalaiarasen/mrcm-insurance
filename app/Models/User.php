@@ -30,6 +30,7 @@ class User extends Authenticatable
         'application_submitted_at',
         'submission_version',
         'status',
+        'gender',
         'old_user_id',
         'old_member_id'
     ];
