@@ -69,6 +69,31 @@ class PolicyHolderController extends Controller
                         </ul>
                     ';
                 })
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where('users.name', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('gender', function($query, $keyword) {
+                    $query->whereHas('applicantProfile', function($q) use ($keyword) {
+                        $q->where('gender', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('nation_status', function($query, $keyword) {
+                    $query->whereHas('applicantProfile', function($q) use ($keyword) {
+                        $q->where('nationality_status', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('nric_no', function($query, $keyword) {
+                    $query->whereHas('applicantProfile', function($q) use ($keyword) {
+                        $q->where('nric_number', 'like', "%{$keyword}%")
+                          ->orWhere('passport_number', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('email', function($query, $keyword) {
+                    $query->where('users.email', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('contact_no', function($query, $keyword) {
+                    $query->where('users.contact_no', 'like', "%{$keyword}%");
+                })
                 ->rawColumns(['date', 'name', 'nation_status', 'action'])
                 ->make(true);
         }

@@ -124,6 +124,37 @@ class YourActionController extends Controller
                           ->orWhere('status', 'like', "%{$keyword}%");
                     });
                 })
+                ->filterColumn('policy_id', function($query, $keyword) {
+                    $query->where('reference_number', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('policy_no', function($query, $keyword) {
+                    $query->where('reference_number', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->whereHas('user', function($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('email', function($query, $keyword) {
+                    $query->whereHas('user', function($q) use ($keyword) {
+                        $q->where('email', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('expiry_date', function($query, $keyword) {
+                    $query->whereHas('user.policyPricing', function($q) use ($keyword) {
+                        $q->where('policy_expiry_date', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('class', function($query, $keyword) {
+                    $query->whereHas('user.healthcareService', function($q) use ($keyword) {
+                        $q->where('coverage_type', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('amount', function($query, $keyword) {
+                    $query->whereHas('user.policyPricing', function($q) use ($keyword) {
+                        $q->where('total_payable', 'like', "%{$keyword}%");
+                    });
+                })
                 ->orderColumn('policy_id', function ($query, $order) {
                     $query->orderBy('reference_number', $order);
                 })
