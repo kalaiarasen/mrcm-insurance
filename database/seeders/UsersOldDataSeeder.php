@@ -42,4 +42,35 @@ class UsersOldDataSeeder extends Seeder
                 default => 3,
             };
 
-            // Preve
+            // Prevent duplicate emails: create placeholder if no email exists
+            $email = $chvUserName . '@import.local';
+
+            $user = User::updateOrCreate(
+                [
+                    'id' => $numUserID,
+                ],
+                [
+                    'name' => $chvUserName,
+                    'email' => $email,
+                    'password' => Hash::make($chvPassword),
+                    'status' => (int) $tnyStatus,
+                ]
+            );
+
+            // Assign role in model_has_roles
+            DB::table('model_has_roles')->updateOrInsert(
+                [
+                    'model_id' => $user->id,
+                    'model_type' => 'App\\Models\\User',
+                ],
+                [
+                    'role_id' => $roleId
+                ]
+            );
+        }
+
+        fclose($file);
+
+        echo "Users imported successfully.\n";
+    }
+}
