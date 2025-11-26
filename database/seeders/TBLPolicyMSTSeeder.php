@@ -169,11 +169,42 @@ class TBLPolicyMSTSeeder extends Seeder
                     $policyData['name_on_card'] = trim($row[32] ?? '') ?: null;
                     $policyData['nric_no'] = trim($row[33] ?? '') ?: null;
                     $policyData['card_no'] = trim($row[34] ?? '') ?: null;
-                    $policyData['card_type'] = trim($row[36] ?? '') ? json_encode(['type' => trim($row[36])]) : null;
+                    
+                    // Map card type to array format (e.g., ["visa"] or ["master"])
+                    $cardTypeRaw = trim($row[36] ?? '');
+                    if ($cardTypeRaw) {
+                        $cardTypeLower = strtolower($cardTypeRaw);
+                        if (str_contains($cardTypeLower, 'visa')) {
+                            $policyData['card_type'] = json_encode(['visa']);
+                        } elseif (str_contains($cardTypeLower, 'master')) {
+                            $policyData['card_type'] = json_encode(['master']);
+                        } else {
+                            $policyData['card_type'] = json_encode([strtolower($cardTypeRaw)]);
+                        }
+                    } else {
+                        $policyData['card_type'] = null;
+                    }
+                    
                     $policyData['expiry_month'] = $expiryMonth;
                     $policyData['expiry_year'] = $expiryYear;
                     $policyData['card_issuing_bank'] = trim($row[38] ?? '') ?: null;
-                    $policyData['relationship'] = trim($row[39] ?? '') ? json_encode(['type' => trim($row[39])]) : null;
+                    
+                    // Map relationship to array format (e.g., ["self"] or ["family_members"])
+                    $relationshipRaw = trim($row[39] ?? '');
+                    if ($relationshipRaw) {
+                        $relationshipLower = strtolower($relationshipRaw);
+                        if (str_contains($relationshipLower, 'self')) {
+                            $policyData['relationship'] = json_encode(['self']);
+                        } elseif (str_contains($relationshipLower, 'family') || str_contains($relationshipLower, 'member')) {
+                            $policyData['relationship'] = json_encode(['family_members']);
+                        } elseif (str_contains($relationshipLower, 'other')) {
+                            $policyData['relationship'] = json_encode(['others']);
+                        } else {
+                            $policyData['relationship'] = json_encode(['self']);
+                        }
+                    } else {
+                        $policyData['relationship'] = null;
+                    }
                 }
                 
                 DB::table('policy_applications')->updateOrInsert(
