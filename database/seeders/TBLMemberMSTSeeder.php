@@ -123,13 +123,24 @@ class TBLMemberMSTSeeder extends Seeder
                 DB::table('qualifications')->where('user_id', $userId)->delete();
 
                 foreach ($qualifications as $index => [$institution, $degree, $year]) {
-                    if (!$institution && !$degree) continue;
+                    // Skip if both institution and degree are empty or NULL string
+                    if (empty($institution) && empty($degree)) continue;
+                    if ($institution === 'NULL') $institution = null;
+                    if ($degree === 'NULL') $degree = null;
+                    
+                    // Clean year value - store as string to handle legacy data
+                    if ($year === 'NULL' || empty($year)) {
+                        $year = null;
+                    } else {
+                        $year = trim($year);
+                    }
+                    
                     DB::table('qualifications')->insert([
                         'user_id'                 => $userId,
                         'sequence'                => $index + 1, // 1, 2, 3
                         'institution'             => $institution,
                         'degree_or_qualification' => $degree,
-                        'year_obtained'           => $year ?: null,
+                        'year_obtained'           => $year,
                         'created_at'              => now(),
                         'updated_at'              => now(),
                     ]);
@@ -206,10 +217,25 @@ class TBLMemberMSTSeeder extends Seeder
                 // -------------------------
                 // 8. CLAIM DOCUMENTS
                 // -------------------------
-                if (!empty($row[69] ?? '')) {
+                if ((!empty($row[69] ?? '') && $row[69] !== 'NUL')) {
+                    $claimId = DB::table('claims')->insertGetId([
+                        'user_id' => $userId,
+                        'action' => 'new',
+                        'incident_date' => now(),
+                        'notification_date' => now(),
+                        'claim_title' => 'Claim from Old System',
+                        'claim_description' => 'This claim was imported from the legacy system.',
+                        'status' => 'closed',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    
                     DB::table('claim_documents')->updateOrInsert(
-                        ['user_id' => $userId, 'document_path' => $row[69]],
+                        ['claim_id' => $claimId, 'document_path' => $row[69]],
                         [
+                            'document_name' => basename($row[69]),
+                            'mime_type' => 'application/octet-stream',
+                            'file_size' => null,
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]

@@ -76,11 +76,17 @@ class ExcelPharmacistSeeder extends Seeder
                 // If still not found → create new user
                 if (!$user) {
                     $user = User::create([
-                        'name'      => $name ?: 'Unknown',
-                        'email'     => $email ?: null,
-                        'gender'    => $gender ?: null,
-                        'password'  => Hash::make('password123'),
+                        'name'       => $name ?: 'Unknown',
+                        'email'      => $email ?: null,
+                        'gender'     => $gender ?: null,
+                        'contact_no' => $contact_no ?: null,
+                        'password'   => Hash::make('password123'),
                     ]);
+                } else {
+                    // Update contact_no if user exists
+                    if ($contact_no) {
+                        $user->update(['contact_no' => $contact_no]);
+                    }
                 }
 
                 // -------------------------
@@ -89,15 +95,10 @@ class ExcelPharmacistSeeder extends Seeder
                 DB::table('applicant_profiles')->updateOrInsert(
                     ['user_id' => $user->id],
                     [
-                        'nationality_status' => $nationality,
-                        'nric_number'        => $nric,
-                        'passport_number'    => $passport_no,
-                        'policy_no'          => $policy_no,
-                        'policy_expiry_date' => $expiry_date,
-                        'premium'            => $plan,
-                        'policy_limit'       => $policy_limit,
-                        'updated_at'         => now(),
-                        'created_at'         => now(),
+                        'nric_number'      => $nric ?: null,
+                        'passport_number'  => $passport_no ?: null,
+                        'updated_at'       => now(),
+                        'created_at'       => now(),
                     ]
                 );
 
@@ -107,13 +108,10 @@ class ExcelPharmacistSeeder extends Seeder
                 DB::table('applicant_contacts')->updateOrInsert(
                     ['user_id' => $user->id],
                     [
-                        'contact_no'       => $contact_no,
-                        'email_address'    => $email,
-                        'mailing_address'  => $mailing_address,
-                        'primary_address'  => $primary_address,
-                        'secondary_address'=> $secondary_address,
-                        'updated_at'       => now(),
-                        'created_at'       => now(),
+                        'contact_no'     => $contact_no ?: null,
+                        'email_address'  => $email ?: null,
+                        'updated_at'     => now(),
+                        'created_at'     => now(),
                     ]
                 );
 
@@ -128,32 +126,22 @@ class ExcelPharmacistSeeder extends Seeder
 
                 DB::table('qualifications')->where('user_id', $user->id)->delete();
 
+                $sequence = 1;
                 foreach ($qualifications as [$inst, $qual]) {
                     if ($inst === '' && $qual === '') continue;
 
                     DB::table('qualifications')->insert([
-                        'user_id'       => $user->id,
-                        'institution'   => $inst,
-                        'degree_or_qualification' => $qual,
-                        'created_at'    => now(),
-                        'updated_at'    => now(),
+                        'user_id'                => $user->id,
+                        'sequence'               => $sequence,
+                        'institution'            => $inst ?: null,
+                        'degree_or_qualification'=> $qual ?: null,
+                        'year_obtained'          => null,
+                        'created_at'             => now(),
+                        'updated_at'             => now(),
                     ]);
+                    
+                    $sequence++;
                 }
-
-                // -------------------------
-                // 5. POLICY PRICINGS
-                // -------------------------
-                DB::table('policy_pricings')->updateOrInsert(
-                    ['user_id' => $user->id],
-                    [
-                        'policy_expiry_date' => $expiry_date,
-                        'gross_premium'      => $plan,
-                        'liability_limit'    => $policy_limit,
-                        'is_used'            => 1,
-                        'updated_at'         => now(),
-                        'created_at'         => now(),
-                    ]
-                );
             }
 
             DB::commit();

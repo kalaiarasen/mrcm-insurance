@@ -18,7 +18,7 @@ class AllCSVSeeder extends Seeder
             ExcelDentalSeeder::class,         // Excel_Dental.csv
             ExcelMedicalSeeder::class,        // Excel_Medical.csv
             ExcelPharmacistSeeder::class,     // Excel_Pharmacist.csv
-            ExcelPolicyDetailsSeeder::class,  // Excel_PolicyDetails.csv
+            // ExcelPolicyDetailsSeeder::class,  // Excel_PolicyDetails.csv
         ]);
     }
 }

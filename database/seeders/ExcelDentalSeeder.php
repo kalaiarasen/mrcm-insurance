@@ -139,35 +139,6 @@ class ExcelDentalSeeder extends Seeder
                     );
                 }
             }
-
-            // ============================
-            // 6. HEALTHCARE SERVICES
-            // ============================
-            DB::table('healthcare_services')->updateOrInsert(
-                ['user_id' => $user->id],
-                [
-                    'employment_status' => $data['Employment status'] ?? null,
-                    'specialty_area' => $data['Specialty'] ?? null,
-                    'is_used' => 1,
-                    'updated_at' => now(),
-                    'created_at' => now(),
-                ]
-            );
-
-            // ============================
-            // 7. POLICY PRICINGS
-            // ============================
-            DB::table('policy_pricings')->updateOrInsert(
-                ['user_id' => $user->id],
-                [
-                    'policy_expiry_date' => $data['Expiry date'] ?? null,
-                    'gross_premium' => $data['Premium'] ?? null,
-                    'liability_limit' => $data['Policy limit'] ?? null,
-                    'is_used' => 1,
-                    'updated_at' => now(),
-                    'created_at' => now(),
-                ]
-            );
         }
 
         fclose($handle);

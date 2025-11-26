@@ -83,11 +83,17 @@ class ExcelMedicalSeeder extends Seeder
                 // If still not found → create new user
                 if (!$user) {
                     $user = User::create([
-                        'name'      => $name ?: 'Unknown',
-                        'email'     => $email ?: null,
-                        'gender'    => $gender ?: null,
-                        'password'  => Hash::make('password123'),
+                        'name'       => $name ?: 'Unknown',
+                        'email'      => $email ?: null,
+                        'gender'     => $gender ?: null,
+                        'contact_no' => $contact_no ?: null,
+                        'password'   => Hash::make('password123'),
                     ]);
+                } else {
+                    // Update contact_no if user exists
+                    if ($contact_no) {
+                        $user->update(['contact_no' => $contact_no]);
+                    }
                 }
 
                 // -------------------------
@@ -96,17 +102,10 @@ class ExcelMedicalSeeder extends Seeder
                 DB::table('applicant_profiles')->updateOrInsert(
                     ['user_id' => $user->id],
                     [
-                        'nationality'          => $nationality,
-                        'nric'                 => $nric,
-                        'passport_no'          => $passport_no,
-                        'employment_status'    => $employment,
-                        'specialty'            => $specialty,
-                        'policy_no'            => $policy_no,
-                        'policy_expiry_date'   => $expiry_date,
-                        'premium'              => $premium,
-                        'policy_limit'         => $policy_limit,
-                        'updated_at'           => now(),
-                        'created_at'           => now(),
+                        'nric_number'      => $nric ?: null,
+                        'passport_number'  => $passport_no ?: null,
+                        'updated_at'       => now(),
+                        'created_at'       => now(),
                     ]
                 );
 
@@ -116,12 +115,10 @@ class ExcelMedicalSeeder extends Seeder
                 DB::table('applicant_contacts')->updateOrInsert(
                     ['user_id' => $user->id],
                     [
-                        'phone'             => $contact_no,
-                        'mailing_address'   => $mailing_address,
-                        'primary_address'   => $primary_address,
-                        'secondary_address' => $secondary_address,
-                        'updated_at'        => now(),
-                        'created_at'        => now(),
+                        'contact_no'     => $contact_no ?: null,
+                        'email_address'  => $email ?: null,
+                        'updated_at'     => now(),
+                        'created_at'     => now(),
                     ]
                 );
 
@@ -136,16 +133,21 @@ class ExcelMedicalSeeder extends Seeder
 
                 DB::table('qualifications')->where('user_id', $user->id)->delete();
 
+                $sequence = 1;
                 foreach ($qualifications as [$inst, $qual]) {
                     if ($inst === '' && $qual === '') continue;
 
                     DB::table('qualifications')->insert([
-                        'user_id'       => $user->id,
-                        'institution'   => $inst,
-                        'qualification' => $qual,
-                        'created_at'    => now(),
-                        'updated_at'    => now(),
+                        'user_id'                => $user->id,
+                        'sequence'               => $sequence,
+                        'institution'            => $inst ?: null,
+                        'degree_or_qualification'=> $qual ?: null,
+                        'year_obtained'          => null,
+                        'created_at'             => now(),
+                        'updated_at'             => now(),
                     ]);
+                    
+                    $sequence++;
                 }
             }
 
