@@ -11,57 +11,111 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Yajra\DataTables\Facades\DataTables;
 
 class YourActionController extends Controller
 {
     /**
      * Display the for-your-action page with policy statistics and pending policies.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $query = PolicyApplication::with('user')
+                ->orderBy('updated_at', 'desc');
+
+            return DataTables::of($query)
+                ->addColumn('policy_id', function ($policy) {
+                    return '<small>' . e($policy->reference_number ?? '') . '</small>';
+                })
+                ->addColumn('status', function ($policy) {
+                    $statusMap = [
+                        'new_case' => 'New Case',
+                        'new_renewal' => 'New Renewal',
+                        'not_paid' => 'Not Paid',
+                        'paid' => 'Paid',
+                        'sent_uw' => 'Sent UW',
+                        'active' => 'Active',
+                    ];
+                    
+                    $displayStatus = $statusMap[$policy->admin_status] ?? ucfirst($policy->admin_status ?? 'N/A');
+                    
+                    $badgeClass = match($displayStatus) {
+                        'Approved' => 'bg-success',
+                        'Submitted' => 'bg-info',
+                        'Rejected' => 'bg-danger',
+                        'Active' => 'bg-primary',
+                        'Processing' => 'bg-warning',
+                        'Send UW', 'Sent UW' => 'bg-info',
+                        'Cancelled' => 'bg-secondary',
+                        'New', 'New Case' => 'bg-light text-dark',
+                        default => 'bg-secondary'
+                    };
+                    
+                    return '<span class="badge ' . $badgeClass . '">' . e($displayStatus) . '</span>';
+                })
+                ->addColumn('expiry_date', function ($policy) {
+                    $expiryDate = $policy->user?->policyPricing?->policy_expiry_date ?? 'N/A';
+                    return $expiryDate === 'N/A' ? 'N/A' : \Carbon\Carbon::parse($expiryDate)->format('d-M-Y');
+                })
+                ->addColumn('name', function ($policy) {
+                    return '<strong>' . e($policy->user?->name ?? 'Unknown') . '</strong>';
+                })
+                ->addColumn('policy_no', function ($policy) {
+                    return e($policy->reference_number ?? '');
+                })
+                ->addColumn('email', function ($policy) {
+                    return e($policy->user?->email ?? 'N/A');
+                })
+                ->addColumn('class', function ($policy) {
+                    return e($policy->user?->healthcareService?->coverage_type ?? 'General Cover');
+                })
+                ->addColumn('amount', function ($policy) {
+                    $amount = $policy->user?->policyPricing?->total_payable;
+                    if (is_numeric($amount)) {
+                        return 'RM' . number_format($amount, 2);
+                    } elseif ($amount === null) {
+                        return 'null';
+                    }
+                    return e($amount);
+                })
+                ->addColumn('action', function ($policy) {
+                    $viewUrl = route('for-your-action.show', $policy->id);
+                    $deleteUrl = route('for-your-action.destroy', $policy->id);
+                    
+                    $html = '<ul class="action">';
+                    $html .= '<li class="view me-2">';
+                    $html .= '<a href="' . $viewUrl . '" title="View Details">';
+                    $html .= '<i class="fa-regular fa-eye"></i>';
+                    $html .= '</a>';
+                    $html .= '</li>';
+                    
+                    if (in_array($policy->status, ['New Case', 'Rejected'])) {
+                        $html .= '<li class="delete">';
+                        $html .= '<form action="' . $deleteUrl . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this policy application?\');">';
+                        $html .= csrf_field();
+                        $html .= method_field('DELETE');
+                        $html .= '<button type="submit" class="border-0 bg-transparent p-0" title="Delete">';
+                        $html .= '<i class="fa-regular fa-trash-can"></i>';
+                        $html .= '</button>';
+                        $html .= '</form>';
+                        $html .= '</li>';
+                    }
+                    
+                    $html .= '</ul>';
+                    return $html;
+                })
+                ->rawColumns(['policy_id', 'status', 'name', 'action'])
+                ->make(true);
+        }
+
         // Count policies by admin_status (show all, no is_used filter)
         $newPolicies = PolicyApplication::where('admin_status', 'new_case')->count();
         $activePolicies = PolicyApplication::where('admin_status', 'active')->count();
         $pendingPolicies = PolicyApplication::where('admin_status', 'not_paid')->count();
         $rejectedPolicies = PolicyApplication::where('status', 'rejected')->count();
 
-        // Get all policies with related user data for the table (show all, no is_used filter)
-        $policies = PolicyApplication::with('user')
-            ->orderBy('updated_at', 'desc')
-            ->get()
-            ->map(function ($policy) {
-                // Determine type based on submission_version or if it's a renewal
-                $type = $policy->submission_version > 1 ? 'Renewal' : 'New';
-                
-                // Map admin_status to readable status
-                $statusMap = [
-                    'new_case' => 'New Case',
-                    'new_renewal' => 'New Renewal',
-                    'not_paid' => 'Not Paid',
-                    'paid' => 'Paid',
-                    'sent_uw' => 'Sent UW',
-                    'active' => 'Active',
-                ];
-                
-                $displayStatus = $statusMap[$policy->admin_status] ?? ucfirst($policy->admin_status ?? 'N/A');
-                
-                return [
-                    'id' => $policy->id,
-                    'policy_id' => $policy->reference_number ?? null,
-                    'type' => $type,
-                    'status' => $displayStatus,
-                    'customer_status' => $policy->customer_status,
-                    'admin_status' => $policy->admin_status,
-                    'expiry_date' => $policy->user?->policyPricing?->policy_expiry_date ?? 'N/A',
-                    'name' => $policy->user?->name ?? 'Unknown',
-                    'policy_no' => $policy->reference_number ?? null,
-                    'email' => $policy->user?->email ?? 'N/A',
-                    'class' => $policy->user?->healthcareService?->coverage_type ?? 'General Cover',
-                    'amount' => $policy->user?->policyPricing?->total_payable ?? null,
-                ];
-            });
-
-        return view('pages.your-action.index', compact('newPolicies', 'activePolicies', 'pendingPolicies', 'rejectedPolicies', 'policies'));
+        return view('pages.your-action.index', compact('newPolicies', 'activePolicies', 'pendingPolicies', 'rejectedPolicies'));
     }
 
     /**
