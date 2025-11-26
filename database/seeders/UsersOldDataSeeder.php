@@ -43,8 +43,15 @@ class UsersOldDataSeeder extends Seeder
             };
 
             // Prevent duplicate emails: create placeholder if no email exists
-            $email = $chvUserName . '@import.local';
+            $email = $chvUserName;
+            $existingUser = User::where('email', $email)
+                ->where('id', '<>', $numUserID)
+                ->first();
 
+            if ($existingUser) {
+                // Skip this row because email is already used
+                continue;
+            }
             $user = User::updateOrCreate(
                 [
                     'id' => $numUserID,
