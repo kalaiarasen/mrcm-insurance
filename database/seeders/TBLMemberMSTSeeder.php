@@ -154,15 +154,25 @@ class TBLMemberMSTSeeder extends Seeder
                 // -------------------------
                 // 6. INSURANCE HISTORIES
                 // -------------------------
+
+                $policyLimit = trim($row[48] ?? '');
+                if (strtolower($policyLimit) === 'unlimited coverage') {
+                    $policyLimit = 999999999999.99; // max for decimal(15,2)
+                } elseif (!is_numeric($policyLimit)) {
+                    $policyLimit = null;
+                } else {
+                    $policyLimit = (float) $policyLimit;
+                }
+
                 DB::table('insurance_histories')->updateOrInsert(
                     ['user_id' => $userId],
                     [
-                        'current_insurance'   => $this->yesNoToBool($row[51] ?? ''),
-                        'period_of_insurance' => $row[52] ?? null,
-                        'insurer_name'        => $row[53] ?? null,
-                        'policy_limit_myr'    => $row[54] ?? null,
-                        'excess_myr'          => $row[55] ?? null,
-                        'retroactive_date'    => $row[56] ?? null,
+                        'current_insurance'   => $this->yesNoToBool($row[45] ?? ''),
+                        'period_of_insurance' => $row[46] ?? null,
+                        'insurer_name'        => $row[47] ?? null,
+                        'policy_limit_myr'    => $policyLimit,
+                        'excess_myr'          => $row[49] ?? null,
+                        'retroactive_date'    => $row[50] ?? null,
                         'is_used'             => 1,
                         'created_at'          => now(),
                         'updated_at'          => now(),
