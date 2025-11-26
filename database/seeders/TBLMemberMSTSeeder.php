@@ -30,45 +30,43 @@ class TBLMemberMSTSeeder extends Seeder
         try {
             while (($row = fgetcsv($handle)) !== false) {
 
+                // -------------------------
+                // 1. USERS
+                // -------------------------
                 $memberId = trim($row[0] ?? '');
                 $name     = trim($row[2] ?? '');
-                $email    = trim($row[6] ?? '');
+                $email    = trim($row[9] ?? '');
+                $password = trim($row[10] ?? '');
+                $gender   = trim($row[7] ?? '');
+                $status   = trim($row[70] ?? 1);
 
                 if (!$memberId || (!$name && !$email)) continue;
 
-                $password = trim($row[7] ?? '');
-                $gender   = trim($row[5] ?? '');
-                $status   = trim($row[92] ?? 1);
-
-                // -------------------------
-                // 1. USERS - updateOrInsert by email
-                // -------------------------
-                $userId = null;
                 $user = User::updateOrCreate(
                     ['email' => $email],
                     [
-                        'name'       => $name,
-                        'gender'     => $gender ?: null,
-                        'password'   => $password ? Hash::make($password) : Hash::make('password123'),
+                        'name'               => $name,
+                        'gender'             => $gender ?: null,
+                        'password'           => $password ? Hash::make($password) : Hash::make('password123'),
                         'application_status' => $status,
                         'old_member_id'      => $memberId,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'created_at'         => now(),
+                        'updated_at'         => now(),
                     ]
                 );
 
                 $userId = $user->id;
 
                 // -------------------------
-                // 2. ADDRESSES (Primary)
+                // 2. PRIMARY ADDRESS
                 // -------------------------
-                $primaryType     = trim($row[16] ?? '');
-                $primaryClinic   = trim($row[17] ?? '');
-                $primaryAddress  = trim($row[18] ?? '');
-                $primaryPostcode = trim($row[19] ?? '');
-                $primaryState    = trim($row[20] ?? '');
-                $primaryCity     = trim($row[21] ?? '');
-                $primaryCountry  = trim($row[22] ?? '');
+                $primaryType     = trim($row[19] ?? '');
+                $primaryClinic   = trim($row[20] ?? '');
+                $primaryAddress  = trim($row[21] ?? '');
+                $primaryPostcode = trim($row[22] ?? '');
+                $primaryState    = trim($row[23] ?? '');
+                $primaryCity     = trim($row[24] ?? '');
+                $primaryCountry  = trim($row[25] ?? '');
 
                 if ($primaryAddress) {
                     DB::table('addresses')->updateOrInsert(
@@ -87,15 +85,15 @@ class TBLMemberMSTSeeder extends Seeder
                 }
 
                 // -------------------------
-                // 3. ADDRESSES (Secondary)
+                // 3. SECONDARY ADDRESS
                 // -------------------------
-                $secondaryType     = trim($row[23] ?? '');
-                $secondaryClinic   = trim($row[24] ?? '');
-                $secondaryAddress  = trim($row[25] ?? '');
-                $secondaryPostcode = trim($row[26] ?? '');
-                $secondaryState    = trim($row[27] ?? '');
-                $secondaryCity     = trim($row[28] ?? '');
-                $secondaryCountry  = trim($row[29] ?? '');
+                $secondaryType     = trim($row[26] ?? '');
+                $secondaryClinic   = trim($row[27] ?? '');
+                $secondaryAddress  = trim($row[28] ?? '');
+                $secondaryPostcode = trim($row[29] ?? '');
+                $secondaryState    = trim($row[30] ?? '');
+                $secondaryCity     = trim($row[31] ?? '');
+                $secondaryCountry  = trim($row[32] ?? '');
 
                 if ($secondaryAddress) {
                     DB::table('addresses')->updateOrInsert(
@@ -117,9 +115,9 @@ class TBLMemberMSTSeeder extends Seeder
                 // 4. QUALIFICATIONS
                 // -------------------------
                 $qualifications = [
-                    [trim($row[30] ?? ''), trim($row[31] ?? ''), trim($row[32] ?? '')],
-                    [trim($row[33] ?? ''), trim($row[34] ?? ''), trim($row[35] ?? '')],
-                    [trim($row[36] ?? ''), trim($row[37] ?? ''), trim($row[38] ?? '')],
+                    [trim($row[34] ?? ''), trim($row[35] ?? ''), trim($row[36] ?? '')],
+                    [trim($row[37] ?? ''), trim($row[38] ?? ''), trim($row[39] ?? '')],
+                    [trim($row[40] ?? ''), trim($row[41] ?? ''), trim($row[42] ?? '')],
                 ];
 
                 DB::table('qualifications')->where('user_id', $userId)->delete();
@@ -143,13 +141,13 @@ class TBLMemberMSTSeeder extends Seeder
                 DB::table('risk_managements')->updateOrInsert(
                     ['user_id' => $userId],
                     [
-                        'medical_records'  => $this->yesNoToBool($row[41] ?? ''),
-                        'informed_consent' => $this->yesNoToBool($row[42] ?? ''),
-                        'adverse_incidents'=> $this->yesNoToBool($row[43] ?? ''),
-                        'sterilisation_facilities' => $this->yesNoToBool($row[44] ?? ''),
-                        'is_used'          => 1,
-                        'created_at'       => now(),
-                        'updated_at'       => now(),
+                        'medical_records'        => $this->yesNoToBool($row[47] ?? ''),
+                        'informed_consent'       => $this->yesNoToBool($row[48] ?? ''),
+                        'adverse_incidents'      => $this->yesNoToBool($row[49] ?? ''),
+                        'sterilisation_facilities'=> $this->yesNoToBool($row[50] ?? ''),
+                        'is_used'                => 1,
+                        'created_at'             => now(),
+                        'updated_at'             => now(),
                     ]
                 );
 
@@ -159,12 +157,12 @@ class TBLMemberMSTSeeder extends Seeder
                 DB::table('insurance_histories')->updateOrInsert(
                     ['user_id' => $userId],
                     [
-                        'current_insurance'   => $this->yesNoToBool($row[45] ?? ''),
-                        'period_of_insurance' => $row[46] ?? null,
-                        'insurer_name'        => $row[47] ?? null,
-                        'policy_limit_myr'    => $row[48] ?? null,
-                        'excess_myr'          => $row[49] ?? null,
-                        'retroactive_date'    => $row[50] ?? null,
+                        'current_insurance'   => $this->yesNoToBool($row[51] ?? ''),
+                        'period_of_insurance' => $row[52] ?? null,
+                        'insurer_name'        => $row[53] ?? null,
+                        'policy_limit_myr'    => $row[54] ?? null,
+                        'excess_myr'          => $row[55] ?? null,
+                        'retroactive_date'    => $row[56] ?? null,
                         'is_used'             => 1,
                         'created_at'          => now(),
                         'updated_at'          => now(),
@@ -177,9 +175,9 @@ class TBLMemberMSTSeeder extends Seeder
                 DB::table('claims_experiences')->updateOrInsert(
                     ['user_id' => $userId],
                     [
-                        'claims_made'        => $this->yesNoToBool($row[53] ?? ''),
-                        'aware_of_errors'    => $this->yesNoToBool($row[54] ?? ''),
-                        'disciplinary_action'=> $this->yesNoToBool($row[55] ?? ''),
+                        'claims_made'        => $this->yesNoToBool($row[59] ?? ''),
+                        'aware_of_errors'    => $this->yesNoToBool($row[60] ?? ''),
+                        'disciplinary_action'=> $this->yesNoToBool($row[61] ?? ''),
                         'is_used'            => 1,
                         'created_at'         => now(),
                         'updated_at'         => now(),
@@ -189,9 +187,9 @@ class TBLMemberMSTSeeder extends Seeder
                 // -------------------------
                 // 8. CLAIM DOCUMENTS
                 // -------------------------
-                if (!empty($row[62] ?? '')) {
+                if (!empty($row[69] ?? '')) {
                     DB::table('claim_documents')->updateOrInsert(
-                        ['user_id' => $userId, 'document_path' => $row[62]],
+                        ['user_id' => $userId, 'document_path' => $row[69]],
                         [
                             'created_at' => now(),
                             'updated_at' => now(),
