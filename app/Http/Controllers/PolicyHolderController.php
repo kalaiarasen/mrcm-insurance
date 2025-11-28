@@ -126,6 +126,7 @@ class PolicyHolderController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'contact_no' => $user->contact_no,
+                'loading' => $user->loading,
             ]
         ]);
     }
@@ -152,6 +153,7 @@ class PolicyHolderController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'contact_no' => ['required', 'string', 'max:20'],
+            'loading' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
 
         // Add password validation rules if password change is being attempted
@@ -187,6 +189,7 @@ class PolicyHolderController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->contact_no = $validated['contact_no'];
+        $user->loading = $validated['loading'] ?? null;
         $user->save();
 
         return response()->json([

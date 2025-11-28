@@ -231,6 +231,14 @@
                             <div class="invalid-feedback d-block" id="contactNoError"></div>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="editLoading" class="form-label fw-bold">Loading (%)</label>
+                            <input type="number" class="form-control" id="editLoading" name="loading" step="0.01"
+                                min="0" max="100" placeholder="Enter loading percentage">
+                            <div class="invalid-feedback d-block" id="loadingError"></div>
+                            <small class="text-muted">Optional: Enter loading percentage (0-100)</small>
+                        </div>
+
                         <!-- Password Section -->
                         <hr class="my-4">
                         <h6 class="text-muted mb-3">
@@ -579,6 +587,7 @@
                         document.getElementById('editName').value = data.name;
                         document.getElementById('editEmail').value = data.email;
                         document.getElementById('editContactNo').value = data.contact_no;
+                        document.getElementById('editLoading').value = data.loading || '';
 
                         // Clear password fields
                         document.getElementById('editCurrentPassword').value = '';
@@ -660,6 +669,7 @@
                 'name': 'nameError',
                 'email': 'emailError',
                 'contact_no': 'contactNoError',
+                'loading': 'loadingError',
                 'current_password': 'currentPasswordError',
                 'new_password': 'newPasswordError',
                 'confirm_password': 'confirmPasswordError'
@@ -682,6 +692,7 @@
                 'nameError',
                 'emailError',
                 'contactNoError',
+                'loadingError',
                 'currentPasswordError',
                 'newPasswordError',
                 'confirmPasswordError'
