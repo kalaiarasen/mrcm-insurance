@@ -243,12 +243,11 @@
                                 <thead>
                                     <tr>
                                         <th>Policy ID</th>
+                                        <th>Last Updated</th>
                                         {{-- <th>Type</th> --}}
                                         <th>Status</th>
                                         <th>Expiry Date</th>
-                                        <th>Name</th>
-                                        <th>Policy No</th>
-                                        <th>Email</th>
+                                        <th>Name / Email</th>
                                         <th>Class</th>
                                         <th>Amount</th>
                                         <th>Action</th>
@@ -288,6 +287,12 @@
                         searchable: true
                     },
                     {
+                        data: 'date_changed',
+                        name: 'date_changed',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
                         data: 'status',
                         name: 'status',
                         orderable: false,
@@ -302,18 +307,6 @@
                     {
                         data: 'name',
                         name: 'name',
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: 'policy_no',
-                        name: 'policy_no',
-                        orderable: false,
-                        searchable: true
-                    },
-                    {
-                        data: 'email',
-                        name: 'email',
                         orderable: true,
                         searchable: true
                     },
@@ -337,8 +330,8 @@
                     }
                 ],
                 order: [
-                    [2, 'desc']
-                ], // Order by expiry date descending
+                    [1, 'desc']
+                ], // Order by date changed descending (latest first)
                 pageLength: 10,
                 lengthMenu: [
                     [10, 25, 50, 100, -1],

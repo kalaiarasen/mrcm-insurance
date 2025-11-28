@@ -27,6 +27,14 @@ class YourActionController extends Controller
                 ->addColumn('policy_id', function ($policy) {
                     return '<small>' . e($policy->reference_number ?? '') . '</small>';
                 })
+                ->addColumn('date_changed', function ($policy) {
+                    // Show updated_at if it exists and is different from created_at, otherwise show created_at
+                    $date = $policy->updated_at && $policy->updated_at != $policy->created_at 
+                        ? $policy->updated_at 
+                        : $policy->created_at;
+                    
+                    return '<small>' . $date->format('d-M-Y') . '<br><span class="text-muted">' . $date->format('h:i A') . '</span></small>';
+                })
                 ->addColumn('status', function ($policy) {
                     $statusMap = [
                         'new_case' => 'New Case',
@@ -58,13 +66,9 @@ class YourActionController extends Controller
                     return $expiryDate === 'N/A' ? 'N/A' : \Carbon\Carbon::parse($expiryDate)->format('d-M-Y');
                 })
                 ->addColumn('name', function ($policy) {
-                    return '<strong>' . e($policy->user?->name ?? 'Unknown') . '</strong>';
-                })
-                ->addColumn('policy_no', function ($policy) {
-                    return e($policy->reference_number ?? '');
-                })
-                ->addColumn('email', function ($policy) {
-                    return e($policy->user?->email ?? 'N/A');
+                    $name = '<strong>' . e($policy->user?->name ?? 'Unknown') . '</strong>';
+                    $email = '<br><small class="text-muted">' . e($policy->user?->email ?? 'N/A') . '</small>';
+                    return $name . $email;
                 })
                 ->addColumn('class', function ($policy) {
                     return e($policy->user?->healthcareService?->coverage_type ?? 'General Cover');
@@ -125,17 +129,10 @@ class YourActionController extends Controller
                 ->filterColumn('policy_id', function($query, $keyword) {
                     $query->where('reference_number', 'like', "%{$keyword}%");
                 })
-                ->filterColumn('policy_no', function($query, $keyword) {
-                    $query->where('reference_number', 'like', "%{$keyword}%");
-                })
                 ->filterColumn('name', function($query, $keyword) {
                     $query->whereHas('user', function($q) use ($keyword) {
-                        $q->where('name', 'like', "%{$keyword}%");
-                    });
-                })
-                ->filterColumn('email', function($query, $keyword) {
-                    $query->whereHas('user', function($q) use ($keyword) {
-                        $q->where('email', 'like', "%{$keyword}%");
+                        $q->where('name', 'like', "%{$keyword}%")
+                          ->orWhere('email', 'like', "%{$keyword}%");
                     });
                 })
                 ->filterColumn('expiry_date', function($query, $keyword) {
@@ -156,7 +153,10 @@ class YourActionController extends Controller
                 ->orderColumn('policy_id', function ($query, $order) {
                     $query->orderBy('reference_number', $order);
                 })
-                ->rawColumns(['policy_id', 'status', 'name', 'action'])
+                ->orderColumn('date_changed', function ($query, $order) {
+                    $query->orderBy('updated_at', $order);
+                })
+                ->rawColumns(['policy_id', 'date_changed', 'status', 'name', 'action'])
                 ->make(true);
         }
 
