@@ -202,10 +202,17 @@ class YourActionController extends Controller
             ->firstOrFail();
 
         // Validate request
-        $validated = $request->validate([
+        $validationRules = [
             'status' => 'required|in:new,approved,send_uw,active,processing,rejected,cancelled',
             'remarks' => 'nullable|string|max:5000',
-        ]);
+        ];
+        
+        // Add certificate document validation when status is changing to active
+        if ($request->input('status') === 'active') {
+            $validationRules['certificate_document'] = 'required|file|mimes:pdf|max:10240'; // 10MB max
+        }
+        
+        $validated = $request->validate($validationRules);
 
         $oldStatus = $policyApplication->status;
         $newStatus = $validated['status'];
@@ -244,6 +251,27 @@ class YourActionController extends Controller
                     // Generate reference number ONLY when status becomes active
                     if (!$policyApplication->reference_number) {
                         $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
+                    }
+                    
+                    // Handle Certificate of Insurance (CI) document upload
+                    if ($request->hasFile('certificate_document')) {
+                        $file = $request->file('certificate_document');
+                        
+                        // Generate unique filename (sanitize reference number for URL safety)
+                        $sanitizedRef = str_replace('#', '_', $policyApplication->reference_number);
+                        $filename = 'CI_' . $sanitizedRef . '_' . time() . '.pdf';
+                        
+                        // Store file in public/certificates directory
+                        $path = $file->storeAs('certificates', $filename, 'public');
+                        
+                        // Save path to database
+                        $policyApplication->certificate_document = $path;
+                        
+                        Log::info('Certificate document uploaded', [
+                            'policy_id' => $id,
+                            'reference' => $policyApplication->reference_number,
+                            'file_path' => $path,
+                        ]);
                     }
                     break;
                     
@@ -295,7 +323,7 @@ class YourActionController extends Controller
             }
 
             return redirect()
-                ->route('for-your-action')
+                ->back()
                 ->with('success', $successMessage);
 
         } catch (\Exception $e) {
