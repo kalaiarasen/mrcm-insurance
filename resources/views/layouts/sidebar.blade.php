@@ -2,13 +2,13 @@
 <div class="sidebar-wrapper" data-sidebar-layout="stroke-svg">
     <div>
         <div class="logo-wrapper">
-            <a href="{{ route('layout_light') }}"><img class="img-fluid for-light w-75" src="{{ asset('img/logo.png') }}" alt="" /><img class="img-fluid for-dark w-75" src="{{ asset('img/logo.png') }}" alt="" /></a>
+            <a href="{{ route('dashboard') }}"><img class="img-fluid for-light w-75" src="{{ asset('img/logo.png') }}" alt="" /><img class="img-fluid for-dark w-75" src="{{ asset('img/logo.png') }}" alt="" /></a>
 
             <div class="back-btn"><i class="fa-solid fa-angle-left"></i></div>
             <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
         </div>
         <div class="logo-icon-wrapper">
-            <a href="{{ route('layout_light') }}"><img class="img-fluid" src="{{ asset('img/favicon.png') }}" alt="" style="width:40px; height:40px;" /></a>
+            <a href="{{ route('dashboard') }}"><img class="img-fluid" src="{{ asset('img/favicon.png') }}" alt="" style="width:40px; height:40px;" /></a>
         </div>
         <nav class="sidebar-main">
             <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
