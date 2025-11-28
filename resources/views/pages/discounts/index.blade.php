@@ -33,7 +33,7 @@
 
     <div class="container-fluid">
         <!-- Success/Error Messages -->
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fa fa-check-circle me-2"></i>
                 <strong>Success!</strong> {{ session('success') }}
@@ -41,7 +41,7 @@
             </div>
         @endif
 
-        @if(session('error'))
+        @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fa fa-exclamation-circle me-2"></i>
                 <strong>Error!</strong> {{ session('error') }}
@@ -70,6 +70,9 @@
                             <table class="display table-striped border datatable">
                                 <thead>
                                     <tr>
+                                        <th>Type</th>
+                                        <th>Product</th>
+                                        <th>Voucher Code</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
                                         <th>Percentage</th>
@@ -79,16 +82,38 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($discounts as $discount)
+                                    @foreach ($discounts as $discount)
                                         <tr>
+                                            <td>
+                                                @if ($discount->type === 'voucher')
+                                                    <span class="badge bg-info">Voucher</span>
+                                                @else
+                                                    <span class="badge bg-primary">Discount</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($discount->product)
+                                                    <span
+                                                        class="badge bg-secondary">{{ ucfirst(str_replace('_', ' ', $discount->product)) }}</span>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($discount->voucher_code)
+                                                    <code class="text-primary">{{ $discount->voucher_code }}</code>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
                                             <td>{{ $discount->start_date->format('d M Y') }}</td>
                                             <td>{{ $discount->end_date->format('d M Y') }}</td>
                                             <td>
-                                                <span class="badge bg-primary">{{ $discount->percentage }}%</span>
+                                                <span class="badge bg-success">{{ $discount->percentage }}%</span>
                                             </td>
                                             <td>{{ $discount->description ?? '-' }}</td>
                                             <td>
-                                                @if($discount->isActive())
+                                                @if ($discount->isActive())
                                                     <span class="badge bg-success">Active</span>
                                                 @elseif(now()->lt($discount->start_date))
                                                     <span class="badge bg-info">Upcoming</span>
@@ -99,15 +124,20 @@
                                             <td>
                                                 <ul class="action">
                                                     <li class="edit">
-                                                        <a href="{{ route('discounts.edit', $discount->id) }}" title="Edit">
+                                                        <a href="{{ route('discounts.edit', $discount->id) }}"
+                                                            title="Edit">
                                                             <i class="fa-regular fa-pen-to-square"></i>
                                                         </a>
                                                     </li>
                                                     <li class="delete">
-                                                        <form action="{{ route('discounts.destroy', $discount->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this discount?');">
+                                                        <form action="{{ route('discounts.destroy', $discount->id) }}"
+                                                            method="POST" style="display: inline;"
+                                                            onsubmit="return confirm('Are you sure you want to delete this discount?');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;" title="Delete">
+                                                            <button type="submit"
+                                                                style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;"
+                                                                title="Delete">
                                                                 <i class="fa-solid fa-trash-can"></i>
                                                             </button>
                                                         </form>
@@ -130,9 +160,11 @@
     <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatables/dataTables.bootstrap5.js') }}"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $(".datatable").DataTable({
-                order: [[0, 'desc']] // Sort by start date descending
+                order: [
+                    [0, 'desc']
+                ] // Sort by start date descending
             });
         });
 

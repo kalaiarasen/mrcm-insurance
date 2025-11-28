@@ -30,25 +30,46 @@ class DiscountController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Base validation rules
+        $rules = [
+            'type' => 'required|in:discount,voucher',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'percentage' => 'required|numeric|min:0|max:100',
             'description' => 'nullable|string|max:255',
-        ]);
+        ];
+
+        // Conditional validation based on type
+        if ($request->type === 'discount') {
+            $rules['product'] = 'required|in:pharmacist,medical_practice,dental_practice';
+        } else {
+            // Voucher type should not have product
+            $rules['product'] = 'prohibited';
+        }
+
+        $validated = $request->validate($rules);
 
         DB::beginTransaction();
         try {
+            // Auto-generate voucher code for voucher type
+            if ($validated['type'] === 'voucher') {
+                $validated['voucher_code'] = Discount::generateVoucherCode();
+            }
+
             Discount::create($validated);
             DB::commit();
 
+            $message = $validated['type'] === 'voucher' 
+                ? 'Voucher created successfully! Code: ' . $validated['voucher_code']
+                : 'Discount created successfully!';
+
             return redirect()->route('discounts.index')
-                ->with('success', 'Discount created successfully!');
+                ->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Failed to create discount. Please try again.');
+                ->with('error', 'Failed to create ' . ($request->type ?? 'discount') . '. Please try again.');
         }
     }
 
@@ -73,25 +94,46 @@ class DiscountController extends Controller
      */
     public function update(Request $request, Discount $discount)
     {
-        $validated = $request->validate([
+        // Base validation rules
+        $rules = [
+            'type' => 'required|in:discount,voucher',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'percentage' => 'required|numeric|min:0|max:100',
             'description' => 'nullable|string|max:255',
-        ]);
+        ];
+
+        // Conditional validation based on type
+        if ($request->type === 'discount') {
+            $rules['product'] = 'required|in:pharmacist,medical_practice,dental_practice';
+        } else {
+            // Voucher type should not have product
+            $rules['product'] = 'prohibited';
+        }
+
+        $validated = $request->validate($rules);
 
         DB::beginTransaction();
         try {
+            // Auto-generate voucher code if changing to voucher type and no code exists
+            if ($validated['type'] === 'voucher' && empty($discount->voucher_code)) {
+                $validated['voucher_code'] = Discount::generateVoucherCode();
+            }
+
             $discount->update($validated);
             DB::commit();
 
+            $message = $validated['type'] === 'voucher' && isset($validated['voucher_code'])
+                ? 'Voucher updated successfully! Code: ' . $validated['voucher_code']
+                : ucfirst($validated['type']) . ' updated successfully!';
+
             return redirect()->route('discounts.index')
-                ->with('success', 'Discount updated successfully!');
+                ->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Failed to update discount. Please try again.');
+                ->with('error', 'Failed to update ' . ($request->type ?? 'discount') . '. Please try again.');
         }
     }
 
