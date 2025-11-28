@@ -59,25 +59,27 @@
 
     function populateForm(step, data) {
         console.log(`[populateForm] Step ${step}, Data:`, data);
-        
+
         Object.keys(data).forEach(name => {
             console.log(`[populateForm] Processing field: ${name} = ${data[name]}`);
-            
+
             const elements = document.querySelectorAll(`[name="${name}"]`);
             console.log(`[populateForm] Found ${elements.length} elements with name="${name}"`);
-            
+
             if (elements.length === 0) {
                 console.warn(`[populateForm] No elements found for name="${name}"`);
                 return;
             }
-            
+
             const element = elements[0];
-            
+
             if (element.type === 'checkbox') {
                 console.log(`[populateForm] Processing checkbox: ${name}`);
                 elements.forEach(el => {
                     el.checked = el.value === data[name];
-                    console.log(`[populateForm] Checkbox ${name}=${el.value}, should be checked: ${el.value === data[name]}, actual: ${el.checked}`);
+                    console.log(
+                        `[populateForm] Checkbox ${name}=${el.value}, should be checked: ${el.value === data[name]}, actual: ${el.checked}`
+                    );
                 });
             } else if (element.type === 'radio') {
                 console.log(`[populateForm] Processing radio: ${name}, looking for value: ${data[name]}`);
@@ -98,7 +100,7 @@
                 console.log(`[populateForm] Set ${element.type} ${name} = ${data[name]}`);
             }
         });
-        
+
         // Enhanced restoration for step 2 (Healthcare Services) - No timeout needed
         if (step === 2) {
             // Use the enhanced restoration function from _health-care.blade.php
@@ -109,7 +111,7 @@
                 restoreHealthcareServicesState(data);
             }
         }
-        
+
         if (step === 3) {
             populatePricingSummary();
         }
@@ -146,7 +148,9 @@
                 liabilitySelect.value = step3Data.liability_limit;
                 // Trigger change to recalculate premium with saved value
                 setTimeout(() => {
-                    const evt = new Event('change', { bubbles: true });
+                    const evt = new Event('change', {
+                        bubbles: true
+                    });
                     liabilitySelect.dispatchEvent(evt);
                 }, 100);
             }
@@ -202,13 +206,13 @@
         ];
 
         // Check conditions
-        const isLocumOnlyGov = step2Data && (step2Data.employment_status === 'government') && 
+        const isLocumOnlyGov = step2Data && (step2Data.employment_status === 'government') &&
             (step2Data.cover_type === 'locum_cover' || step2Data.cover_type === 'locum_cover_only');
-        
+
         const isTwoMillionOnlyService = step2Data && twoMillionOnlyServices.includes(step2Data.service_type);
-        
+
         const isMediumRiskSpecialist = step2Data && mediumRiskSpecialists.includes(step2Data.service_type);
-        
+
         const isLowRiskSpecialist = step2Data && lowRiskSpecialists.includes(step2Data.service_type);
 
         const isLecturerTrainee = step2Data && step2Data.specialty_area === 'lecturer_trainee';
@@ -247,7 +251,9 @@
         select.disabled = false;
 
         // Trigger change so pricing recalculates
-        const evt = new Event('change', { bubbles: true });
+        const evt = new Event('change', {
+            bubbles: true
+        });
         select.dispatchEvent(evt);
         // Also explicitly call calculatePremium in case listeners are not yet attached
         try {
@@ -272,11 +278,11 @@
         }
         return '-';
     }
-    
+
     function getMedicalStatusText(step2Data) {
         // Construct Medical Status from employment status and specialty
         let parts = [];
-        
+
         if (step2Data.employment_status) {
             if (step2Data.employment_status === 'government') {
                 parts.push('Government');
@@ -286,7 +292,7 @@
                 parts.push(formatDisplayText(step2Data.employment_status));
             }
         }
-        
+
         if (step2Data.specialty_area) {
             if (step2Data.specialty_area === 'medical_officer') {
                 parts.push('Medical Officers');
@@ -296,14 +302,14 @@
                 parts.push(formatDisplayText(step2Data.specialty_area));
             }
         }
-        
+
         if (step2Data.cover_type && step2Data.cover_type === 'locum_cover') {
             parts.push('Locum only');
         }
-        
+
         return parts.length > 0 ? parts.join(' ') : '-';
     }
-    
+
     function getClassText(step2Data) {
         // Map service type or cover type to class text
         if (step2Data.service_type) {
@@ -316,9 +322,9 @@
 
     function formatDisplayText(value) {
         if (value === '-' || !value) return '-';
-        
+
         return value.replace(/_/g, ' ')
-                    .replace(/\b\w/g, l => l.toUpperCase());
+            .replace(/\b\w/g, l => l.toUpperCase());
     }
 
     let pricingCalculationsSetup = false;
@@ -329,13 +335,13 @@
         const liabilityLimit = document.getElementById('liabilityLimit');
         const locumExtension = document.getElementById('locumExtension');
         const toggleLocumExtensionBtn = document.getElementById('toggleLocumExtensionBtn');
-        
+
         if (!policyStartDate.value) {
             const today = new Date();
             policyStartDate.value = today.toISOString().split('T')[0];
             updateExpiryDate();
         }
-        
+
         // Only set up event listeners once
         if (!pricingCalculationsSetup) {
             policyStartDate.addEventListener('change', function() {
@@ -343,20 +349,20 @@
                 calculatePremium();
             });
             liabilityLimit.addEventListener('change', calculatePremium);
-            
+
             pricingCalculationsSetup = true;
         }
-        
+
         // Add event listener for locum extension toggle button (use event delegation to handle dynamic elements)
         if (toggleLocumExtensionBtn && !toggleLocumExtensionBtn.hasAttribute('data-listener-attached')) {
             toggleLocumExtensionBtn.setAttribute('data-listener-attached', 'true');
             toggleLocumExtensionBtn.addEventListener('click', function() {
                 const isCurrentlyEnabled = locumExtension.checked;
                 const newState = !isCurrentlyEnabled;
-                
+
                 // Update checkbox state
                 locumExtension.checked = newState;
-                
+
                 // Update button appearance
                 if (newState) {
                     this.innerHTML = '<i class="fa fa-minus-circle"></i> Remove Locum Extension';
@@ -367,51 +373,53 @@
                     this.classList.remove('btn-outline-danger');
                     this.classList.add('btn-outline-primary');
                 }
-                
+
                 // Save the locum extension state
                 const step3Data = loadFormData(3);
                 step3Data.locum_extension = newState;
                 saveFormData(3, step3Data);
-                
+
                 // Recalculate premium
                 calculatePremium();
             });
         }
-        
+
         // Add event listener for locum extension checkbox (hidden but still used for form submission)
         if (locumExtension) {
             locumExtension.addEventListener('change', function() {
                 // Update button state to match checkbox
                 if (toggleLocumExtensionBtn) {
                     if (this.checked) {
-                        toggleLocumExtensionBtn.innerHTML = '<i class="fa fa-minus-circle"></i> Remove Locum Extension';
+                        toggleLocumExtensionBtn.innerHTML =
+                            '<i class="fa fa-minus-circle"></i> Remove Locum Extension';
                         toggleLocumExtensionBtn.classList.remove('btn-outline-primary');
                         toggleLocumExtensionBtn.classList.add('btn-outline-danger');
                     } else {
-                        toggleLocumExtensionBtn.innerHTML = '<i class="fa fa-plus-circle"></i> Add Locum Extension';
+                        toggleLocumExtensionBtn.innerHTML =
+                            '<i class="fa fa-plus-circle"></i> Add Locum Extension';
                         toggleLocumExtensionBtn.classList.remove('btn-outline-danger');
                         toggleLocumExtensionBtn.classList.add('btn-outline-primary');
                     }
                 }
             });
         }
-        
+
         // NOTE: Don't call updateLocumExtensionVisibility() here - it will be called from showStep() when Step 3 is actually visible
     }
-    
+
     function updateLocumExtensionVisibility() {
         const step2Data = loadFormData(2);
         const serviceType = step2Data.service_type || '';
         const coverType = step2Data.cover_type || '';
         const specialtyArea = step2Data.specialty_area || '';
-        
+
         const locumExtensionButtonSection = document.getElementById('locumExtensionButtonSection');
-        
+
         // If element doesn't exist, return early (not on step 3 yet)
         if (!locumExtensionButtonSection) {
             return;
         }
-        
+
         // Services that support Locum Extension
         const servicesWithLocum = [
             'core_services',
@@ -422,23 +430,23 @@
             'general_dental_practice',
             'general_dental_practitioners'
         ];
-        
+
         // Show locum extension button if:
         // 1. It's General Cover (Government Medical Officer) and service supports it, OR
         // 2. The cover_type itself is one of the services with locum (Private General Practitioner), OR
         // 3. It's Private General Practitioner (specialtyArea) with specific service types
-        const shouldShowLocum = (coverType === 'general_cover' && servicesWithLocum.includes(serviceType)) || 
-                                servicesWithLocum.includes(coverType) ||
-                                (specialtyArea === 'general_practitioner' && servicesWithLocum.includes(serviceType));
-        
+        const shouldShowLocum = (coverType === 'general_cover' && servicesWithLocum.includes(serviceType)) ||
+            servicesWithLocum.includes(coverType) ||
+            (specialtyArea === 'general_practitioner' && servicesWithLocum.includes(serviceType));
+
         if (shouldShowLocum) {
             locumExtensionButtonSection.style.display = 'block';
-            
+
             // Restore button state from saved data
             const step3Data = loadFormData(3);
             const locumExtension = document.getElementById('locumExtension');
             const toggleBtn = document.getElementById('toggleLocumExtensionBtn');
-            
+
             if (step3Data.locum_extension && locumExtension) {
                 locumExtension.checked = true;
                 if (toggleBtn) {
@@ -454,7 +462,7 @@
                     toggleBtn.classList.add('btn-outline-primary');
                 }
             }
-            
+
             // Recalculate premium to update with/without locum extension
             if (typeof calculatePremium === 'function') {
                 calculatePremium();
@@ -469,31 +477,31 @@
                 step3Data.locum_extension = false;
                 saveFormData(3, step3Data);
             }
-            
+
             // Recalculate premium without locum extension
             if (typeof calculatePremium === 'function') {
                 calculatePremium();
             }
         }
-        
+
         // Also auto-set liability limit based on service type for General Cover
         if (coverType === 'general_cover') {
             autoSetLiabilityLimit(serviceType);
         }
     }
-    
+
     function autoSetLiabilityLimit(serviceType) {
         const liabilityLimitSelect = document.getElementById('liabilityLimit');
         const liabilityLimitDisplay = document.getElementById('liabilityLimitDisplay');
-        
+
         if (!liabilityLimitSelect) return;
-        
+
         const step2Data = loadFormData(2);
         const coverType = step2Data.cover_type || '';
         const professionalType = step2Data.professional_indemnity_type || '';
-        
+
         console.log('autoSetLiabilityLimit called - professionalType:', professionalType, 'serviceType:', serviceType);
-        
+
         // Pharmacist - has 500K and 1M options
         if (professionalType === 'pharmacist') {
             console.log('Setting pharmacist liability limits');
@@ -503,11 +511,11 @@
                 <option value="1000000">RM 1,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
-            
+
             // Restore saved value for pharmacist
             const step3Data = loadFormData(3);
             if (step3Data.liability_limit) {
@@ -515,26 +523,26 @@
             }
             return;
         }
-        
+
         // If serviceType is not provided and not pharmacist, return early (don't set liability limits yet)
         if (!serviceType) {
             console.log('No serviceType provided, skipping liability limit setup');
             return;
         }
-        
+
         // Define default liability limits for each service type
         const serviceLiabilityLimits = {
             'core_services': '1000000',
             'core_services_with_procedures': '1000000',
-            'general_practitioner_private_hospital_outpatient': '1000000',  // Locum - Private Hospital - Outpatient
-            'general_practitioner_private_hospital_emergency': '1000000',   // Locum - Private Hospital - Emergency
+            'general_practitioner_private_hospital_outpatient': '1000000', // Locum - Private Hospital - Outpatient
+            'general_practitioner_private_hospital_emergency': '1000000', // Locum - Private Hospital - Emergency
             'general_practitioner_with_obstetrics': '2000000',
             'cosmetic_aesthetic_non_invasive': '2000000',
             'cosmetic_aesthetic_non_surgical_invasive': '2000000',
-            'general_practice': '2000000',  // Dental - General Practice
-            'general_practice_with_specialized_procedures': '2000000'  // Dental - General Practice with Specialized Procedures
+            'general_practice': '2000000', // Dental - General Practice
+            'general_practice_with_specialized_procedures': '2000000' // Dental - General Practice with Specialized Procedures
         };
-        
+
         // Low Risk Specialist services - all have 1M and 2M options
         const lowRiskSpecialistServices = [
             'occupational_health_physicians',
@@ -554,7 +562,7 @@
             'neurology',
             'radiology_non_interventional'
         ];
-        
+
         // Medium Risk Specialist services - most have only 2M, except Office/Clinical Gynaecology which has 1M and 2M
         const mediumRiskSpecialistOnly2M = [
             'ophthalmology_office_procedures',
@@ -567,13 +575,13 @@
             'cosmetic_aesthetic_non_surgical_invasive',
             'cosmetic_aesthetic_surgical_invasive'
         ];
-        
+
         // Format liability limit for display
         const formatLiabilityLimit = (value) => {
             const numValue = parseInt(value);
             return 'RM ' + numValue.toLocaleString('en-MY');
         };
-        
+
         // Helper function to restore saved liability limit value
         const restoreSavedLiabilityLimit = () => {
             const step3Data = loadFormData(3);
@@ -581,7 +589,7 @@
                 liabilityLimitSelect.value = step3Data.liability_limit;
             }
         };
-        
+
         // Check if this is a low risk specialist service
         if (lowRiskSpecialistServices.includes(serviceType)) {
             // Show only 1M and 2M options for low-risk specialists
@@ -591,14 +599,14 @@
                 <option value="2000000">RM 2,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // Check if this is a medium risk specialist service with only 2M option
         if (mediumRiskSpecialistOnly2M.includes(serviceType)) {
             // Show only 2M option
@@ -607,14 +615,14 @@
                 <option value="2000000">RM 2,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // Office/Clinical Gynaecology has both 1M and 2M options
         if (serviceType === 'office_clinical_gynaecology') {
             liabilityLimitSelect.innerHTML = `
@@ -623,14 +631,14 @@
                 <option value="2000000">RM 2,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // General Dental Practice (General Cover) - has 1M and 2M options
         if (serviceType === 'general_dental_practice') {
             liabilityLimitSelect.innerHTML = `
@@ -639,14 +647,14 @@
                 <option value="2000000">RM 2,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // General Dental Practitioners with specialized procedures - has only 2.5M option
         if (serviceType === 'general_dental_practitioners') {
             liabilityLimitSelect.innerHTML = `
@@ -654,14 +662,14 @@
                 <option value="2500000">RM 2,500,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // Dental Specialists - has 2M and 3M options
         if (coverType === 'dental_specialists') {
             liabilityLimitSelect.innerHTML = `
@@ -670,14 +678,14 @@
                 <option value="3000000">RM 3,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // Dental Specialist OMFS - Clinic based - has 2M and 3M options
         if (serviceType === 'clinic_based_non_general_anaesthetic') {
             liabilityLimitSelect.innerHTML = `
@@ -686,14 +694,14 @@
                 <option value="3000000">RM 3,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // Dental Specialist OMFS - Hospital based - has 2M and 3M options
         if (serviceType === 'hospital_based_full_fledged_omfs') {
             liabilityLimitSelect.innerHTML = `
@@ -702,31 +710,33 @@
                 <option value="3000000">RM 3,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
             restoreSavedLiabilityLimit();
             return;
         }
-        
+
         // Check if we should set a specific liability limit
         // Either from General Cover service type OR Locum Cover service type OR Dental Locum Cover Only service type OR from cover type itself (Private GP path)
-        const limitKey = (coverType === 'general_cover' || coverType === 'locum_cover' || coverType === 'locum_cover_only') ? serviceType : coverType;
-        
+        const limitKey = (coverType === 'general_cover' || coverType === 'locum_cover' || coverType ===
+            'locum_cover_only') ? serviceType : coverType;
+
         if (serviceLiabilityLimits[limitKey]) {
             const limitValue = serviceLiabilityLimits[limitKey];
-            
+
             // Update the select to show ONLY the required liability limit
-            liabilityLimitSelect.innerHTML = `<option value="${limitValue}">${formatLiabilityLimit(limitValue)}</option>`;
+            liabilityLimitSelect.innerHTML =
+                `<option value="${limitValue}">${formatLiabilityLimit(limitValue)}</option>`;
             liabilityLimitSelect.value = limitValue;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             // Hide display field if it exists
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
-            
+
             // Save to localStorage
             const step3Data = loadFormData(3);
             step3Data.liability_limit = limitValue;
@@ -741,11 +751,11 @@
                 <option value="10000000">RM 10,000,000</option>
             `;
             liabilityLimitSelect.classList.remove('d-none');
-            
+
             if (liabilityLimitDisplay) {
                 liabilityLimitDisplay.classList.add('d-none');
             }
-            
+
             // Restore previously selected liability limit from localStorage
             const step3Data = loadFormData(3);
             if (step3Data.liability_limit) {
@@ -753,7 +763,7 @@
             }
         }
     }
-    
+
     // Make functions globally available
     window.autoSetLiabilityLimit = autoSetLiabilityLimit;
     window.updateLocumExtensionVisibility = updateLocumExtensionVisibility;
@@ -761,28 +771,28 @@
     function updateExpiryDate() {
         const policyStartDateInput = document.getElementById('policyStartDate');
         const policyExpiryDateInput = document.getElementById('policyExpiryDate');
-        
+
         let startDateInput = policyStartDateInput.value;
-        
+
         // If no start date is set, use today's date
         if (!startDateInput) {
             const today = new Date();
             startDateInput = today.toISOString().split('T')[0];
             policyStartDateInput.value = startDateInput;
         }
-        
+
         if (startDateInput) {
             // Parse the start date
             const startDate = new Date(startDateInput);
-            
+
             // Set expiry date to December 31st of next year
             const expiryDate = new Date(startDate.getFullYear() + 1, 11, 31); // Month 11 = December, day 31
-            
+
             // Format as YYYY-MM-DD for the input field
             const expiryYear = expiryDate.getFullYear();
             const expiryMonth = String(expiryDate.getMonth() + 1).padStart(2, '0');
             const expiryDay = String(expiryDate.getDate()).padStart(2, '0');
-            
+
             policyExpiryDateInput.value = `${expiryYear}-${expiryMonth}-${expiryDay}`;
         }
     }
@@ -791,25 +801,26 @@
         const liabilityLimit = document.getElementById('liabilityLimit').value;
         const policyStartDate = document.getElementById('policyStartDate').value;
         const policyExpiryDate = document.getElementById('policyExpiryDate').value;
-        
+
         if (!liabilityLimit || !policyStartDate || !policyExpiryDate) {
             document.getElementById('pricingBreakdown').style.display = 'none';
             return;
         }
-        
+
         // Calculate actual number of days between start and expiry date
         const startDate = new Date(policyStartDate);
         const endDate = new Date(policyExpiryDate);
-        const numberOfDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
+        const numberOfDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) +
+            1; // +1 to include both start and end dates
         const daysInYear = 365;
-        
+
         const annualPremium = getBasePremium(liabilityLimit);
         const locumExtensionPremium = getLocumExtensionPremium();
-        
+
         // Gross Premium = ((Annual Premium + Locum Extension) × number of days) / 365
         const totalAnnualPremium = annualPremium + locumExtensionPremium;
         const grossPremium = (totalAnnualPremium * numberOfDays) / daysInYear;
-        
+
         // Fetch active discount for the policy start date
         fetch(`/discounts-api/active?date=${policyStartDate}`)
             .then(response => response.json())
@@ -817,49 +828,53 @@
                 let discountPercentage = 0;
                 let discountAmount = 0;
                 let discountDescription = '';
-                
+
                 if (data.success && data.discount) {
                     discountPercentage = parseFloat(data.discount.percentage);
                     discountAmount = grossPremium * (discountPercentage / 100);
                     discountDescription = data.discount.description || '';
                 }
-                
+
                 const discountedPremium = grossPremium - discountAmount;
-                
+
                 // SST = 8% of discounted premium
                 const sstPercentage = 0.08;
                 const sst = discountedPremium * sstPercentage;
-                
+
                 // Stamp duty = RM10
                 const stampDuty = 10.00;
-                
+
                 // Total to pay = Discounted Premium + SST + Stamp Duty
                 const totalPayable = discountedPremium + sst + stampDuty;
-                
+
                 // Format amounts with thousands separator
                 const formatCurrency = (value) => {
-                    return parseFloat(value).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    return parseFloat(value).toLocaleString('en-MY', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
                 };
-                
+
                 document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
                 document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
                 document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
                 document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
-                
+
                 // Show/hide discount row
                 const discountRow = document.getElementById('discountRow');
                 if (discountPercentage > 0) {
-                    document.getElementById('displayDiscountPercentage').textContent = discountPercentage.toFixed(2);
+                    document.getElementById('displayDiscountPercentage').textContent = discountPercentage.toFixed(
+                        2);
                     document.getElementById('displayDiscountAmount').textContent = formatCurrency(discountAmount);
                     if (discountRow) discountRow.style.display = 'flex';
                 } else {
                     if (discountRow) discountRow.style.display = 'none';
                 }
-                
+
                 document.getElementById('displaySST').textContent = formatCurrency(sst);
                 document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
                 document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
-                
+
                 // Show/hide locum addon row based on whether it's applicable
                 const locumAddonRow = document.getElementById('locumAddonRow');
                 if (locumExtensionPremium > 0) {
@@ -867,7 +882,7 @@
                 } else {
                     locumAddonRow.style.display = 'none';
                 }
-                
+
                 // Also populate hidden fields for form submission
                 document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
                 document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
@@ -877,7 +892,7 @@
                 document.getElementById('displaySSTInput').value = sst.toFixed(2);
                 document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
                 document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
-                
+
                 document.getElementById('pricingBreakdown').style.display = 'block';
                 const hr = document.getElementById('amountHr');
                 if (hr) hr.style.display = 'block';
@@ -890,11 +905,14 @@
                 const sst = discountedPremium * sstPercentage;
                 const stampDuty = 10.00;
                 const totalPayable = discountedPremium + sst + stampDuty;
-                
+
                 const formatCurrency = (value) => {
-                    return parseFloat(value).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    return parseFloat(value).toLocaleString('en-MY', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
                 };
-                
+
                 document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
                 document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
                 document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
@@ -902,18 +920,18 @@
                 document.getElementById('displaySST').textContent = formatCurrency(sst);
                 document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
                 document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
-                
+
                 // Hide discount row
                 const discountRow = document.getElementById('discountRow');
                 if (discountRow) discountRow.style.display = 'none';
-                
+
                 const locumAddonRow = document.getElementById('locumAddonRow');
                 if (locumExtensionPremium > 0) {
                     locumAddonRow.style.display = 'flex';
                 } else {
                     locumAddonRow.style.display = 'none';
                 }
-                
+
                 document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
                 document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
                 document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
@@ -922,7 +940,7 @@
                 document.getElementById('displaySSTInput').value = sst.toFixed(2);
                 document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
                 document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
-                
+
                 document.getElementById('pricingBreakdown').style.display = 'block';
                 const hr = document.getElementById('amountHr');
                 if (hr) hr.style.display = 'block';
@@ -931,27 +949,27 @@
 
     function getBasePremium(liabilityLimit) {
         const step2Data = loadFormData(2);
-        
+
         // Get service type and cover type to determine premium
         const serviceType = step2Data.service_type || step2Data.cover_type || '';
         const coverType = step2Data.cover_type || '';
         const employmentStatus = step2Data.employment_status || '';
         const specialtyArea = step2Data.specialty_area || '';
         const professionalType = step2Data.professional_indemnity_type || '';
-        
+
         // Pharmacist pricing based on liability limit
         if (professionalType === 'pharmacist') {
             const pharmacistRates = {
-                '500000': 750,   // 500K liability
-                '1000000': 1000  // 1M liability
+                '500000': 750, // 500K liability
+                '1000000': 1000 // 1M liability
             };
-            
+
             const rate = pharmacistRates[liabilityLimit];
             if (rate) {
                 return rate;
             }
         }
-        
+
         // General Practitioner + specific service types pricing
         // Check if specialty is General Practitioner
         if (specialtyArea === 'general_practitioner') {
@@ -964,7 +982,7 @@
                 return 1250;
             }
         }
-        
+
         // Lecturer/Trainee (Non-Practicing) - Based on liability limit
         if (employmentStatus === 'non_practicing' && specialtyArea === 'lecturer_trainee') {
             if (liabilityLimit === '2000000') {
@@ -973,7 +991,7 @@
             // Default for other liability limits (1M, 5M, 10M)
             return 950;
         }
-        
+
         // Premium rates for General Cover service types
         const generalCoverRates = {
             'core_services': {
@@ -989,12 +1007,12 @@
             'general_practitioner_private_hospital_outpatient': {
                 liability: 2000000,
                 basePremium: 1400,
-                withLocum: null  // No locum extension
+                withLocum: null // No locum extension
             },
             'general_practitioner_private_hospital_emergency': {
                 liability: 2000000,
                 basePremium: 1600,
-                withLocum: null  // No locum extension
+                withLocum: null // No locum extension
             },
             'general_practitioner_with_obstetrics': {
                 liability: 2000000,
@@ -1012,17 +1030,17 @@
                 withLocum: 4250
             }
         };
-        
+
         // If it's General Cover, use the specific rates
         if (coverType === 'general_cover' && generalCoverRates[serviceType]) {
             return generalCoverRates[serviceType].basePremium;
         }
-        
+
         // If it's Private General Practitioner with specific service types, use the generalCoverRates
         if (specialtyArea === 'general_practitioner' && generalCoverRates[serviceType]) {
             return generalCoverRates[serviceType].basePremium;
         }
-        
+
         // Low Risk Specialist pricing - fixed rates based on liability limit
         const lowRiskSpecialistServices = [
             'occupational_health_physicians',
@@ -1042,7 +1060,7 @@
             'neurology',
             'radiology_non_interventional'
         ];
-        
+
         if (lowRiskSpecialistServices.includes(serviceType)) {
             // Fixed pricing for low-risk specialists
             if (liabilityLimit === '1000000') {
@@ -1051,7 +1069,7 @@
                 return 2400;
             }
         }
-        
+
         // Medium Risk Specialist pricing - fixed rates based on service type and liability limit
         const mediumRiskSpecialistRates = {
             'ophthalmology_office_procedures': {
@@ -1086,149 +1104,150 @@
                 '2000000': 19800
             }
         };
-        
+
         if (mediumRiskSpecialistRates[serviceType]) {
             const rate = mediumRiskSpecialistRates[serviceType][liabilityLimit];
             if (rate) {
                 return rate;
             }
         }
-        
+
         // Dental Practice - Locum Cover Only pricing (fixed liability of 2M)
         const dentalLocumCoverRates = {
-            'general_practice': 700,  // General Practice (Dental)
-            'general_practice_with_specialized_procedures': 1250  // General Practice with Specialized Procedures
+            'general_practice': 700, // General Practice (Dental)
+            'general_practice_with_specialized_procedures': 1250 // General Practice with Specialized Procedures
         };
-        
+
         if (dentalLocumCoverRates[serviceType]) {
             return dentalLocumCoverRates[serviceType];
         }
-        
+
         // Dental Practice - General Cover pricing
         const dentalGeneralCoverRates = {
             'general_dental_practice': {
-                '1000000': 1200,  // General Dentist Practice - 1M
-                '2000000': 1400   // General Dentist Practice - 2M
+                '1000000': 1200, // General Dentist Practice - 1M
+                '2000000': 1400 // General Dentist Practice - 2M
             },
             'general_dental_practitioners': {
-                '2500000': 1700   // General Dentist Practice with specialized procedures - 2.5M
+                '2500000': 1700 // General Dentist Practice with specialized procedures - 2.5M
             }
         };
-        
+
         if (dentalGeneralCoverRates[serviceType]) {
             const rate = dentalGeneralCoverRates[serviceType][liabilityLimit];
             if (rate) {
                 return rate;
             }
         }
-        
+
         // Dental Specialists pricing (cover_type based)
         if (coverType === 'dental_specialists') {
             const dentalSpecialistsRates = {
-                '2000000': 2200,  // Dental Specialists - 2M
-                '3000000': 2700   // Dental Specialists - 3M
+                '2000000': 2200, // Dental Specialists - 2M
+                '3000000': 2700 // Dental Specialists - 3M
             };
-            
+
             const rate = dentalSpecialistsRates[liabilityLimit];
             if (rate) {
                 return rate;
             }
         }
-        
+
         // Dental Specialist OMFS - service_type based pricing
         const dentalOMFSRates = {
             'clinic_based_non_general_anaesthetic': {
-                '2000000': 4950,  // Clinic based - 2M
-                '3000000': 6050   // Clinic based - 3M
+                '2000000': 4950, // Clinic based - 2M
+                '3000000': 6050 // Clinic based - 3M
             },
             'hospital_based_full_fledged_omfs': {
-                '2000000': 6600,  // Hospital based - 2M
-                '3000000': 7700   // Hospital based - 3M
+                '2000000': 6600, // Hospital based - 2M
+                '3000000': 7700 // Hospital based - 3M
             }
         };
-        
+
         if (dentalOMFSRates[serviceType]) {
             const rate = dentalOMFSRates[serviceType][liabilityLimit];
             if (rate) {
                 return rate;
             }
         }
-        
+
         // Original pricing logic for other types (Locum Cover, etc.)
         const servicePremiumRates = {
-            'general_practitioner_private_hospital_outpatient': 900,  // Outpatient Service
-            'general_practitioner_private_hospital_emergency': 1200,  // Emergency Department
-            'core_services': 700,                                      // Core Services
-            'core_services_with_procedures': 900                       // Core Services with procedures
+            'general_practitioner_private_hospital_outpatient': 900, // Outpatient Service
+            'general_practitioner_private_hospital_emergency': 1200, // Emergency Department
+            'core_services': 700, // Core Services
+            'core_services_with_procedures': 900 // Core Services with procedures
         };
-        
+
         // Get base premium for RM 1,000,000
         let basePremiumFor1M = servicePremiumRates[serviceType] || 700;
-        
+
         // Scale premium based on liability limit
         const liabilityMultipliers = {
-            '1000000': 1,      // RM 1,000,000 - base rate
-            '2000000': 1.5,    // RM 2,000,000 - 1.5x
-            '5000000': 2.5,    // RM 5,000,000 - 2.5x
-            '10000000': 4      // RM 10,000,000 - 4x
+            '1000000': 1, // RM 1,000,000 - base rate
+            '2000000': 1.5, // RM 2,000,000 - 1.5x
+            '5000000': 2.5, // RM 5,000,000 - 2.5x
+            '10000000': 4 // RM 10,000,000 - 4x
         };
-        
+
         const multiplier = liabilityMultipliers[liabilityLimit] || 1;
         return basePremiumFor1M * multiplier;
     }
-    
+
     function getLocumExtensionPremium() {
         const step2Data = loadFormData(2);
         const step3Data = loadFormData(3);
-        
+
         const serviceType = step2Data.service_type || step2Data.cover_type || '';
         const coverType = step2Data.cover_type || '';
         const specialtyArea = step2Data.specialty_area || '';
         const liabilityLimit = step3Data.liability_limit || '';
         const locumExtensionRaw = step3Data.locum_extension;
-        
+
         // Convert to boolean properly (handles true, "1", "true", 1)
-        const locumExtension = locumExtensionRaw === true || locumExtensionRaw === 'true' || locumExtensionRaw === '1' || locumExtensionRaw === 1;
-        
+        const locumExtension = locumExtensionRaw === true || locumExtensionRaw === 'true' || locumExtensionRaw ===
+            '1' || locumExtensionRaw === 1;
+
         // If locum extension is not enabled, return 0
         if (!locumExtension) {
             return 0;
         }
-        
+
         // Private General Practitioner with specialty - Locum Extension rates
         if (specialtyArea === 'general_practitioner') {
             if (serviceType === 'core_services') {
-                return 350;  // Core Services: RM 1,300 total (950 + 350)
+                return 350; // Core Services: RM 1,300 total (950 + 350)
             }
             if (serviceType === 'core_services_with_procedures') {
-                return 450;  // Core Services with Procedures: RM 1,700 total (1250 + 450)
+                return 450; // Core Services with Procedures: RM 1,700 total (1250 + 450)
             }
             if (serviceType === 'general_practitioner_with_obstetrics') {
-                return 450;  // General Practitioner with Obstetrics: RM 4,250 total (3800 + 450)
+                return 450; // General Practitioner with Obstetrics: RM 4,250 total (3800 + 450)
             }
             if (serviceType === 'cosmetic_aesthetic_non_invasive') {
-                return 400;  // Cosmetic & Aesthetic Non-Invasive: RM 2,400 total (2000 + 400)
+                return 400; // Cosmetic & Aesthetic Non-Invasive: RM 2,400 total (2000 + 400)
             }
             if (serviceType === 'cosmetic_aesthetic_non_surgical_invasive') {
-                return 450;  // Cosmetic & Aesthetic Non-Surgical Invasive: RM 4,250 total (3800 + 450)
+                return 450; // Cosmetic & Aesthetic Non-Surgical Invasive: RM 4,250 total (3800 + 450)
             }
         }
-        
+
         // Dental General Cover - Locum Extension rates based on service type and liability limit
         if (coverType === 'general_cover' && serviceType === 'general_dental_practice') {
             if (liabilityLimit === '1000000') {
-                return 350;  // 1M liability
+                return 350; // 1M liability
             } else if (liabilityLimit === '2000000') {
-                return 450;  // 2M liability
+                return 450; // 2M liability
             }
         }
-        
+
         if (coverType === 'general_cover' && serviceType === 'general_dental_practitioners') {
             if (liabilityLimit === '2500000') {
-                return 500;  // 2.5M liability
+                return 500; // 2.5M liability
             }
         }
-        
+
         // Premium rates for General Cover service types with Locum Extension
         const generalCoverRates = {
             'core_services': {
@@ -1252,7 +1271,7 @@
                 withLocum: 4250
             }
         };
-        
+
         // Check General Cover path only (not Private GP path anymore)
         if (coverType === 'general_cover' && generalCoverRates[serviceType]) {
             const rates = generalCoverRates[serviceType];
@@ -1261,7 +1280,7 @@
                 return additionalCost;
             }
         }
-        
+
         return 0;
     }
 
@@ -1269,9 +1288,9 @@
         const professionalType = step2Data.professional_indemnity_type;
         const employmentStatus = step2Data.employment_status;
         const coverType = step2Data.cover_type;
-        
-        return employmentStatus === 'private' || 
-            coverType === 'locum_cover' || 
+
+        return employmentStatus === 'private' ||
+            coverType === 'locum_cover' ||
             coverType === 'general_cover';
     }
 
@@ -1290,12 +1309,12 @@
     function updateProgressBar(step) {
         const progressBar = document.getElementById('progressBar');
         const progressPercentage = (step / totalSteps) * 100;
-        
+
         if (progressBar) {
             progressBar.style.width = progressPercentage + '%';
             progressBar.setAttribute('aria-valuenow', progressPercentage);
             progressBar.textContent = `Step ${step} of ${totalSteps}`;
-            
+
             if (step === totalSteps) {
                 progressBar.classList.remove('bg-primary');
                 progressBar.classList.add('bg-success');
@@ -1309,7 +1328,7 @@
     // Helper function to restore conditional sections on page load
     function restoreConditionalSections() {
         console.log('[restoreConditionalSections] Starting restoration');
-        
+
         // Step 5
         const currentInsuranceVal = $('input[name="current_insurance"]:checked').val();
         console.log('[restoreConditionalSections] current_insurance value:', currentInsuranceVal);
@@ -1322,7 +1341,7 @@
                 console.warn('[restoreConditionalSections] currentInsuranceDetailsSection not found');
             }
         }
-        
+
         const previousClaimsVal = $('input[name="previous_claims"]:checked').val();
         console.log('[restoreConditionalSections] previous_claims value:', previousClaimsVal);
         if (previousClaimsVal === 'yes') {
@@ -1339,7 +1358,7 @@
         const claimsMadeVal = $('input[name="claims_made"]:checked').val();
         const awareOfErrorsVal = $('input[name="aware_of_errors"]:checked').val();
         const disciplinaryActionVal = $('input[name="disciplinary_action"]:checked').val();
-        
+
         console.log('[restoreConditionalSections] Step 6 values:', {
             claims_made: claimsMadeVal,
             aware_of_errors: awareOfErrorsVal,
@@ -1359,18 +1378,18 @@
 
     function showStep(step) {
         console.log('showStep called with step:', step, 'currentStep before:', currentStep);
-        
+
         // Update currentStep IMMEDIATELY to prevent race conditions
         currentStep = step;
         console.log('currentStep updated to:', currentStep);
-        
+
         for (let i = 1; i <= totalSteps; i++) {
             const stepCard = document.getElementById(`step${i}Card`);
             if (stepCard) {
                 stepCard.style.display = 'none';
             }
         }
-        
+
         const currentCard = document.getElementById(`step${step}Card`);
         if (currentCard) {
             currentCard.style.display = 'block';
@@ -1378,22 +1397,23 @@
         } else {
             console.error('Step card not found:', `step${step}Card`);
         }
-        
+
         updateProgressBar(step);
-        
+
         // Load and populate saved data for this step
         const savedData = loadFormData(step);
         console.log(`Loading saved data for step ${step}:`, savedData);
-        
+
         if (Object.keys(savedData).length > 0) {
             console.log(`Populating form for step ${step} with saved data`);
             populateForm(step, savedData);
-            
+
             // Restore conditional sections visibility after form is populated
             setTimeout(() => {
                 if (step === 5 || step === 6) {
                     restoreConditionalSections();
                 }
+                // Initialize signature canvas when Step 8 is shown
                 if (step === 8) {
                     initSignatureCanvas();
                 }
@@ -1411,7 +1431,7 @@
             }, 50);
         } else {
             console.log(`No saved data found for step ${step}`);
-            // Initialize signature canvas even if no saved data
+            // Initialize signature canvas when Step 8 is shown (even without saved data)
             if (step === 8) {
                 setTimeout(() => {
                     initSignatureCanvas();
@@ -1455,9 +1475,59 @@
         }
     }
 
-    // Step 8: Signature Canvas Variables and Functions
-    let signatureCanvas = null;
-    let signatureContext = null;
+    // ===== MODAL HELPER FUNCTIONS =====
+    /**
+     * Show a Bootstrap modal alert instead of browser alert
+     * @param {string} message - The message to display
+     * @param {string} title - The title of the modal (default: 'Notification')
+     * @param {string} type - The type of alert: 'info', 'success', 'warning', 'error' (default: 'info')
+     */
+    function showAlert(message, title = 'Notification', type = 'info') {
+        const modal = new bootstrap.Modal(document.getElementById('alertModal'));
+        const modalHeader = document.getElementById('alertModalHeader');
+        const modalIcon = document.getElementById('alertModalIcon');
+        const modalTitle = document.getElementById('alertModalTitle');
+        const modalMessage = document.getElementById('alertModalMessage');
+        const modalOkBtn = document.getElementById('alertModalOkBtn');
+
+        // Set title
+        modalTitle.textContent = title;
+
+        // Set message
+        modalMessage.innerHTML = message;
+
+        // Set icon and colors based on type
+        modalHeader.className = 'modal-header';
+        modalOkBtn.className = 'btn';
+
+        switch (type) {
+            case 'success':
+                modalHeader.classList.add('bg-success', 'text-white');
+                modalIcon.className = 'fa fa-check-circle me-2';
+                modalOkBtn.classList.add('btn-success');
+                break;
+            case 'warning':
+                modalHeader.classList.add('bg-warning', 'text-dark');
+                modalIcon.className = 'fa fa-exclamation-triangle me-2';
+                modalOkBtn.classList.add('btn-warning');
+                break;
+            case 'error':
+                modalHeader.classList.add('bg-danger', 'text-white');
+                modalIcon.className = 'fa fa-times-circle me-2';
+                modalOkBtn.classList.add('btn-danger');
+                break;
+            default: // info
+                modalHeader.classList.add('bg-info', 'text-white');
+                modalIcon.className = 'fa fa-info-circle me-2';
+                modalOkBtn.classList.add('btn-primary');
+        }
+
+        modal.show();
+    }
+
+    // ===== SIGNATURE CANVAS SETUP =====
+    let signatureCanvas;
+    let signatureContext;
     let isDrawing = false;
 
     function initSignatureCanvas() {
@@ -1468,14 +1538,14 @@
         }
 
         signatureContext = signatureCanvas.getContext('2d');
-        
+
         // Set canvas resolution to match display size
         const dpr = window.devicePixelRatio || 1;
         const rect = signatureCanvas.getBoundingClientRect();
-        
+
         signatureCanvas.width = rect.width * dpr;
         signatureCanvas.height = rect.height * dpr;
-        
+
         if (signatureContext) {
             signatureContext.scale(dpr, dpr);
             // Set white background
@@ -1484,6 +1554,15 @@
         }
 
         console.log('Signature canvas initialized:', signatureCanvas.width, 'x', signatureCanvas.height);
+
+        // Remove old event listeners if any
+        signatureCanvas.removeEventListener('mousedown', startDrawing);
+        signatureCanvas.removeEventListener('mousemove', draw);
+        signatureCanvas.removeEventListener('mouseup', stopDrawing);
+        signatureCanvas.removeEventListener('mouseout', stopDrawing);
+        signatureCanvas.removeEventListener('touchstart', startDrawing);
+        signatureCanvas.removeEventListener('touchmove', draw);
+        signatureCanvas.removeEventListener('touchend', stopDrawing);
 
         // Mouse events
         signatureCanvas.addEventListener('mousedown', startDrawing, false);
@@ -1531,14 +1610,14 @@
 
     $(document).ready(function() {
         showStep(1);
-        
+
         $('#nationalityStatus').on('change', function() {
             const value = $(this).val();
             const nricField = $('#nricNumber');
             const passportField = $('#passportNumber');
             const nricRequired = $('#nricRequired');
             const passportRequired = $('#passportRequired');
-            
+
             if (value === 'malaysian') {
                 nricField.prop('required', true);
                 passportField.prop('required', false);
@@ -1563,10 +1642,10 @@
             const otherInput = $('#otherCouncil');
             const registrationLabel = $('#registrationNumberLabel');
             const registrationInput = $('#registrationNumber');
-            
+
             otherInput.val('');
             registrationInput.val('');
-            
+
             if (value === 'mmc') {
                 otherField.hide();
                 otherInput.prop('required', false);
@@ -1596,44 +1675,44 @@
 
         $('#policyApplicationForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (!this.checkValidity()) {
                 e.stopPropagation();
                 $(this).addClass('was-validated');
                 return;
             }
-            
+
             const formData = getFormData(this);
             saveFormData(1, formData);
-            
+
             console.log('Step 1 completed, moving to step 2. Current step:', currentStep);
             nextStep();
         });
-        
+
         $('#healthcareServicesForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (!this.checkValidity()) {
                 e.stopPropagation();
                 $(this).addClass('was-validated');
                 return;
             }
-            
+
             const formData = getFormData(this);
             saveFormData(2, formData);
-            
+
             console.log('Step 2 completed, moving to step 3. Current step:', currentStep);
             nextStep();
         });
         $('#pricingDetailsForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (!this.checkValidity()) {
                 e.stopPropagation();
                 $(this).addClass('was-validated');
                 return;
             }
-            
+
             // Populate hidden fields with calculated values from display elements
             document.getElementById('displayBasePremiumInput').value = parseFloat(
                 document.getElementById('displayBasePremium').textContent.replace(/[^0-9.]/g, '')
@@ -1653,10 +1732,10 @@
             document.getElementById('displayTotalPayableInput').value = parseFloat(
                 document.getElementById('displayTotalPayable').textContent.replace(/[^0-9.]/g, '')
             ) || 0;
-            
+
             const formData = getFormData(this);
             saveFormData(3, formData);
-            
+
             console.log('Step 3 completed, moving to step 4. Current step:', currentStep);
             nextStep();
         });
@@ -1707,16 +1786,16 @@
 
         $('#declarationForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (!this.checkValidity()) {
                 e.stopPropagation();
                 $(this).addClass('was-validated');
                 return;
             }
-            
+
             const formData = getFormData(this);
             saveFormData(4, formData);
-            
+
             console.log('Step 4 completed, moving to step 5. Current step:', currentStep);
             nextStep();
         });
@@ -1742,16 +1821,16 @@
 
         $('#insuranceHistoryForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (!this.checkValidity()) {
                 e.stopPropagation();
                 $(this).addClass('was-validated');
                 return;
             }
-            
+
             const formData = getFormData(this);
             saveFormData(5, formData);
-            
+
             console.log('Step 5 completed, moving to step 6. Current step:', currentStep);
             nextStep();
         });
@@ -1777,16 +1856,16 @@
 
         $('#claimsExperienceForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (!this.checkValidity()) {
                 e.stopPropagation();
                 $(this).addClass('was-validated');
                 return;
             }
-            
+
             const formData = getFormData(this);
             saveFormData(6, formData);
-            
+
             console.log('Step 6 completed, moving to step 7. Current step:', currentStep);
             nextStep();
         });
@@ -1813,7 +1892,7 @@
         $('#confirmPassword').on('input', function() {
             const password = $('#password').val();
             const confirmPassword = $(this).val();
-            
+
             if (password && confirmPassword) {
                 if (password === confirmPassword) {
                     $(this).removeClass('is-invalid').addClass('is-valid');
@@ -1836,11 +1915,12 @@
             saveFormData(2, formData);
         });
 
-        $('#pricingDetailsForm input, #pricingDetailsForm select, #pricingDetailsForm input[type="checkbox"]').on('change input', function() {
-            console.log('Pricing details form field changed:', this.name, '=', this.value);
-            const formData = getFormData(document.getElementById('pricingDetailsForm'));
-            saveFormData(3, formData);
-        });
+        $('#pricingDetailsForm input, #pricingDetailsForm select, #pricingDetailsForm input[type="checkbox"]')
+            .on('change input', function() {
+                console.log('Pricing details form field changed:', this.name, '=', this.value);
+                const formData = getFormData(document.getElementById('pricingDetailsForm'));
+                saveFormData(3, formData);
+            });
 
         $('#declarationForm input, #declarationForm select').on('change', function() {
             console.log('Declaration form field changed:', this.name, '=', this.value);
@@ -1848,11 +1928,13 @@
             saveFormData(4, formData);
         });
 
-        $('#insuranceHistoryForm input, #insuranceHistoryForm select, #insuranceHistoryForm textarea').on('change input', function() {
-            console.log('Insurance history form field changed:', this.name, '=', this.value);
-            const formData = getFormData(document.getElementById('insuranceHistoryForm'));
-            saveFormData(5, formData);
-        });
+        $('#insuranceHistoryForm input, #insuranceHistoryForm select, #insuranceHistoryForm textarea').on(
+            'change input',
+            function() {
+                console.log('Insurance history form field changed:', this.name, '=', this.value);
+                const formData = getFormData(document.getElementById('insuranceHistoryForm'));
+                saveFormData(5, formData);
+            });
 
         $('#claimsExperienceForm input, #claimsExperienceForm select').on('change', function() {
             console.log('Claims experience form field changed:', this.name, '=', this.value);
@@ -1864,10 +1946,11 @@
         $('#dataProtectionForm').on('submit', function(e) {
             e.preventDefault();
             console.log('Data Protection form submitted');
-            
+
             const agreeDeclaration = document.getElementById('agreeDeclaration');
             if (!agreeDeclaration || !agreeDeclaration.checked) {
-                alert('Please read and agree to the Data Protection Notice declaration');
+                showAlert('Please read and agree to the Data Protection Notice declaration', 'Required',
+                    'warning');
                 return;
             }
 
@@ -1921,22 +2004,23 @@
         $('#declarationSignatureForm').on('submit', function(e) {
             e.preventDefault();
             console.log('Declaration & Signature form submitted');
-            
+
             // Step 1: Validate all required declarations are agreed
             const agreeDeclarationFinal = document.getElementById('agreeDeclarationFinal');
             if (!agreeDeclarationFinal || !agreeDeclarationFinal.checked) {
-                alert('Please read and agree to the declaration');
+                showAlert('Please read and agree to the declaration', 'Required', 'warning');
                 return;
             }
 
             // Step 2: Validate signature is drawn
             let hasSignature = false;
             if (signatureCanvas) {
-                const imageData = signatureContext.getImageData(0, 0, signatureCanvas.width, signatureCanvas.height);
+                const imageData = signatureContext.getImageData(0, 0, signatureCanvas.width,
+                    signatureCanvas.height);
                 const data = imageData.data;
                 // Check if any pixel is not white (255, 255, 255, 255)
                 for (let i = 0; i < data.length; i += 4) {
-                    if (data[i] !== 255 || data[i+1] !== 255 || data[i+2] !== 255) {
+                    if (data[i] !== 255 || data[i + 1] !== 255 || data[i + 2] !== 255) {
                         hasSignature = true;
                         break;
                     }
@@ -1944,14 +2028,16 @@
             }
 
             if (!hasSignature) {
-                alert('Please provide a signature before submitting');
+                showAlert('Please provide a signature before submitting', 'Signature Required',
+                    'warning');
                 return;
             }
 
             // Step 3: Validate all required fields across all steps
             const allStepsValid = validateAllSteps();
             if (!allStepsValid) {
-                alert('Some required fields are missing. Please go back and complete all steps.');
+                showAlert('Some required fields are missing. Please go back and complete all steps.',
+                    'Incomplete Form', 'error');
                 return;
             }
 
@@ -1968,7 +2054,7 @@
 
             // Step 5: Collect all form data from all steps
             const allFormData = getAllSavedData();
-            
+
             // Step 6: Submit data to server
             submitFormData(allFormData);
         });
@@ -1999,7 +2085,8 @@
 
         // Step 5: Conditional display for insurance history sections
         $('input[name="current_insurance"]').on('change', function() {
-            const currentInsuranceDetailsSection = document.getElementById('currentInsuranceDetailsSection');
+            const currentInsuranceDetailsSection = document.getElementById(
+                'currentInsuranceDetailsSection');
             if (this.value === 'yes') {
                 currentInsuranceDetailsSection.style.display = 'block';
             } else {
@@ -2008,7 +2095,8 @@
         });
 
         $('input[name="previous_claims"]').on('change', function() {
-            const previousClaimsDetailsSection = document.getElementById('previousClaimsDetailsSection');
+            const previousClaimsDetailsSection = document.getElementById(
+                'previousClaimsDetailsSection');
             if (this.value === 'yes') {
                 previousClaimsDetailsSection.style.display = 'block';
             } else {
@@ -2018,22 +2106,25 @@
 
         // Step 6: Conditional display for claims experience sections
         // Show details section if ANY question has "yes" selected
-        $('input[name="claims_made"], input[name="aware_of_errors"], input[name="disciplinary_action"]').on('change', function() {
-            const claimsMadeVal = $('input[name="claims_made"]:checked').val();
-            const awareOfErrorsVal = $('input[name="aware_of_errors"]:checked').val();
-            const disciplinaryActionVal = $('input[name="disciplinary_action"]:checked').val();
+        $('input[name="claims_made"], input[name="aware_of_errors"], input[name="disciplinary_action"]').on(
+            'change',
+            function() {
+                const claimsMadeVal = $('input[name="claims_made"]:checked').val();
+                const awareOfErrorsVal = $('input[name="aware_of_errors"]:checked').val();
+                const disciplinaryActionVal = $('input[name="disciplinary_action"]:checked').val();
 
-            const claimsDetailsSection = document.getElementById('claimsDetailsSection');
-            
-            // Show details if ANY question is answered "yes"
-            if (claimsMadeVal === 'yes' || awareOfErrorsVal === 'yes' || disciplinaryActionVal === 'yes') {
-                claimsDetailsSection.style.display = 'block';
-            } else {
-                claimsDetailsSection.style.display = 'none';
-            }
+                const claimsDetailsSection = document.getElementById('claimsDetailsSection');
 
-            saveFormData(6, getFormData(document.getElementById('claimsExperienceForm')));
-        });
+                // Show details if ANY question is answered "yes"
+                if (claimsMadeVal === 'yes' || awareOfErrorsVal === 'yes' || disciplinaryActionVal ===
+                    'yes') {
+                    claimsDetailsSection.style.display = 'block';
+                } else {
+                    claimsDetailsSection.style.display = 'none';
+                }
+
+                saveFormData(6, getFormData(document.getElementById('claimsExperienceForm')));
+            });
 
         // Call this function after form data is restored on page load
         setTimeout(restoreConditionalSections, 100);
@@ -2044,21 +2135,26 @@
      * Validates all required fields across all 8 steps
      */
     function validateAllSteps() {
-        const step1Fields = ['title', 'full_name', 'nationality_status', 'gender', 'contact_no', 'email_address', 'mailing_address', 'mailing_postcode', 'mailing_city', 'mailing_state', 'mailing_country', 'primary_clinic_type', 'primary_clinic_name', 'primary_address', 'primary_postcode', 'primary_city', 'primary_state', 'primary_country', 'institution_1', 'qualification_1', 'year_obtained_1', 'registration_council', 'registration_number'];
-        
+        const step1Fields = ['title', 'full_name', 'nationality_status', 'gender', 'contact_no', 'email_address',
+            'mailing_address', 'mailing_postcode', 'mailing_city', 'mailing_state', 'mailing_country',
+            'primary_clinic_type', 'primary_clinic_name', 'primary_address', 'primary_postcode', 'primary_city',
+            'primary_state', 'primary_country', 'institution_1', 'qualification_1', 'year_obtained_1',
+            'registration_council', 'registration_number'
+        ];
+
         // service_type is optional - some paths don't need it
         const step2Fields = ['professional_indemnity_type', 'employment_status', 'specialty_area', 'cover_type'];
-        
+
         const step3Fields = ['policy_start_date', 'liability_limit'];
-        
+
         const step4Fields = ['medical_records', 'informed_consent', 'adverse_incidents', 'sterilisation_facilities'];
-        
+
         const step5Fields = ['current_insurance', 'previous_claims'];
-        
+
         const step6Fields = ['claims_made', 'aware_of_errors', 'disciplinary_action'];
-        
+
         const step7Fields = ['agree_declaration'];
-        
+
         const step8Fields = ['agree_declaration_final'];
 
         let isValid = true;
@@ -2173,9 +2269,10 @@
         const submitBtn = document.getElementById('step8NextBtn');
         const originalText = submitBtn.textContent;
         const originalDisabled = submitBtn.disabled;
-        
+
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
+        submitBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
 
         // Prepare data for submission
         const submissionData = {
@@ -2183,7 +2280,7 @@
         };
 
         console.log('[Submit] Submitting form data:', submissionData);
-        
+
         // Get CSRF token - works for both authenticated and guest users
         const getCsrfToken = function() {
             // Try to get from meta tag first (works for guests)
@@ -2191,24 +2288,24 @@
             if (metaToken) {
                 return metaToken.getAttribute('content');
             }
-            
+
             // Fallback to blade template (works for authenticated users)
             const templateToken = document.querySelector('[data-csrf-token]');
             if (templateToken) {
                 return templateToken.getAttribute('data-csrf-token');
             }
-            
+
             return '';
         };
-        
+
         // Log CSRF token for debugging
         const csrfToken = getCsrfToken();
         console.log('[Submit] CSRF Token:', csrfToken ? 'Found' : 'NOT FOUND');
-        console.log('[Submit] Route URL:', '{{ route("policies.submit") }}');
+        console.log('[Submit] Route URL:', '{{ route('policies.submit') }}');
 
         // Send AJAX request to server
         $.ajax({
-            url: '{{ route("policies.submit") }}',
+            url: '{{ route('policies.submit') }}',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(submissionData),
@@ -2219,14 +2316,14 @@
             timeout: 30000, // 30 second timeout
             success: function(response) {
                 console.log('[Submit] ✅ SUCCESS:', response);
-                
+
                 // Show success message
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
                         icon: 'success',
                         title: 'Application Submitted Successfully!',
                         html: '<p>Thank you for submitting your application.</p>' +
-                              '<p>We will review your application and contact you shortly.</p>',
+                            '<p>We will review your application and contact you shortly.</p>',
                         confirmButtonText: 'Go to Dashboard',
                         allowOutsideClick: false,
                         allowEscapeKey: false
@@ -2234,14 +2331,18 @@
                         if (result.isConfirmed) {
                             // Clear localStorage and redirect
                             clearAllSavedData();
-                            window.location.href = '{{ route("dashboard") }}';
+                            window.location.href = '{{ route('dashboard') }}';
                         }
                     });
                 } else {
                     // Fallback if SweetAlert not available
-                    alert('Application Submitted Successfully!\n\nWe will review your application and contact you shortly.');
-                    clearAllSavedData();
-                    window.location.href = '{{ route("dashboard") }}';
+                    showAlert(
+                        'Application Submitted Successfully!<br><br>We will review your application and contact you shortly.',
+                        'Success', 'success');
+                    setTimeout(() => {
+                        clearAllSavedData();
+                        window.location.href = '{{ route('dashboard') }}';
+                    }, 2000);
                 }
 
                 // Update progress bar
@@ -2249,9 +2350,9 @@
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('[Submit] ❌ ERROR:', jqXHR, textStatus, errorThrown);
-                
+
                 let errorMessage = 'An error occurred while submitting your application.';
-                
+
                 if (jqXHR.status === 422) {
                     // Validation errors
                     const errors = jqXHR.responseJSON.errors;
@@ -2276,7 +2377,7 @@
                     });
                 } else {
                     // Fallback if SweetAlert not available
-                    alert('Submission Failed:\n' + errorMessage);
+                    showAlert('Submission Failed:<br>' + errorMessage, 'Error', 'error');
                 }
 
                 console.log('[Submit] Error response:', jqXHR.responseJSON);
