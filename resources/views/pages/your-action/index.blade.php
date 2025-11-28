@@ -263,6 +263,34 @@
             </div>
         </div>
     </div><!-- Container-fluid Ends-->
+
+    <!-- Policy History Modal -->
+    <div class="modal fade" id="policyHistoryModal" tabindex="-1" aria-labelledby="policyHistoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="policyHistoryModalLabel">
+                        <i class="fa fa-history me-2"></i>Policy Application History
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="policyHistoryContent">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3">Loading policy history...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <script src="{{ asset('assets/js/counter/counter-custom.js') }}"></script>
@@ -341,5 +369,110 @@
                 autoWidth: false
             });
         });
+
+        // Show Policy History Modal
+        function showPolicyHistory(userId) {
+            if (!userId || userId === 0) {
+                alert('Invalid user ID');
+                return;
+            }
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('policyHistoryModal'));
+            modal.show();
+
+            // Reset content to loading state
+            document.getElementById('policyHistoryContent').innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Loading policy history...</p>
+                </div>
+            `;
+
+            // Fetch policy history
+            fetch(`/policy-holders/${userId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load policy history');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Parse the HTML to extract user info and policy table
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // Extract user information
+                    const userCard = doc.querySelector('.info-card');
+                    let userName = 'N/A';
+                    let userEmail = 'N/A';
+                    let userPhone = 'N/A';
+
+                    if (userCard) {
+                        const infoValues = userCard.querySelectorAll('.info-value');
+                        if (infoValues.length > 0) userName = infoValues[0]?.textContent.trim() || 'N/A';
+                        if (infoValues.length > 1) userEmail = infoValues[1]?.textContent.trim() || 'N/A';
+                        if (infoValues.length > 2) userPhone = infoValues[2]?.textContent.trim() || 'N/A';
+                    }
+
+                    const policyTable = doc.querySelector('.datatable');
+
+                    if (policyTable) {
+                        document.getElementById('policyHistoryContent').innerHTML = `
+                            <div class="alert alert-light border-start border-primary border-4 mb-3" style="background-color: #f8f9fa;">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="mb-2">
+                                            <i class="fa fa-user text-primary me-2"></i>
+                                            <strong>Name:</strong> ${userName}
+                                        </div>
+                                        <div class="mb-2">
+                                            <i class="fa fa-envelope text-primary me-2"></i>
+                                            <strong>Email:</strong> ${userEmail}
+                                        </div>
+                                        <div class="mb-0">
+                                            <i class="fa fa-phone text-primary me-2"></i>
+                                            <strong>Phone:</strong> ${userPhone}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                ${policyTable.outerHTML}
+                            </div>
+                        `;
+
+                        // Reinitialize DataTable for the modal table
+                        $(document.getElementById('policyHistoryContent')).find('.datatable').DataTable({
+                            order: [
+                                [1, 'desc']
+                            ], // Sort by submission date descending
+                            pageLength: 5,
+                            lengthMenu: [
+                                [5, 10, 25],
+                                [5, 10, 25]
+                            ]
+                        });
+                    } else {
+                        document.getElementById('policyHistoryContent').innerHTML = `
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle me-2"></i>
+                                No policy applications found for this user.
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('policyHistoryContent').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-circle me-2"></i>
+                            Failed to load policy history. Please try again.
+                        </div>
+                    `;
+                });
+        }
     </script>
 @endsection

@@ -66,7 +66,10 @@ class YourActionController extends Controller
                     return $expiryDate === 'N/A' ? 'N/A' : \Carbon\Carbon::parse($expiryDate)->format('d-M-Y');
                 })
                 ->addColumn('name', function ($policy) {
-                    $name = '<strong>' . e($policy->user?->name ?? 'Unknown') . '</strong>';
+                    $userId = $policy->user?->id ?? 0;
+                    $name = '<a href="javascript:void(0)" class="text-primary fw-bold" onclick="showPolicyHistory(' . $userId . ')">' 
+                          . e($policy->user?->name ?? 'Unknown') 
+                          . '</a>';
                     $email = '<br><small class="text-muted">' . e($policy->user?->email ?? 'N/A') . '</small>';
                     return $name . $email;
                 })
