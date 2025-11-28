@@ -89,17 +89,15 @@ class YourActionController extends Controller
                     $html .= '</a>';
                     $html .= '</li>';
                     
-                    if (in_array($policy->status, ['New Case', 'Rejected'])) {
-                        $html .= '<li class="delete">';
-                        $html .= '<form action="' . $deleteUrl . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this policy application?\');">';
-                        $html .= csrf_field();
-                        $html .= method_field('DELETE');
-                        $html .= '<button type="submit" class="border-0 bg-transparent p-0" title="Delete">';
-                        $html .= '<i class="fa-regular fa-trash-can"></i>';
-                        $html .= '</button>';
-                        $html .= '</form>';
-                        $html .= '</li>';
-                    }
+                    $html .= '<li class="delete">';
+                    $html .= '<form action="' . $deleteUrl . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this policy application?\');">';
+                    $html .= csrf_field();
+                    $html .= method_field('DELETE');
+                    $html .= '<button type="submit" class="border-0 bg-transparent p-0" title="Delete">';
+                    $html .= '<i class="fa-regular fa-trash-can"></i>';
+                    $html .= '</button>';
+                    $html .= '</form>';
+                    $html .= '</li>';
                     
                     $html .= '</ul>';
                     return $html;
