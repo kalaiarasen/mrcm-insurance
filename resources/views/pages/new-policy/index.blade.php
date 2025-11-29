@@ -764,6 +764,30 @@
                                                 id="displayDiscountAmount">0.00</span></span></div>
                                 </div>
 
+                                {{-- Voucher Code Input Section (shown when no product discount) --}}
+                                <div id="voucherInputSection" style="display: none;">
+                                    <div class="alert alert-info mb-3">
+                                        <small><i class="fa fa-info-circle"></i> No discount available for your
+                                            professional type. Enter a voucher code if you have one.</small>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="voucherCodeInput"
+                                                placeholder="Enter voucher code (e.g., MRCM-ABC12345)"
+                                                style="text-transform: uppercase;">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="button" class="btn btn-primary w-100" id="applyVoucherBtn"
+                                                onclick="applyVoucher()">
+                                                <i class="fa fa-check"></i> Apply Voucher
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="voucherError" class="alert alert-danger" style="display: none;">
+                                        <small id="voucherErrorMessage"></small>
+                                    </div>
+                                </div>
+
                                 <div class="row mb-2">
                                     <div class="col-md-6"><span id="sstLabel">8% SST</span></div>
                                     <div class="col-md-6"><span>: RM <span id="displaySST">0.00</span></span></div>
@@ -782,40 +806,7 @@
                                     </div>
                                 </div>
 
-                                @if ($walletBalance > 0)
-                                    <div class="row mb-2" id="walletBalanceRow">
-                                        <div class="col-md-6">
-                                            <span>Available Wallet Balance</span>
-                                            <button type="button" class="btn btn-sm btn-outline-success ms-2"
-                                                id="applyWalletBtn" onclick="toggleWalletUsage()">
-                                                <i class="fa fa-wallet"></i> Apply Wallet
-                                            </button>
-                                        </div>
-                                        <div class="col-md-6"><span>: RM <span
-                                                    id="displayWalletBalance">{{ number_format($walletBalance, 2) }}</span></span>
-                                        </div>
-                                    </div>
 
-                                    <div class="row mb-2" id="walletUsedRow" style="display: none;">
-                                        <div class="col-md-6">
-                                            <span>Wallet Amount Used</span>
-                                            <button type="button" class="btn btn-sm btn-outline-danger ms-2"
-                                                id="removeWalletBtn" onclick="toggleWalletUsage()">
-                                                <i class="fa fa-times"></i> Remove
-                                            </button>
-                                        </div>
-                                        <div class="col-md-6"><span class="text-success">: - RM <span
-                                                    id="displayWalletUsed">0.00</span></span></div>
-                                    </div>
-
-                                    <hr id="walletHr" style="display: none;">
-
-                                    <div class="row mb-3" id="finalPayableRow" style="display: none;">
-                                        <div class="col-md-6"><strong>Final Amount to Pay</strong></div>
-                                        <div class="col-md-6"><strong>: RM <span
-                                                    id="displayFinalPayable">0.00</span></strong></div>
-                                    </div>
-                                @endif
 
                                 <hr>
                             </div>
@@ -853,8 +844,8 @@
                             <input type="hidden" id="displayStampDutyInput" name="displayStampDuty" value="10">
                             <input type="hidden" id="displayTotalPayableInput" name="displayTotalPayable"
                                 value="0">
-                            <input type="hidden" id="walletUsedInput" name="wallet_used" value="0">
-                            <input type="hidden" id="walletBalanceValue" value="{{ $walletBalance ?? 0 }}">
+                            <input type="hidden" id="voucherCodeApplied" name="voucher_code" value="">
+
 
                             <div class="row mt-4">
                                 <div class="col-md-12 text-end">
@@ -1451,13 +1442,15 @@
                                             <tbody>
                                                 <tr style="background-color: #e8e8e8; border-bottom: 1px solid #ddd;">
                                                     <td style="padding: 12px; font-weight: bold; width: 40%;">
-                                                        <strong>Website Laman Sesawang</strong></td>
+                                                        <strong>Website Laman Sesawang</strong>
+                                                    </td>
                                                     <td style="padding: 12px; text-align: right;">greateasterngeneral.com
                                                     </td>
                                                 </tr>
                                                 <tr style="background-color: #ffffff; border-bottom: 1px solid #ddd;">
                                                     <td style="padding: 12px; font-weight: bold; width: 40%;">
-                                                        <strong>Customer Portal Portal Pelanggan</strong></td>
+                                                        <strong>Customer Portal Portal Pelanggan</strong>
+                                                    </td>
                                                     <td style="padding: 12px; text-align: right;">
                                                         https://econnect-my.greateasternlife.com</td>
                                                 </tr>
@@ -1470,13 +1463,15 @@
                                                 </tr>
                                                 <tr style="background-color: #ffffff; border-bottom: 1px solid #ddd;">
                                                     <td style="padding: 12px; font-weight: bold; width: 40%;">
-                                                        <strong>Email Address Alamat email</strong></td>
+                                                        <strong>Email Address Alamat email</strong>
+                                                    </td>
                                                     <td style="padding: 12px; text-align: right;">
                                                         gicare-my@greateasterngeneral.com</td>
                                                 </tr>
                                                 <tr style="background-color: #e8e8e8; border-bottom: 1px solid #ddd;">
                                                     <td style="padding: 12px; font-weight: bold; width: 40%;">
-                                                        <strong>Privacy Officer Pegawai Privasi</strong></td>
+                                                        <strong>Privacy Officer Pegawai Privasi</strong>
+                                                    </td>
                                                     <td style="padding: 12px; text-align: right;">+603 - 2786 1162</td>
                                                 </tr>
                                             </tbody>
@@ -1698,60 +1693,6 @@
 @endsection
 
 @section('scripts')
-    <script>
-        // Wallet usage toggle function
-        function toggleWalletUsage() {
-            const walletUsedRow = document.getElementById('walletUsedRow');
-            const walletBalanceRow = document.getElementById('walletBalanceRow');
-            const finalPayableRow = document.getElementById('finalPayableRow');
-            const walletHr = document.getElementById('walletHr');
-            const applyBtn = document.getElementById('applyWalletBtn');
-
-            if (walletUsedRow.style.display === 'none') {
-                // Apply wallet
-                const totalPayable = parseFloat(document.getElementById('displayTotalPayable').textContent.replace(/,/g,
-                    ''));
-                const walletBalance = parseFloat(document.getElementById('walletBalanceValue').value);
-
-                // Calculate wallet usage (use min of wallet balance or total payable)
-                const walletUsed = Math.min(walletBalance, totalPayable);
-                const finalPayable = Math.max(0, totalPayable - walletUsed);
-
-                // Update display
-                document.getElementById('displayWalletUsed').textContent = walletUsed.toFixed(2).replace(
-                    /\B(?=(\d{3})+(?!\d))/g, ",");
-                document.getElementById('displayFinalPayable').textContent = finalPayable.toFixed(2).replace(
-                    /\B(?=(\d{3})+(?!\d))/g, ",");
-                document.getElementById('walletUsedInput').value = walletUsed.toFixed(2);
-
-                // Show/hide elements
-                walletUsedRow.style.display = '';
-                finalPayableRow.style.display = '';
-                walletHr.style.display = '';
-                applyBtn.textContent = ' Wallet Applied';
-                applyBtn.innerHTML = '<i class="fa fa-check-circle"></i> Wallet Applied';
-                applyBtn.disabled = true;
-                applyBtn.classList.remove('btn-outline-success');
-                applyBtn.classList.add('btn-success');
-
-                console.log('Wallet applied:', walletUsed, 'Final payable:', finalPayable);
-            } else {
-                // Remove wallet
-                walletUsedRow.style.display = 'none';
-                finalPayableRow.style.display = 'none';
-                walletHr.style.display = 'none';
-                document.getElementById('walletUsedInput').value = '0';
-                applyBtn.textContent = ' Apply Wallet';
-                applyBtn.innerHTML = '<i class="fa fa-wallet"></i> Apply Wallet';
-                applyBtn.disabled = false;
-                applyBtn.classList.remove('btn-success');
-                applyBtn.classList.add('btn-outline-success');
-
-                console.log('Wallet removed');
-            }
-        }
-    </script>
-
     @if ($existingData)
         <script>
             // Pre-fill Step 1 form with existing data for renewal

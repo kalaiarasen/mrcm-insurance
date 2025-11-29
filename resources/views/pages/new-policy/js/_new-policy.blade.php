@@ -821,130 +821,143 @@
         const totalAnnualPremium = annualPremium + locumExtensionPremium;
         const grossPremium = (totalAnnualPremium * numberOfDays) / daysInYear;
 
-        // Fetch active discount for the policy start date
-        fetch(`/discounts-api/active?date=${policyStartDate}`)
-            .then(response => response.json())
-            .then(data => {
-                let discountPercentage = 0;
-                let discountAmount = 0;
-                let discountDescription = '';
+        // Get professional indemnity type from Step 2 data
+        const step2Data = loadFormData(2);
+        const professionalType = step2Data.professional_indemnity_type || '';
 
-                if (data.success && data.discount) {
-                    discountPercentage = parseFloat(data.discount.percentage);
-                    discountAmount = grossPremium * (discountPercentage / 100);
-                    discountDescription = data.discount.description || '';
-                }
+        if (!professionalType) {
+            console.error('Professional indemnity type not selected');
+            document.getElementById('pricingBreakdown').style.display = 'none';
+            return;
+        }
 
-                const discountedPremium = grossPremium - discountAmount;
+        // Check if voucher code has been applied
+        const appliedVoucherCode = document.getElementById('voucherCodeApplied').value;
 
-                // SST = 8% of discounted premium
-                const sstPercentage = 0.08;
-                const sst = discountedPremium * sstPercentage;
+        // Helper function to update pricing display
+        const updatePricingUI = (discountPercentage, discountAmount) => {
+            const discountedPremium = grossPremium - discountAmount;
+            const sstPercentage = 0.08;
+            const sst = discountedPremium * sstPercentage;
+            const stampDuty = 10.00;
+            const totalPayable = discountedPremium + sst + stampDuty;
 
-                // Stamp duty = RM10
-                const stampDuty = 10.00;
+            const formatCurrency = (value) => {
+                return parseFloat(value).toLocaleString('en-MY', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            };
 
-                // Total to pay = Discounted Premium + SST + Stamp Duty
-                const totalPayable = discountedPremium + sst + stampDuty;
+            document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
+            document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
+            document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
+            document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
 
-                // Format amounts with thousands separator
-                const formatCurrency = (value) => {
-                    return parseFloat(value).toLocaleString('en-MY', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                };
-
-                document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
-                document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
-                document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
-                document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
-
-                // Show/hide discount row
-                const discountRow = document.getElementById('discountRow');
-                if (discountPercentage > 0) {
-                    document.getElementById('displayDiscountPercentage').textContent = discountPercentage.toFixed(
-                        2);
-                    document.getElementById('displayDiscountAmount').textContent = formatCurrency(discountAmount);
-                    if (discountRow) discountRow.style.display = 'flex';
-                } else {
-                    if (discountRow) discountRow.style.display = 'none';
-                }
-
-                document.getElementById('displaySST').textContent = formatCurrency(sst);
-                document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
-                document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
-
-                // Show/hide locum addon row based on whether it's applicable
-                const locumAddonRow = document.getElementById('locumAddonRow');
-                if (locumExtensionPremium > 0) {
-                    locumAddonRow.style.display = 'flex'; // Use flex for Bootstrap row
-                } else {
-                    locumAddonRow.style.display = 'none';
-                }
-
-                // Also populate hidden fields for form submission
-                document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
-                document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
-                document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
-                document.getElementById('displayDiscountPercentageInput').value = discountPercentage.toFixed(2);
-                document.getElementById('displayDiscountAmountInput').value = discountAmount.toFixed(2);
-                document.getElementById('displaySSTInput').value = sst.toFixed(2);
-                document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
-                document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
-
-                document.getElementById('pricingBreakdown').style.display = 'block';
-                const hr = document.getElementById('amountHr');
-                if (hr) hr.style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Error fetching discount:', error);
-                // If error, calculate without discount
-                const discountedPremium = grossPremium;
-                const sstPercentage = 0.08;
-                const sst = discountedPremium * sstPercentage;
-                const stampDuty = 10.00;
-                const totalPayable = discountedPremium + sst + stampDuty;
-
-                const formatCurrency = (value) => {
-                    return parseFloat(value).toLocaleString('en-MY', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                };
-
-                document.getElementById('displayLiabilityLimit').textContent = formatCurrency(liabilityLimit);
-                document.getElementById('displayBasePremium').textContent = formatCurrency(annualPremium);
-                document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
-                document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
-                document.getElementById('displaySST').textContent = formatCurrency(sst);
-                document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
-                document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
-
-                // Hide discount row
-                const discountRow = document.getElementById('discountRow');
+            // Show/hide discount row
+            const discountRow = document.getElementById('discountRow');
+            if (discountPercentage > 0) {
+                document.getElementById('displayDiscountPercentage').textContent = discountPercentage.toFixed(2);
+                document.getElementById('displayDiscountAmount').textContent = formatCurrency(discountAmount);
+                if (discountRow) discountRow.style.display = 'flex';
+            } else {
                 if (discountRow) discountRow.style.display = 'none';
+            }
 
-                const locumAddonRow = document.getElementById('locumAddonRow');
-                if (locumExtensionPremium > 0) {
-                    locumAddonRow.style.display = 'flex';
-                } else {
-                    locumAddonRow.style.display = 'none';
-                }
+            document.getElementById('displaySST').textContent = formatCurrency(sst);
+            document.getElementById('displayStampDuty').textContent = formatCurrency(stampDuty);
+            document.getElementById('displayTotalPayable').textContent = formatCurrency(totalPayable);
 
-                document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
-                document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
-                document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
-                document.getElementById('displayDiscountPercentageInput').value = '0';
-                document.getElementById('displayDiscountAmountInput').value = '0';
-                document.getElementById('displaySSTInput').value = sst.toFixed(2);
-                document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
-                document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
+            // Show/hide locum addon row
+            const locumAddonRow = document.getElementById('locumAddonRow');
+            if (locumExtensionPremium > 0) {
+                locumAddonRow.style.display = 'flex';
+            } else {
+                locumAddonRow.style.display = 'none';
+            }
 
-                document.getElementById('pricingBreakdown').style.display = 'block';
-                const hr = document.getElementById('amountHr');
-                if (hr) hr.style.display = 'block';
-            });
+            // Populate hidden fields
+            document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
+            document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
+            document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
+            document.getElementById('displayDiscountPercentageInput').value = discountPercentage.toFixed(2);
+            document.getElementById('displayDiscountAmountInput').value = discountAmount.toFixed(2);
+            document.getElementById('displaySSTInput').value = sst.toFixed(2);
+            document.getElementById('displayStampDutyInput').value = stampDuty.toFixed(2);
+            document.getElementById('displayTotalPayableInput').value = totalPayable.toFixed(2);
+
+            document.getElementById('pricingBreakdown').style.display = 'block';
+            const hr = document.getElementById('amountHr');
+            if (hr) hr.style.display = 'block';
+        };
+
+        // If voucher is applied, validate it instead of checking product discount
+        if (appliedVoucherCode) {
+            fetch('/discounts-api/validate-voucher', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        voucher_code: appliedVoucherCode,
+                        date: policyStartDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let discountPercentage = 0;
+                    let discountAmount = 0;
+
+                    if (data.success && data.voucher) {
+                        discountPercentage = parseFloat(data.voucher.percentage);
+                        discountAmount = grossPremium * (discountPercentage / 100);
+                    }
+
+                    // Hide voucher input since voucher is applied
+                    const voucherInputSection = document.getElementById('voucherInputSection');
+                    if (voucherInputSection) voucherInputSection.style.display = 'none';
+
+                    // Update pricing display
+                    updatePricingUI(discountPercentage, discountAmount);
+                })
+                .catch(error => {
+                    console.error('Error validating applied voucher:', error);
+                    // Continue without discount if error
+                    updatePricingUI(0, 0);
+                });
+        } else {
+            // Fetch active discount for the policy start date AND product type
+            fetch(`/discounts-api/active?date=${policyStartDate}&product=${professionalType}`)
+                .then(response => response.json())
+                .then(data => {
+                    let discountPercentage = 0;
+                    let discountAmount = 0;
+                    let hasProductDiscount = false;
+
+                    if (data.success && data.discount) {
+                        discountPercentage = parseFloat(data.discount.percentage);
+                        discountAmount = grossPremium * (discountPercentage / 100);
+                        hasProductDiscount = true;
+                    }
+
+                    // Show/hide voucher input section based on product discount availability
+                    const voucherInputSection = document.getElementById('voucherInputSection');
+                    if (hasProductDiscount) {
+                        if (voucherInputSection) voucherInputSection.style.display = 'none';
+                    } else {
+                        if (voucherInputSection) voucherInputSection.style.display = 'block';
+                    }
+
+                    // Update pricing display
+                    updatePricingUI(discountPercentage, discountAmount);
+                })
+                .catch(error => {
+                    console.error('Error fetching discount:', error);
+                    // Continue without discount if error
+                    updatePricingUI(0, 0);
+                });
+        }
     }
 
     function getBasePremium(liabilityLimit) {
@@ -1283,6 +1296,87 @@
 
         return 0;
     }
+
+    // Apply voucher code function
+    function applyVoucher() {
+        const voucherCodeInput = document.getElementById('voucherCodeInput');
+        const voucherCode = voucherCodeInput.value.trim().toUpperCase();
+        const policyStartDate = document.getElementById('policyStartDate').value;
+        const voucherError = document.getElementById('voucherError');
+        const voucherErrorMessage = document.getElementById('voucherErrorMessage');
+        const applyVoucherBtn = document.getElementById('applyVoucherBtn');
+
+        // Validate input
+        if (!voucherCode) {
+            voucherErrorMessage.textContent = 'Please enter a voucher code.';
+            voucherError.style.display = 'block';
+            return;
+        }
+
+        if (!policyStartDate) {
+            voucherErrorMessage.textContent = 'Please select a policy start date first.';
+            voucherError.style.display = 'block';
+            return;
+        }
+
+        // Disable button and show loading
+        applyVoucherBtn.disabled = true;
+        applyVoucherBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Validating...';
+        voucherError.style.display = 'none';
+
+        // Validate voucher via API
+        fetch('/discounts-api/validate-voucher', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    voucher_code: voucherCode,
+                    date: policyStartDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.voucher) {
+                    // Voucher is valid - apply discount
+                    const discountPercentage = parseFloat(data.voucher.percentage);
+
+                    // Store voucher code in hidden input
+                    document.getElementById('voucherCodeApplied').value = voucherCode;
+
+                    // Hide voucher input section
+                    document.getElementById('voucherInputSection').style.display = 'none';
+
+                    // Recalculate pricing with voucher discount
+                    calculatePremium();
+
+                    // Show success message (optional)
+                    console.log('Voucher applied successfully:', voucherCode, discountPercentage + '%');
+                } else {
+                    // Invalid voucher
+                    voucherErrorMessage.textContent = data.message || 'Invalid or expired voucher code.';
+                    voucherError.style.display = 'block';
+
+                    // Re-enable button
+                    applyVoucherBtn.disabled = false;
+                    applyVoucherBtn.innerHTML = '<i class="fa fa-check"></i> Apply Voucher';
+                }
+            })
+            .catch(error => {
+                console.error('Error validating voucher:', error);
+                voucherErrorMessage.textContent =
+                    'An error occurred while validating the voucher. Please try again.';
+                voucherError.style.display = 'block';
+
+                // Re-enable button
+                applyVoucherBtn.disabled = false;
+                applyVoucherBtn.innerHTML = '<i class="fa fa-check"></i> Apply Voucher';
+            });
+    }
+
+    // Make applyVoucher globally available
+    window.applyVoucher = applyVoucher;
 
     function shouldShowLocumExtension(step2Data) {
         const professionalType = step2Data.professional_indemnity_type;

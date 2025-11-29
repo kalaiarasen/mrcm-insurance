@@ -157,18 +157,23 @@ class DiscountController extends Controller
     }
 
     /**
-     * Get active discount for a specific date (API endpoint)
+     * Get active discount for a specific date and product (API endpoint)
      */
     public function getActiveDiscount(Request $request)
     {
         $validated = $request->validate([
             'date' => 'required|date',
+            'product' => 'required|in:pharmacist,medical_practice,dental_practice',
         ]);
 
         $date = $validated['date'];
+        $product = $validated['product'];
 
         // Find discount where the date falls within start_date and end_date
-        $discount = Discount::whereDate('start_date', '<=', $date)
+        // AND product matches AND type is 'discount'
+        $discount = Discount::where('type', 'discount')
+            ->where('product', $product)
+            ->whereDate('start_date', '<=', $date)
             ->whereDate('end_date', '>=', $date)
             ->first();
 
@@ -187,7 +192,47 @@ class DiscountController extends Controller
 
         return response()->json([
             'success' => false,
-            'message' => 'No active discount found for the selected date.'
+            'message' => 'No active discount found for the selected date and product.'
         ]);
+    }
+
+    /**
+     * Validate voucher code (API endpoint)
+     */
+    public function validateVoucher(Request $request)
+    {
+        $validated = $request->validate([
+            'voucher_code' => 'required|string|max:50',
+            'date' => 'required|date',
+        ]);
+
+        $voucherCode = strtoupper(trim($validated['voucher_code']));
+        $date = $validated['date'];
+
+        // Find voucher by code, check if it's active and type is 'voucher'
+        $voucher = Discount::where('type', 'voucher')
+            ->where('voucher_code', $voucherCode)
+            ->whereDate('start_date', '<=', $date)
+            ->whereDate('end_date', '>=', $date)
+            ->first();
+
+        if ($voucher) {
+            return response()->json([
+                'success' => true,
+                'voucher' => [
+                    'id' => $voucher->id,
+                    'code' => $voucher->voucher_code,
+                    'percentage' => $voucher->percentage,
+                    'description' => $voucher->description,
+                    'start_date' => $voucher->start_date->format('Y-m-d'),
+                    'end_date' => $voucher->end_date->format('Y-m-d'),
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid or expired voucher code.'
+        ], 422);
     }
 }

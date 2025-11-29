@@ -72,8 +72,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('wallet/add-amount', [WalletController::class, 'addAmount'])->name('wallet.add-amount');
     Route::post('wallet/deduct-amount', [WalletController::class, 'deductAmount'])->name('wallet.deduct-amount');
     
+    Route::resource('discounts', DiscountController::class);
     // Get active discount by date
     Route::get('discounts-api/active', [DiscountController::class, 'getActiveDiscount'])->name('discounts.active');
+    Route::post('discounts-api/validate-voucher', [DiscountController::class, 'validateVoucher'])->name('discounts.validate-voucher');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');

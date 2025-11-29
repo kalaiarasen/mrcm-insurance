@@ -82,9 +82,6 @@ class PolicyController extends Controller
             }
         }
         
-        // Get user's wallet balance
-        $walletBalance = $user ? $user->wallet_amount : 0;
-        
-        return view('pages.new-policy.index', compact('existingData', 'walletBalance'));
+        return view('pages.new-policy.index', compact('existingData'));
     }
 }

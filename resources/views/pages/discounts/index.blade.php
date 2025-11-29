@@ -101,7 +101,15 @@
                                             </td>
                                             <td>
                                                 @if ($discount->voucher_code)
-                                                    <code class="text-primary">{{ $discount->voucher_code }}</code>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <code class="text-primary">{{ $discount->voucher_code }}</code>
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-outline-primary copy-voucher-btn"
+                                                            data-voucher="{{ $discount->voucher_code }}"
+                                                            title="Copy voucher code">
+                                                            <i class="fa fa-copy"></i>
+                                                        </button>
+                                                    </div>
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif
@@ -177,6 +185,38 @@
                     bsAlert.close();
                 });
             }, 5000);
+
+            // Copy voucher code functionality
+            document.querySelectorAll('.copy-voucher-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const voucherCode = this.getAttribute('data-voucher');
+                    const icon = this.querySelector('i');
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(voucherCode).then(() => {
+                        // Change icon to checkmark
+                        icon.classList.remove('fa-copy');
+                        icon.classList.add('fa-check');
+                        this.classList.remove('btn-outline-primary');
+                        this.classList.add('btn-success');
+
+                        // Show tooltip
+                        this.setAttribute('title', 'Copied!');
+
+                        // Reset after 2 seconds
+                        setTimeout(() => {
+                            icon.classList.remove('fa-check');
+                            icon.classList.add('fa-copy');
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-outline-primary');
+                            this.setAttribute('title', 'Copy voucher code');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy:', err);
+                        alert('Failed to copy voucher code');
+                    });
+                });
+            });
         });
     </script>
 @endsection
