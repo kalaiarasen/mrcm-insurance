@@ -2,20 +2,24 @@
 <div class="sidebar-wrapper" data-sidebar-layout="stroke-svg">
     <div>
         <div class="logo-wrapper">
-            <a href="{{ route('dashboard') }}"><img class="img-fluid for-light w-75" src="{{ asset('img/logo.png') }}" alt="" /><img class="img-fluid for-dark w-75" src="{{ asset('img/logo.png') }}" alt="" /></a>
+            <a href="{{ route('dashboard') }}"><img class="img-fluid for-light w-75" src="{{ asset('img/logo.png') }}"
+                    alt="" /><img class="img-fluid for-dark w-75" src="{{ asset('img/logo.png') }}"
+                    alt="" /></a>
 
             <div class="back-btn"><i class="fa-solid fa-angle-left"></i></div>
             <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
         </div>
         <div class="logo-icon-wrapper">
-            <a href="{{ route('dashboard') }}"><img class="img-fluid" src="{{ asset('img/favicon.png') }}" alt="" style="width:40px; height:40px;" /></a>
+            <a href="{{ route('dashboard') }}"><img class="img-fluid" src="{{ asset('img/favicon.png') }}"
+                    alt="" style="width:40px; height:40px;" /></a>
         </div>
         <nav class="sidebar-main">
             <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
             <div id="sidebar-menu">
                 <ul class="sidebar-links" id="simple-bar">
                     <li class="back-btn">
-                        <div class="mobile-back text-end"><span>Back</span><i class="fa-solid fa-angle-right ps-2" aria-hidden="true"></i></div>
+                        <div class="mobile-back text-end"><span>Back</span><i class="fa-solid fa-angle-right ps-2"
+                                aria-hidden="true"></i></div>
                     </li>
                     <li class="pin-title sidebar-main-title">
                         <div>
@@ -35,105 +39,121 @@
                         </a>
                     </li> --}}
                     @role('Client')
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-social') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-social') }}"></use>
-                            </svg>
-                            <span>Professional Indemnity</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
-                            </svg>
-                            <span>Clinic Cover</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
-                            </svg>
-                            <span>Group/Entity Cover</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
-                            </svg>
-                            <span>Allied Healthcare</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-button') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-button') }}"></use>
-                            </svg>
-                            <span>Q&A</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                                </svg>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}" href="{{ route('new-policy') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                                </svg>
+                                <span>Professional Indemnity</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('customer.products.*') ? 'active' : '' }}"
+                                href="{{ route('customer.products.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                                </svg>
+                                <span>Other Insurances</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav" href="">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                                </svg>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav" href="">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                                </svg>
+                                <span>View My Policies</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav" href="">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
+                                </svg>
+                                <span>Logout</span>
+                            </a>
+                        </li>
                     @endrole
                     @hasanyrole('Super Admin|Admin|Agent')
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('for-your-action') ? 'active' : '' }}" href="{{ route('for-your-action') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
-                            </svg>
-                            <span>For your action</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('policy-holder') ? 'active' : '' }}" href="{{ route('policy-holder') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
-                            </svg>
-                            <span>Policy Holder</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('claims.*') ? 'active' : '' }}" href="{{ route('claims.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-email') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-email') }}"></use>
-                            </svg>
-                            <span>Claims Management</span>
-                        </a>
-                    </li>
-                    {{-- <li class="sidebar-list">
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('for-your-action') ? 'active' : '' }}"
+                                href="{{ route('for-your-action') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
+                                </svg>
+                                <span>For your action</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('policy-holder') ? 'active' : '' }}"
+                                href="{{ route('policy-holder') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
+                                </svg>
+                                <span>Policy Holder</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('claims.*') ? 'active' : '' }}"
+                                href="{{ route('claims.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-email') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-email') }}"></use>
+                                </svg>
+                                <span>Claims Management</span>
+                            </a>
+                        </li>
+                        {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}" href="{{ route('new-policy') }}">
                             <svg class="stroke-icon">
@@ -145,83 +165,117 @@
                             <span>New Policy</span>
                         </a>
                     </li> --}}
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-button') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-button') }}"></use>
-                            </svg>
-                            <span>Announcement</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
-                            </svg>
-                            <span>Users</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('announcements.*') ? 'active' : '' }}"
+                                href="{{ route('announcements.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-button') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-button') }}"></use>
+                                </svg>
+                                <span>Announcement</span>
+                            </a>
+                        </li>
+                        {{-- Products Menu --}}
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('products.*') ? 'active' : '' }}"
+                                href="{{ route('products.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                                </svg>
+                                <span>Other Insurances</span>
+                            </a>
+                        </li>
+                        {{-- <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('quotation-requests.*') ? 'active' : '' }}"
+                                href="{{ route('quotation-requests.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-email') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-email') }}"></use>
+                                </svg>
+                                <span>Quotation Requests</span>
+                            </a>
+                        </li> --}}
+
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('users.*') ? 'active' : '' }}"
+                                href="{{ route('users.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
+                                </svg>
+                                <span>Users</span>
+                            </a>
+                        </li>
                     @endhasanyrole
                     @role('Super Admin')
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-social') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-social') }}"></use>
-                            </svg>
-                            <span>Roles & Permissions</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles.*') ? 'active' : '' }}"
+                                href="{{ route('roles.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-social') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-social') }}"></use>
+                                </svg>
+                                <span>Roles & Permissions</span>
+                            </a>
+                        </li>
                     @endrole
                     @hasanyrole('Super Admin|Admin')
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('wallet.*') ? 'active' : '' }}" href="{{ route('wallet.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-price') }}"></use>
-                            </svg>
-                            <span>Wallet Management</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agents.*') ? 'active' : '' }}" href="{{ route('agents.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
-                            </svg>
-                            <span>Agent Management</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('discounts.*') ? 'active' : '' }}" href="{{ route('discounts.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-price') }}"></use>
-                            </svg>
-                            <span>Discount Setup</span>
-                        </a>
-                    </li>
-                    {{-- <li class="sidebar-list">
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('wallet.*') ? 'active' : '' }}"
+                                href="{{ route('wallet.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-price') }}"></use>
+                                </svg>
+                                <span>Wallet Management</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agents.*') ? 'active' : '' }}"
+                                href="{{ route('agents.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
+                                </svg>
+                                <span>Agent Management</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('discounts.*') ? 'active' : '' }}"
+                                href="{{ route('discounts.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-price') }}"></use>
+                                </svg>
+                                <span>Discount Setup</span>
+                            </a>
+                        </li>
+                        {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="">
                             <svg class="stroke-icon">

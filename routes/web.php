@@ -3,10 +3,13 @@
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ClaimsController;
+use App\Http\Controllers\CustomerProductController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyHolderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\QuotationRequestController;
 use App\Http\Controllers\YourActionController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\Api\PolicySubmissionController;
@@ -76,6 +79,17 @@ Route::middleware(['auth'])->group(function () {
     // Get active discount by date
     Route::get('discounts-api/active', [DiscountController::class, 'getActiveDiscount'])->name('discounts.active');
     Route::post('discounts-api/validate-voucher', [DiscountController::class, 'validateVoucher'])->name('discounts.validate-voucher');
+
+    // Product Management (Admin)
+    Route::resource('products', ProductController::class);
+    
+    // Customer Products
+    Route::get('customer-products', [CustomerProductController::class, 'index'])->name('customer.products.index');
+    Route::get('customer-products/{id}', [CustomerProductController::class, 'show'])->name('customer.products.show');
+    Route::post('customer-products/{id}/quotation', [CustomerProductController::class, 'submitQuotation'])->name('customer.products.quotation');
+
+    // Quotation Request Management (Admin)
+    Route::resource('quotation-requests', QuotationRequestController::class)->only(['index', 'show', 'update', 'destroy']);
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
