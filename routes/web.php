@@ -49,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('client-policy/{id}/upload-payment', [DashboardController::class, 'uploadPayment'])->name('client-policy.upload-payment');
     
     Route::get('for-your-action', [YourActionController::class, 'index'])->name('for-your-action');
+    Route::get('for-your-action/export', [YourActionController::class, 'exportExcel'])->name('for-your-action.export');
     Route::get('for-your-action/{id}', [YourActionController::class, 'show'])->name('for-your-action.show');
     Route::get('for-your-action/{id}/export-pdf', [YourActionController::class, 'exportPdf'])->name('for-your-action.export-pdf');
     Route::get('for-your-action/{id}/edit', [YourActionController::class, 'edit'])->name('for-your-action.edit');

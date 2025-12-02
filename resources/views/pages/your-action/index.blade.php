@@ -110,6 +110,24 @@
             background-color: #495057 !important;
             color: #ffffff !important;
         }
+
+        /* Export Button Styling */
+        #exportExcelBtn {
+            background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(25, 135, 84, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        #exportExcelBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.4);
+        }
+
+        #exportExcelBtn i {
+            font-size: 1.1em;
+        }
     </style>
 @endsection
 
@@ -229,12 +247,93 @@
                     </div>
                 </div>
             </div>
+            <!-- Filter Card -->
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <div>
-                            <h5>Policies</h5>
-                            <p class="f-m-light mt-1">Policy status update</p>
+                            <h5><i class="fa fa-filter me-2"></i>Filter Options</h5>
+                            <p class="f-m-light mt-1">Select date range to filter policies</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="policyTypeFilter" class="form-label"><i class="fa fa-briefcase-medical me-1"></i>Type of Professional Indemnity</label>
+                                <select class="form-select" id="policyTypeFilter">
+                                    <option value="">All Types</option>
+                                    <option value="medical_practice">Medical Practice</option>
+                                    <option value="dental_practice">Dental Practice</option>
+                                    <option value="pharmacist">Pharmacist</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="statusFilter" class="form-label"><i class="fa fa-info-circle me-1"></i>Status</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="new_case">New Case</option>
+                                    <option value="new_renewal">New Renewal</option>
+                                    <option value="not_paid">Not Paid</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="sent_uw">Sent UW</option>
+                                    <option value="active">Active</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="dateRangeSelect" class="form-label"><i class="fa fa-calendar me-1"></i>Date Range</label>
+                                <select class="form-select" id="dateRangeSelect">
+                                    <option value="">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="yesterday">Yesterday</option>
+                                    <option value="last7days">Last 7 Days</option>
+                                    <option value="last30days">Last 30 Days</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div>
+                                    <button type="button" class="btn btn-primary w-100" id="applyFiltersBtn">
+                                        <i class="fa fa-filter me-1"></i>Apply Filters
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="customDateRow" style="display:none;">
+                            <div class="col-md-3">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" placeholder="Start Date">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" placeholder="End Date">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div>
+                                    <button type="button" class="btn btn-outline-secondary w-100" id="clearFiltersBtn">
+                                        <i class="fa fa-times me-1"></i>Clear All Filters
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Results Card -->
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header pb-0 card-no-border">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>Policies</h5>
+                                <p class="f-m-light mt-1 mb-0">Policy status update</p>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-success" id="exportExcelBtn">
+                                    <i class="fa fa-file-excel me-2"></i>Export to Excel
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -247,8 +346,8 @@
                                         {{-- <th>Type</th> --}}
                                         <th>Status</th>
                                         <th>Expiry Date</th>
-                                        <th>Name / Email</th>
-                                        <th>Class</th>
+                                        <th>Name / Email / Phone</th>
+                                        <th>Type of Professional Indemnity</th>
                                         <th>Amount</th>
                                         <th>Action</th>
                                     </tr>
@@ -306,7 +405,13 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('for-your-action') }}"
+                    url: "{{ route('for-your-action') }}",
+                    data: function(d) {
+                        d.start_date = $('#startDate').val();
+                        d.end_date = $('#endDate').val();
+                        d.policy_type = $('#policyTypeFilter').val();
+                        d.status = $('#statusFilter').val();
+                    }
                 },
                 columns: [{
                         data: 'policy_id',
@@ -367,6 +472,93 @@
                 ],
                 responsive: true,
                 autoWidth: false
+            });
+
+            // Date range select change
+            $('#dateRangeSelect').on('change', function() {
+                const value = $(this).val();
+                const today = new Date();
+                let startDate = '';
+                let endDate = '';
+
+                if (value === 'custom') {
+                    // Show custom date row
+                    $('#customDateRow').show();
+                } else {
+                    // Hide custom date row
+                    $('#customDateRow').hide();
+
+                    // Calculate date ranges
+                    if (value === 'today') {
+                        startDate = endDate = today.toISOString().split('T')[0];
+                    } else if (value === 'yesterday') {
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        startDate = endDate = yesterday.toISOString().split('T')[0];
+                    } else if (value === 'last7days') {
+                        const last7 = new Date(today);
+                        last7.setDate(last7.getDate() - 7);
+                        startDate = last7.toISOString().split('T')[0];
+                        endDate = today.toISOString().split('T')[0];
+                    } else if (value === 'last30days') {
+                        const last30 = new Date(today);
+                        last30.setDate(last30.getDate() - 30);
+                        startDate = last30.toISOString().split('T')[0];
+                        endDate = today.toISOString().split('T')[0];
+                    }
+
+                    // Set dates
+                    $('#startDate').val(startDate);
+                    $('#endDate').val(endDate);
+                }
+            });
+
+            // Apply filters button
+            $('#applyFiltersBtn').on('click', function() {
+                dataTable.draw();
+            });
+
+            // Clear all filters
+            $('#clearFiltersBtn').on('click', function() {
+                $('#policyTypeFilter').val('');
+                $('#statusFilter').val('');
+                $('#dateRangeSelect').val('');
+                $('#startDate').val('');
+                $('#endDate').val('');
+                $('#customDateRow').hide();
+                dataTable.draw();
+            });
+
+            // Export to Excel
+            $('#exportExcelBtn').on('click', function() {
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+                const policyType = $('#policyTypeFilter').val();
+                const status = $('#statusFilter').val();
+                
+                // Build URL with parameters
+                let url = "{{ route('for-your-action.export') }}";
+                const params = [];
+                
+                if (startDate) {
+                    params.push('start_date=' + encodeURIComponent(startDate));
+                }
+                if (endDate) {
+                    params.push('end_date=' + encodeURIComponent(endDate));
+                }
+                if (policyType) {
+                    params.push('policy_type=' + encodeURIComponent(policyType));
+                }
+                if (status) {
+                    params.push('status=' + encodeURIComponent(status));
+                }
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                // Open in new window to trigger download
+                window.location.href = url;
             });
         });
 

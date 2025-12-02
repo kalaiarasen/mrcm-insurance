@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PolicyApplication;
 use App\Mail\SendToUnderwriting;
+use App\Exports\PolicyApplicationsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class YourActionController extends Controller
@@ -21,7 +23,27 @@ class YourActionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = PolicyApplication::with('user');
+            $query = PolicyApplication::with('user', 'user.applicantContact', 'user.healthcareService');
+
+            // Apply date range filter
+            if ($request->filled('start_date')) {
+                $query->whereDate('updated_at', '>=', $request->start_date);
+            }
+            if ($request->filled('end_date')) {
+                $query->whereDate('updated_at', '<=', $request->end_date);
+            }
+
+            // Apply policy type filter
+            if ($request->filled('policy_type')) {
+                $query->whereHas('user.healthcareService', function($q) use ($request) {
+                    $q->where('professional_indemnity_type', $request->policy_type);
+                });
+            }
+
+            // Apply status filter
+            if ($request->filled('status')) {
+                $query->where('admin_status', $request->status);
+            }
 
             return DataTables::of($query)
                 ->addColumn('policy_id', function ($policy) {
@@ -71,10 +93,18 @@ class YourActionController extends Controller
                           . e($policy->user?->name ?? 'Unknown') 
                           . '</a>';
                     $email = '<br><small class="text-muted">' . e($policy->user?->email ?? 'N/A') . '</small>';
-                    return $name . $email;
+                    $phone = $policy->user?->contact_no ?? $policy->user?->applicantContact?->contact_no ?? 'N/A';
+                    $phoneDisplay = '<br><small class="text-muted"><i class="fa fa-phone me-1"></i>' . e($phone) . '</small>';
+                    return $name . $email . $phoneDisplay;
                 })
                 ->addColumn('class', function ($policy) {
-                    return e($policy->user?->healthcareService?->coverage_type ?? 'General Cover');
+                    $type = $policy->user?->healthcareService?->professional_indemnity_type;
+                    $typeMap = [
+                        'medical_practice' => 'Medical Practice',
+                        'dental_practice' => 'Dental Practice',
+                        'pharmacist' => 'Pharmacist',
+                    ];
+                    return e($typeMap[$type] ?? 'N/A');
                 })
                 ->addColumn('amount', function ($policy) {
                     $amount = $policy->user?->policyPricing?->total_payable;
@@ -135,7 +165,11 @@ class YourActionController extends Controller
                 ->filterColumn('name', function($query, $keyword) {
                     $query->whereHas('user', function($q) use ($keyword) {
                         $q->where('name', 'like', "%{$keyword}%")
-                          ->orWhere('email', 'like', "%{$keyword}%");
+                          ->orWhere('email', 'like', "%{$keyword}%")
+                          ->orWhere('contact_no', 'like', "%{$keyword}%")
+                          ->orWhereHas('applicantContact', function($subQ) use ($keyword) {
+                              $subQ->where('contact_no', 'like', "%{$keyword}%");
+                          });
                     });
                 })
                 ->filterColumn('expiry_date', function($query, $keyword) {
@@ -145,7 +179,7 @@ class YourActionController extends Controller
                 })
                 ->filterColumn('class', function($query, $keyword) {
                     $query->whereHas('user.healthcareService', function($q) use ($keyword) {
-                        $q->where('coverage_type', 'like', "%{$keyword}%");
+                        $q->where('professional_indemnity_type', 'like', "%{$keyword}%");
                     });
                 })
                 ->filterColumn('amount', function($query, $keyword) {
@@ -720,6 +754,35 @@ class YourActionController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Failed to upload documents. Please try again.');
+        }
+    }
+
+    /**
+     * Export policy applications to Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $policyType = $request->input('policy_type');
+        $status = $request->input('status');
+
+        $fileName = 'policy_applications_' . date('Y-m-d_His') . '.xlsx';
+
+        try {
+            return Excel::download(
+                new PolicyApplicationsExport($startDate, $endDate, $policyType, $status),
+                $fileName
+            );
+        } catch (\Exception $e) {
+            Log::error('Failed to export policy applications', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to export data. Please try again.');
         }
     }
 
