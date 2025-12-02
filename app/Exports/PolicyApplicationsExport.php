@@ -16,13 +16,15 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
     protected $endDate;
     protected $policyType;
     protected $status;
+    protected $agentId;
 
-    public function __construct($startDate = null, $endDate = null, $policyType = null, $status = null)
+    public function __construct($startDate = null, $endDate = null, $policyType = null, $status = null, $agentId = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->policyType = $policyType;
         $this->status = $status;
+        $this->agentId = $agentId;
     }
 
     /**
@@ -36,6 +38,13 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
             'user.healthcareService',
             'user.policyPricing'
         ]);
+
+        // Filter by agent if specified
+        if ($this->agentId) {
+            $query->whereHas('user', function($q) {
+                $q->where('agent_id', $this->agentId);
+            });
+        }
 
         // Apply date filters
         if ($this->startDate) {

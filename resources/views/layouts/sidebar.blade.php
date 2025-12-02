@@ -119,7 +119,7 @@
                             </form>
                         </li>
                     @endrole
-                    @hasanyrole('Super Admin|Admin|Agent')
+                    @hasanyrole('Super Admin|Admin')
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('for-your-action') ? 'active' : '' }}"
@@ -159,18 +159,6 @@
                                 <span>Claims Management</span>
                             </a>
                         </li>
-                        {{-- <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}" href="{{ route('new-policy') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
-                            </svg>
-                            <span>New Policy</span>
-                        </a>
-                    </li> --}}
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('announcements.*') ? 'active' : '' }}"
@@ -184,7 +172,6 @@
                                 <span>Announcement</span>
                             </a>
                         </li>
-                        {{-- Products Menu --}}
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('products.*') ? 'active' : '' }}"
@@ -198,19 +185,6 @@
                                 <span>Other Insurances</span>
                             </a>
                         </li>
-                        {{-- <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('quotation-requests.*') ? 'active' : '' }}"
-                                href="{{ route('quotation-requests.index') }}">
-                                <svg class="stroke-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-email') }}"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-email') }}"></use>
-                                </svg>
-                                <span>Quotation Requests</span>
-                            </a>
-                        </li> --}}
 
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
@@ -294,19 +268,35 @@
                                 <span>Discount Setup</span>
                             </a>
                         </li>
-                        {{-- <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
-                            </svg>
-                            <span>Client Management</span>
-                        </a>
-                    </li> --}}
                     @endhasanyrole
+                    @hasrole('Agent')
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('for-your-action') ? 'active' : '' }}"
+                                href="{{ route('for-your-action') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
+                                </svg>
+                                <span>Application List</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('policy-holder') ? 'active' : '' }}"
+                                href="{{ route('policy-holder') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
+                                </svg>
+                                <span>Customer List</span>
+                            </a>
+                        </li>
+                    @endhasrole
                     {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title" href="#">

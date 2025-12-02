@@ -25,6 +25,13 @@ class YourActionController extends Controller
         if ($request->ajax()) {
             $query = PolicyApplication::with('user', 'user.applicantContact', 'user.healthcareService');
 
+            // Filter by agent_id if user is an agent
+            if (Auth::user()->hasRole('Agent')) {
+                $query->whereHas('user', function($q) {
+                    $q->where('agent_id', Auth::id());
+                });
+            }
+
             // Apply date range filter
             if ($request->filled('start_date')) {
                 $query->whereDate('updated_at', '>=', $request->start_date);
@@ -117,21 +124,28 @@ class YourActionController extends Controller
                     $deleteUrl = route('for-your-action.destroy', $policy->id);
                     
                     $html = '<ul class="action">';
-                    $html .= '<li class="view me-2">';
-                    $html .= '<a href="' . $viewUrl . '" title="View Details">';
-                    $html .= '<i class="fa-regular fa-eye"></i>';
-                    $html .= '</a>';
-                    $html .= '</li>';
                     
-                    $html .= '<li class="delete">';
-                    $html .= '<form action="' . $deleteUrl . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this policy application?\');">';
-                    $html .= csrf_field();
-                    $html .= method_field('DELETE');
-                    $html .= '<button type="submit" class="border-0 bg-transparent p-0" title="Delete">';
-                    $html .= '<i class="fa-regular fa-trash-can"></i>';
-                    $html .= '</button>';
-                    $html .= '</form>';
-                    $html .= '</li>';
+                    // Only show view and delete buttons for non-agent users
+                    if (!Auth::user()->hasRole('Agent')) {
+                        $html .= '<li class="view me-2">';
+                        $html .= '<a href="' . $viewUrl . '" title="View Details">';
+                        $html .= '<i class="fa-regular fa-eye"></i>';
+                        $html .= '</a>';
+                        $html .= '</li>';
+                        
+                        $html .= '<li class="delete">';
+                        $html .= '<form action="' . $deleteUrl . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this policy application?\');">';
+                        $html .= csrf_field();
+                        $html .= method_field('DELETE');
+                        $html .= '<button type="submit" class="border-0 bg-transparent p-0" title="Delete">';
+                        $html .= '<i class="fa-regular fa-trash-can"></i>';
+                        $html .= '</button>';
+                        $html .= '</form>';
+                        $html .= '</li>';
+                    } else {
+                        // Agents see nothing in action column - only can view the list
+                        $html .= '<li><span class="text-muted">View only</span></li>';
+                    }
                     
                     $html .= '</ul>';
                     return $html;
@@ -195,10 +209,19 @@ class YourActionController extends Controller
         }
 
         // Count policies by admin_status (show all, no is_used filter)
-        $newPolicies = PolicyApplication::where('admin_status', 'new_case')->count();
-        $activePolicies = PolicyApplication::where('admin_status', 'active')->count();
-        $pendingPolicies = PolicyApplication::where('admin_status', 'not_paid')->count();
-        $rejectedPolicies = PolicyApplication::where('status', 'rejected')->count();
+        $baseQuery = PolicyApplication::query();
+        
+        // Filter by agent_id if user is an agent
+        if (Auth::user()->hasRole('Agent')) {
+            $baseQuery->whereHas('user', function($q) {
+                $q->where('agent_id', Auth::id());
+            });
+        }
+        
+        $newPolicies = (clone $baseQuery)->where('admin_status', 'new_case')->count();
+        $activePolicies = (clone $baseQuery)->where('admin_status', 'active')->count();
+        $pendingPolicies = (clone $baseQuery)->where('admin_status', 'not_paid')->count();
+        $rejectedPolicies = (clone $baseQuery)->where('status', 'rejected')->count();
 
         return view('pages.your-action.index', compact('newPolicies', 'activePolicies', 'pendingPolicies', 'rejectedPolicies'));
     }
@@ -763,12 +786,15 @@ class YourActionController extends Controller
         $endDate = $request->input('end_date');
         $policyType = $request->input('policy_type');
         $status = $request->input('status');
+        
+        // Pass agent ID if user is an agent
+        $agentId = Auth::user()->hasRole('Agent') ? Auth::id() : null;
 
         $fileName = 'policy_applications_' . date('Y-m-d_His') . '.xlsx';
 
         try {
             return Excel::download(
-                new PolicyApplicationsExport($startDate, $endDate, $policyType, $status),
+                new PolicyApplicationsExport($startDate, $endDate, $policyType, $status, $agentId),
                 $fileName
             );
         } catch (\Exception $e) {

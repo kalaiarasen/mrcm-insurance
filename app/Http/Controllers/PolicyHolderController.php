@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Yajra\DataTables\Facades\DataTables;
@@ -16,9 +17,12 @@ class PolicyHolderController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = User::whereHas('applicantProfile')
-                ->with(['applicantProfile', 'applicantContact'])
+            $query = User::with(['applicantProfile', 'applicantContact'])
                 ->orderBy('created_at', 'desc');
+
+            if (Auth::user()->hasRole('Agent')) {
+                $query->where('agent_id', Auth::id());
+            }
 
             // Apply date range filter if provided
             if ($request->has('start_date') && $request->get('start_date')) {
@@ -54,13 +58,19 @@ class PolicyHolderController extends Controller
                     return e($holder->contact_no);
                 })
                 ->addColumn('action', function ($holder) {
-                    return '
-                        <ul class="action">
+                    $editButton = '';
+                    if (!Auth::user()->hasRole('Agent')) {
+                        $editButton = '
                             <li class="edit">
                                 <a href="#" onclick="editPolicyHolder(' . $holder->id . '); return false;" title="Edit">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
-                            </li>
+                            </li>';
+                    }
+                    
+                    return '
+                        <ul class="action">' . 
+                            $editButton . '
                             <li class="view">
                                 <a href="' . route('policy-holders.show', $holder->id) . '" title="View Details">
                                     <i class="fa-regular fa-eye"></i>
@@ -136,6 +146,14 @@ class PolicyHolderController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Block agents from editing
+        if (Auth::user()->hasRole('Agent')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to edit customer information'
+            ], 403);
+        }
+
         // Verify user has submitted an application (has applicant profile)
         if (!$user->relationLoaded('applicantProfile')) {
             $user->load('applicantProfile');
@@ -203,7 +221,15 @@ class PolicyHolderController extends Controller
      */
     public function show(User $user)
     {
-        // Verify user has submitted an application (has applicant profile)
+        // Filter for agents - only show their assigned clients
+        if (Auth::user()->hasRole('Agent')) {
+            if ($user->agent_id !== Auth::id()) {
+                return redirect()->route('policy-holder')->with('error', 'You do not have permission to view this customer');
+            }
+        }
+
+
+        // Load relationships
         if (!$user->relationLoaded('applicantProfile')) {
             $user->load([
                 'applicantProfile',
@@ -211,10 +237,6 @@ class PolicyHolderController extends Controller
                 'policyApplications.policyPricing',
                 'policyApplications.healthcareService',
             ]);
-        }
-        
-        if (!$user->applicantProfile) {
-            return redirect()->route('policy-holder')->with('error', 'User does not have an applicant profile');
         }
 
         // Get all policy applications for this user (including drafts), ordered by newest first
@@ -231,6 +253,13 @@ class PolicyHolderController extends Controller
      */
     public function showApplication(User $user, $application)
     {
+        // Filter for agents - only show their assigned clients
+        if (Auth::user()->hasRole('Agent')) {
+            if ($user->agent_id !== Auth::id()) {
+                abort(403, 'You do not have permission to view this customer');
+            }
+        }
+
         // Find the policy application and verify it belongs to this user
         $policyApplication = \App\Models\PolicyApplication::where('id', $application)
             ->where('user_id', $user->id)

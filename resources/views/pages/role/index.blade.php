@@ -143,17 +143,17 @@
                                             <td>{{ $role->created_at->format('M d, Y H:i') }}</td>
                                             <td>
                                                 <ul class="action">
-                                                    @if($role->name !== 'Super Admin')
+                                                    @if(($role->name !== 'Super Admin') && ($role->name !== 'Agent') && ($role->name !== 'Client'))
                                                         <li class="edit">
                                                             <a href="#!" onclick="editRole({{ $role->id }})">
                                                                 <i class="fa-regular fa-pen-to-square"></i>
                                                             </a>
                                                         </li>
-                                                        <li class="delete">
+                                                        {{-- <li class="delete">
                                                             <a href="#!" onclick="deleteRole({{ $role->id }})">
                                                                 <i class="fa-solid fa-trash-can"></i>
                                                             </a>
-                                                        </li>
+                                                        </li> --}}
                                                     @endif
                                                 </ul>
                                             </td>
