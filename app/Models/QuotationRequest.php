@@ -16,6 +16,8 @@ class QuotationRequest extends Model
         'customer_status',
         'admin_status',
         'quoted_price',
+        'wallet_amount_applied',
+        'final_price',
         'quotation_details',
         'payment_document',
         'payment_uploaded_at',
@@ -26,6 +28,8 @@ class QuotationRequest extends Model
         'form_data' => 'array',
         'payment_uploaded_at' => 'datetime',
         'quoted_price' => 'decimal:2',
+        'wallet_amount_applied' => 'decimal:2',
+        'final_price' => 'decimal:2',
     ];
 
     /**

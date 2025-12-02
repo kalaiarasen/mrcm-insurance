@@ -101,20 +101,40 @@ class CustomerProductController extends Controller
 
         $request->validate([
             'payment_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
+            'wallet_amount' => 'nullable|numeric|min:0|max:' . min(auth()->user()->wallet_amount, $quotation->quoted_price),
         ]);
 
         // Store the payment document
         $path = $request->file('payment_document')->store('quotation-payments', 'public');
 
+        // Calculate wallet amount and final price
+        $walletAmount = floatval($request->input('wallet_amount', 0));
+        $quotedPrice = floatval($quotation->quoted_price);
+        $finalPrice = max(0, $quotedPrice - $walletAmount);
+
+        // Deduct wallet amount from user's balance
+        if ($walletAmount > 0) {
+            $user = auth()->user();
+            $user->wallet_amount = max(0, $user->wallet_amount - $walletAmount);
+            $user->save();
+        }
+
         // Update quotation request
         $quotation->update([
             'payment_document' => $path,
             'payment_uploaded_at' => now(),
+            'wallet_amount_applied' => $walletAmount,
+            'final_price' => $finalPrice,
             'customer_status' => 'paid',
-            'admin_status' => 'processing', // Changed from 'paid' to 'processing'
+            'admin_status' => 'processing',
         ]);
 
+        $message = 'Payment proof uploaded successfully.';
+        if ($walletAmount > 0) {
+            $message .= ' RM ' . number_format($walletAmount, 2) . ' has been deducted from your wallet.';
+        }
+
         return redirect()->route('customer.quotations.show', $quotation->id)
-            ->with('success', 'Payment proof uploaded successfully. We will process your payment shortly.');
+            ->with('success', $message);
     }
 }

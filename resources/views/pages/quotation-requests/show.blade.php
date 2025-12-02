@@ -127,13 +127,40 @@
                 @if ($quotationRequest->payment_document)
                     <div class="card mt-3">
                         <div class="card-header pb-0">
-                            <h5><i class="fa fa-file-invoice"></i> Payment Document</h5>
+                            <h5><i class="fa fa-file-invoice"></i> Payment Information</h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>Uploaded:</strong>
+                            @if ($quotationRequest->quoted_price)
+                                <div class="row mb-3">
+                                    <div class="col-6"><strong>Quoted Price:</strong></div>
+                                    <div class="col-6 text-end">RM {{ number_format($quotationRequest->quoted_price, 2) }}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($quotationRequest->wallet_amount_applied > 0)
+                                <div class="row mb-3 text-success">
+                                    <div class="col-6"><strong><i class="fa fa-wallet"></i> Wallet Applied:</strong></div>
+                                    <div class="col-6 text-end">- RM
+                                        {{ number_format($quotationRequest->wallet_amount_applied, 2) }}</div>
+                                </div>
+                            @endif
+
+                            @if ($quotationRequest->final_price !== null)
+                                <div class="row mb-3">
+                                    <div class="col-6"><strong>Final Amount Paid:</strong></div>
+                                    <div class="col-6 text-end">
+                                        <h5 class="mb-0 text-primary">RM
+                                            {{ number_format($quotationRequest->final_price, 2) }}</h5>
+                                    </div>
+                                </div>
+                                <hr>
+                            @endif
+
+                            <p><strong>Payment Uploaded:</strong>
                                 {{ $quotationRequest->payment_uploaded_at?->format('M d, Y H:i A') ?? 'N/A' }}</p>
                             <a href="{{ $quotationRequest->payment_document_url }}" target="_blank"
-                                class="btn btn-primary">
+                                class="btn btn-primary w-100">
                                 <i class="fa fa-download"></i> View Payment Proof
                             </a>
                         </div>

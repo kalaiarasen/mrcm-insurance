@@ -148,11 +148,11 @@
                         </div>
                         <div class="card-body">
                             <div class="list-group">
-                                @foreach ($previousRequests as $request)
+                                @foreach ($previousRequests as $key => $request)
                                     <div class="list-group-item">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
-                                                <h6 class="mb-1">Request #{{ $request->id }}</h6>
+                                                <h6 class="mb-1">Request #{{ $key + 1 }}</h6>
                                                 <small class="text-muted">
                                                     <i class="fa fa-calendar"></i>
                                                     {{ $request->created_at->format('M d, Y H:i') }}

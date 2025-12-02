@@ -139,14 +139,51 @@
 
                             @if ($quotation->quoted_price)
                                 <div class="alert alert-info mb-3">
-                                    <strong>Amount to Pay:</strong><br>
-                                    RM {{ number_format($quotation->quoted_price, 2) }}
+                                    <strong>Quoted Price:</strong><br>
+                                    RM <span id="quotedPrice">{{ number_format($quotation->quoted_price, 2) }}</span>
+                                </div>
+
+                                <!-- Wallet Balance Info -->
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-dark"><i class="fa fa-wallet"></i> Your Wallet Balance:</span>
+                                            <strong class="text-primary">RM
+                                                {{ number_format(auth()->user()->wallet_amount ?? 0, 2) }}</strong>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
 
                             <form action="{{ route('customer.quotations.upload-payment', $quotation->id) }}" method="POST"
-                                enctype="multipart/form-data">
+                                enctype="multipart/form-data" id="paymentForm">
                                 @csrf
+
+                                <!-- Wallet Amount Input -->
+                                @if ($quotation->quoted_price && auth()->user()->wallet_amount > 0)
+                                    <div class="mb-3">
+                                        <label for="wallet_amount" class="form-label">Apply Wallet Balance</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">RM</span>
+                                            <input type="number" step="0.01" min="0"
+                                                max="{{ min(auth()->user()->wallet_amount, $quotation->quoted_price) }}"
+                                                class="form-control @error('wallet_amount') is-invalid @enderror"
+                                                id="wallet_amount" name="wallet_amount" value="0" placeholder="0.00">
+                                        </div>
+                                        <small class="text-muted">Maximum: RM
+                                            {{ number_format(min(auth()->user()->wallet_amount, $quotation->quoted_price), 2) }}</small>
+                                        @error('wallet_amount')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Final Amount Display -->
+                                    <div class="alert alert-success mb-3">
+                                        <strong>Final Amount to Pay:</strong><br>
+                                        RM <span id="finalAmount">{{ number_format($quotation->quoted_price, 2) }}</span>
+                                    </div>
+                                @endif
+
                                 <div class="mb-3">
                                     <label for="payment_document" class="form-label">Payment Proof <span
                                             class="text-danger">*</span></label>
@@ -218,4 +255,38 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const walletInput = document.getElementById('wallet_amount');
+            const finalAmountSpan = document.getElementById('finalAmount');
+            const quotedPriceSpan = document.getElementById('quotedPrice');
+
+            if (walletInput && finalAmountSpan && quotedPriceSpan) {
+                const quotedPrice = parseFloat(quotedPriceSpan.textContent.replace(/,/g, ''));
+
+                walletInput.addEventListener('input', function() {
+                    let walletAmount = parseFloat(this.value) || 0;
+                    const maxWallet = parseFloat(this.max);
+
+                    // Ensure wallet amount doesn't exceed max
+                    if (walletAmount > maxWallet) {
+                        walletAmount = maxWallet;
+                        this.value = maxWallet.toFixed(2);
+                    }
+
+                    // Calculate final amount
+                    const finalAmount = Math.max(0, quotedPrice - walletAmount);
+
+                    // Update display
+                    finalAmountSpan.textContent = finalAmount.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                });
+            }
+        });
+    </script>
 @endsection
