@@ -167,6 +167,8 @@ class PolicySubmissionController extends Controller
                 'policy_expiry_date' => $applicationData['policy_expiry_date'] ?? null,
                 'liability_limit' => $applicationData['liability_limit'] ?? null,
                 'base_premium' => $applicationData['displayBasePremium'] ?? 0,
+                'loading_percentage' => $applicationData['displayLoadingPercentage'] ?? 0,
+                'loading_amount' => $applicationData['displayLoadingAmount'] ?? 0,
                 'gross_premium' => $applicationData['displayGrossPremium'] ?? 0,
                 'locum_addon' => $applicationData['displayLocumAddon'] ?? 0,
                 'locum_extension' => $applicationData['locum_extension'] ?? false,
@@ -219,7 +221,7 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            PolicyApplication::where('user_id', $currentUser->id)->update(['is_used' => false]);
+            // PolicyApplication::where('user_id', $currentUser->id)->update(['is_used' => false]);
             PolicyApplication::create([
                 'user_id' => $currentUser->id,
                 'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',

@@ -50,10 +50,7 @@ class YourActionController extends Controller
                     return '<small>' . e($policy->reference_number ?? '') . '</small>';
                 })
                 ->addColumn('date_changed', function ($policy) {
-                    // Show updated_at if it exists and is different from created_at, otherwise show created_at
-                    $date = $policy->updated_at && $policy->updated_at != $policy->created_at 
-                        ? $policy->updated_at 
-                        : $policy->created_at;
+                    $date = $policy->updated_at;
                     
                     return '<small>' . $date->format('d-M-Y') . '<br><span class="text-muted">' . $date->format('h:i A') . '</span></small>';
                 })

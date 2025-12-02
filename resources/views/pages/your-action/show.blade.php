@@ -667,6 +667,13 @@
                                                 <span>RM {{ number_format($pricing->base_premium ?? 0, 2) }}</span>
                                             </div>
 
+                                            @if (($pricing->loading_amount ?? 0) > 0)
+                                                <div class="pricing-row d-flex justify-content-between info-label">
+                                                    <span>Loading ({{ number_format($pricing->loading_percentage ?? 0, 2) }}%)</span>
+                                                    <span>RM {{ number_format($pricing->loading_amount, 2) }}</span>
+                                                </div>
+                                            @endif
+
                                             <div class="pricing-row d-flex justify-content-between info-label">
                                                 <span>Gross Premium</span>
                                                 <span>RM {{ number_format($pricing->gross_premium ?? 0, 2) }}</span>

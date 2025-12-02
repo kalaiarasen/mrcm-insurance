@@ -817,8 +817,13 @@
         const annualPremium = getBasePremium(liabilityLimit);
         const locumExtensionPremium = getLocumExtensionPremium();
 
-        // Gross Premium = ((Annual Premium + Locum Extension) × number of days) / 365
-        const totalAnnualPremium = annualPremium + locumExtensionPremium;
+        // Get user's loading percentage from data attribute
+        const step3Card = document.getElementById('step3Card');
+        const userLoadingPercentage = parseFloat(step3Card?.getAttribute('data-user-loading') || 0);
+        const loadingAmount = annualPremium * (userLoadingPercentage / 100);
+
+        // Gross Premium = ((Annual Premium + Loading + Locum Extension) × number of days) / 365
+        const totalAnnualPremium = annualPremium + loadingAmount + locumExtensionPremium;
         const grossPremium = (totalAnnualPremium * numberOfDays) / daysInYear;
 
         // Get professional indemnity type from Step 2 data
@@ -854,6 +859,16 @@
             document.getElementById('displayGrossPremium').textContent = formatCurrency(grossPremium);
             document.getElementById('displayLocumAddon').textContent = formatCurrency(locumExtensionPremium);
 
+            // Show/hide loading row
+            const loadingRow = document.getElementById('loadingRow');
+            if (userLoadingPercentage > 0) {
+                document.getElementById('displayLoadingPercentage').textContent = userLoadingPercentage.toFixed(2);
+                document.getElementById('displayLoadingAmount').textContent = formatCurrency(loadingAmount);
+                if (loadingRow) loadingRow.style.display = 'flex';
+            } else {
+                if (loadingRow) loadingRow.style.display = 'none';
+            }
+
             // Show/hide discount row
             const discountRow = document.getElementById('discountRow');
             if (discountPercentage > 0) {
@@ -878,6 +893,8 @@
 
             // Populate hidden fields
             document.getElementById('displayBasePremiumInput').value = annualPremium.toFixed(2);
+            document.getElementById('displayLoadingPercentageInput').value = userLoadingPercentage.toFixed(2);
+            document.getElementById('displayLoadingAmountInput').value = loadingAmount.toFixed(2);
             document.getElementById('displayGrossPremiumInput').value = grossPremium.toFixed(2);
             document.getElementById('displayLocumAddonInput').value = locumExtensionPremium.toFixed(2);
             document.getElementById('displayDiscountPercentageInput').value = discountPercentage.toFixed(2);
@@ -1704,6 +1721,12 @@
 
     $(document).ready(function() {
         showStep(1);
+
+        // Initialize Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
         $('#nationalityStatus').on('change', function() {
             const value = $(this).val();

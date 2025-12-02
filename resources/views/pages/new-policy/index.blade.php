@@ -663,7 +663,7 @@
                 </div>
             </div>
             <!-- Card 3: Pricing Details -->
-            <div class="col-md-12" id="step3Card" style="display: none;">
+            <div class="col-md-12" id="step3Card" style="display: none;" data-user-loading="{{ auth()->user()->loading ?? 0 }}">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border" style="position: relative;">
                         <h5>3. Pricing Details</h5>
@@ -744,6 +744,14 @@
                                     <div class="col-md-6"><span>Premium Per Annum</span></div>
                                     <div class="col-md-6"><span>: RM <span id="displayBasePremium">0.00</span></span>
                                     </div>
+                                </div>
+
+                                <div class="row mb-2" id="loadingRow" style="display: none;">
+                                    <div class="col-md-6">
+                                        <span>Loading (<span id="displayLoadingPercentage">0</span>%)</span>
+                                        <i class="fa fa-info-circle text-muted ms-1" data-bs-toggle="tooltip" title="Additional percentage applied to Premium Per Annum based on risk assessment"></i>
+                                    </div>
+                                    <div class="col-md-6"><span>: RM <span id="displayLoadingAmount">0.00</span></span></div>
                                 </div>
 
                                 <div class="row mb-2">
@@ -833,6 +841,8 @@
 
                             <!-- Hidden fields to store calculated values -->
                             <input type="hidden" id="displayBasePremiumInput" name="displayBasePremium" value="0">
+                            <input type="hidden" id="displayLoadingPercentageInput" name="displayLoadingPercentage" value="0">
+                            <input type="hidden" id="displayLoadingAmountInput" name="displayLoadingAmount" value="0">
                             <input type="hidden" id="displayGrossPremiumInput" name="displayGrossPremium"
                                 value="0">
                             <input type="hidden" id="displayLocumAddonInput" name="displayLocumAddon" value="0">

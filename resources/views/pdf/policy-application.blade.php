@@ -284,6 +284,12 @@
             <td class="label">Premium Per Annum</td>
             <td>RM{{ number_format($pricing->base_premium ?? 0, 0) }}</td>
         </tr>
+        @if(($pricing->loading_amount ?? 0) > 0)
+        <tr>
+            <td class="label">Loading ({{ number_format($pricing->loading_percentage ?? 0, 2) }}%)</td>
+            <td>RM{{ number_format($pricing->loading_amount, 0) }}</td>
+        </tr>
+        @endif
         <tr>
             <td class="label">Gross Premium</td>
             <td>RM{{ number_format($pricing->gross_premium ?? 0, 0) }}</td>
