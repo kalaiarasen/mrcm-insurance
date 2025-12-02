@@ -90,4 +90,57 @@ class AgentCommissionController extends Controller
             'totalCommissions'
         ));
     }
+
+    /**
+     * Display agent profile
+     */
+    public function profile()
+    {
+        if (!Auth::user()->hasRole('Agent')) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $agent = Auth::user();
+        return view('pages.agent.profile', compact('agent'));
+    }
+
+    /**
+     * Update agent profile
+     */
+    public function updateProfile(Request $request)
+    {
+        if (!Auth::user()->hasRole('Agent')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $agent = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $agent->id,
+            'contact_no' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date',
+            'location' => 'nullable|string|max:255',
+            'bank_account_number' => 'nullable|string|max:50',
+            'subscribe_newsletter' => 'nullable|boolean',
+        ]);
+
+        $agent->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'contact_no' => $request->contact_no,
+            'date_of_birth' => $request->date_of_birth,
+            'location' => $request->location,
+            'bank_account_number' => $request->bank_account_number,
+            'subscribe_newsletter' => $request->has('subscribe_newsletter'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully'
+        ]);
+    }
 }

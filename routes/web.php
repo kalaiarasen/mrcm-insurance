@@ -82,6 +82,8 @@ Route::middleware(['auth'])->group(function () {
     
     // Agent Commission Dashboard
     Route::get('agent/commissions', [AgentCommissionController::class, 'index'])->name('agent.commissions');
+    Route::get('agent/profile', [AgentCommissionController::class, 'profile'])->name('agent.profile');
+    Route::put('agent/profile', [AgentCommissionController::class, 'updateProfile'])->name('agent.profile.update');
     
     Route::resource('discounts', DiscountController::class);
     

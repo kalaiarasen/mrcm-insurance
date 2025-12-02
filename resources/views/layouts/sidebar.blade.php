@@ -311,6 +311,19 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agent.profile') ? 'active' : '' }}"
+                                href="{{ route('agent.profile') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
+                                </svg>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
                             <a class="sidebar-link sidebar-title link-nav" href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <svg class="stroke-icon">
