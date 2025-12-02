@@ -87,6 +87,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('customer-products', [CustomerProductController::class, 'index'])->name('customer.products.index');
     Route::get('customer-products/{id}', [CustomerProductController::class, 'show'])->name('customer.products.show');
     Route::post('customer-products/{id}/quotation', [CustomerProductController::class, 'submitQuotation'])->name('customer.products.quotation');
+    
+    // Client Quotation Request View
+    Route::get('my-quotations/{id}', [CustomerProductController::class, 'showQuotation'])->name('customer.quotations.show');
+    Route::post('my-quotations/{id}/upload-payment', [CustomerProductController::class, 'uploadPayment'])->name('customer.quotations.upload-payment');
 
     // Quotation Request Management (Admin)
     Route::resource('quotation-requests', QuotationRequestController::class)->only(['index', 'show', 'update', 'destroy']);

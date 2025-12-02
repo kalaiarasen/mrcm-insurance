@@ -47,7 +47,7 @@
                             <div class="card-body p-0">
                                 <div class="row g-0">
                                     <!-- Brochure Image Section -->
-                                    <div class="col-lg-3 col-md-4">
+                                    <div class="col-lg-4 col-md-4">
                                         @if ($product->brochure_path)
                                             <img src="{{ $product->brochure_url }}" class="img-fluid product-brochure-img"
                                                 alt="{{ $product->title }}">
@@ -60,7 +60,7 @@
 
 
                                     <!-- Content Section -->
-                                    <div class="col-lg-9 col-md-8">
+                                    <div class="col-lg-8 col-md-8">
                                         <div class="row g-0 h-100">
                                             <!-- Left: Content -->
                                             <div class="col-lg-9">

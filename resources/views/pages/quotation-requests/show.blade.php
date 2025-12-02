@@ -54,8 +54,24 @@
                             <div class="col-md-6">
                                 <p><strong>Submitted:</strong> {{ $quotationRequest->created_at->format('M d, Y H:i A') }}
                                 </p>
-                                <p><strong>Status:</strong> <span
+                                <p><strong>Customer Status:</strong> <span
                                         class="badge {{ $quotationRequest->status_badge }}">{{ $quotationRequest->status_name }}</span>
+                                </p>
+                                <p><strong>Admin Status:</strong>
+                                    @php
+                                        $adminBadges = [
+                                            'new_case' => 'bg-light text-dark',
+                                            'reviewed' => 'bg-info',
+                                            'approved' => 'bg-success',
+                                            'rejected' => 'bg-danger',
+                                            'not_paid' => 'bg-warning text-dark',
+                                            'paid' => 'bg-primary',
+                                            'completed' => 'bg-success',
+                                        ];
+                                        $badge = $adminBadges[$quotationRequest->admin_status] ?? 'bg-secondary';
+                                    @endphp
+                                    <span
+                                        class="badge {{ $badge }}">{{ ucfirst(str_replace('_', ' ', $quotationRequest->admin_status)) }}</span>
                                 </p>
                             </div>
                         </div>
@@ -106,47 +122,77 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Payment Document (if uploaded) -->
+                @if ($quotationRequest->payment_document)
+                    <div class="card mt-3">
+                        <div class="card-header pb-0">
+                            <h5><i class="fa fa-file-invoice"></i> Payment Document</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Uploaded:</strong>
+                                {{ $quotationRequest->payment_uploaded_at?->format('M d, Y H:i A') ?? 'N/A' }}</p>
+                            <a href="{{ $quotationRequest->payment_document_url }}" target="_blank"
+                                class="btn btn-primary">
+                                <i class="fa fa-download"></i> View Payment Proof
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
 
-            <!-- Status Update & Notes -->
+            <!-- Status Update & Quotation -->
             <div class="col-lg-4">
-                <div class="card sticky-top" style="top: 20px;">
+                <div class="card sticky-top" style="top: 20px; z-index: 1;">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fa fa-edit"></i> Update Status</h5>
+                        <h5 class="mb-0"><i class="fa fa-edit"></i> Admin Action</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('quotation-requests.update', $quotationRequest->id) }}" method="POST">
+                        <form id="statusForm" action="{{ route('quotation-requests.update', $quotationRequest->id) }}"
+                            method="POST">
                             @csrf
                             @method('PUT')
 
                             <div class="mb-3">
-                                <label class="form-label" for="status">Status</label>
-                                <select class="form-select @error('status') is-invalid @enderror" id="status"
-                                    name="status" required>
-                                    <option value="pending" {{ $quotationRequest->status == 'pending' ? 'selected' : '' }}>
-                                        Pending</option>
-                                    <option value="reviewed"
-                                        {{ $quotationRequest->status == 'reviewed' ? 'selected' : '' }}>Reviewed</option>
-                                    <option value="quoted" {{ $quotationRequest->status == 'quoted' ? 'selected' : '' }}>
-                                        Quoted</option>
+                                <label class="form-label" for="admin_status">Admin Status</label>
+                                <select class="form-select @error('admin_status') is-invalid @enderror" id="admin_status"
+                                    name="admin_status" required>
+                                    <option value="new"
+                                        {{ $quotationRequest->admin_status == 'new' ? 'selected' : '' }}>New</option>
+                                    <option value="approved"
+                                        {{ $quotationRequest->admin_status == 'approved' ? 'selected' : '' }}>Approved
+                                    </option>
+                                    <option value="send_uw"
+                                        {{ $quotationRequest->admin_status == 'send_uw' ? 'selected' : '' }}>Send UW
+                                    </option>
+                                    <option value="active"
+                                        {{ $quotationRequest->admin_status == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="processing"
+                                        {{ $quotationRequest->admin_status == 'processing' ? 'selected' : '' }}>Processing
+                                    </option>
                                     <option value="rejected"
-                                        {{ $quotationRequest->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        {{ $quotationRequest->admin_status == 'rejected' ? 'selected' : '' }}>Rejected
+                                    </option>
+                                    <option value="cancelled"
+                                        {{ $quotationRequest->admin_status == 'cancelled' ? 'selected' : '' }}>Cancelled
+                                    </option>
                                 </select>
-                                @error('status')
+                                @error('admin_status')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="text-muted">Customer Status: <span
+                                        class="badge {{ $quotationRequest->status_badge }}">{{ $quotationRequest->status_name }}</span></small>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label" for="admin_notes">Admin Notes</label>
-                                <textarea class="form-control @error('admin_notes') is-invalid @enderror" id="admin_notes" name="admin_notes"
-                                    rows="6" placeholder="Add internal notes about this request...">{{ old('admin_notes', $quotationRequest->admin_notes) }}</textarea>
-                                @error('admin_notes')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            <!-- Hidden fields for quotation data (will be populated from modal) -->
+                            <input type="hidden" name="quoted_price" id="hidden_quoted_price"
+                                value="{{ old('quoted_price', $quotationRequest->quoted_price) }}">
+                            <input type="hidden" name="quotation_details" id="hidden_quotation_details"
+                                value="{{ old('quotation_details', $quotationRequest->quotation_details) }}">
+                            <input type="hidden" name="admin_notes" id="hidden_admin_notes"
+                                value="{{ old('admin_notes', $quotationRequest->admin_notes) }}">
 
-                            <button type="submit" class="btn btn-primary w-100">
+                            <button type="button" id="updateBtn" class="btn btn-primary w-100">
                                 <i class="fa fa-save"></i> Update Request
                             </button>
                         </form>
@@ -157,7 +203,8 @@
                             <a href="{{ route('quotation-requests.index') }}" class="btn btn-secondary">
                                 <i class="fa fa-arrow-left"></i> Back to List
                             </a>
-                            <form action="{{ route('quotation-requests.destroy', $quotationRequest->id) }}" method="POST"
+                            <form action="{{ route('quotation-requests.destroy', $quotationRequest->id) }}"
+                                method="POST"
                                 onsubmit="return confirm('Are you sure you want to delete this quotation request?');">
                                 @csrf
                                 @method('DELETE')
@@ -167,6 +214,52 @@
                             </form>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approval Modal -->
+    <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="approvalModalLabel">
+                        <i class="fa fa-check-circle"></i> Approve Quotation Request
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Please provide the quotation details for the customer:</p>
+
+                    <div class="mb-3">
+                        <label for="modal_quoted_price" class="form-label">Quoted Price (RM) <span
+                                class="text-danger">*</span></label>
+                        <input type="number" step="0.01" min="0" class="form-control"
+                            id="modal_quoted_price" placeholder="Enter quoted price" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modal_quotation_details" class="form-label">Quotation Details <span
+                                class="text-danger">*</span></label>
+                        <textarea class="form-control" id="modal_quotation_details" rows="6"
+                            placeholder="Enter quotation details, coverage, terms, etc..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modal_admin_notes" class="form-label">Admin Notes</label>
+                        <textarea class="form-control" id="modal_admin_notes" rows="4"
+                            placeholder="Add internal notes about this request..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa fa-times"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-success" id="confirmApprovalBtn">
+                        <i class="fa fa-check"></i> Approve & Send Quotation
+                    </button>
                 </div>
             </div>
         </div>
@@ -184,6 +277,57 @@
                     bsAlert.close();
                 });
             }, 5000);
+
+            // Handle status change and form submission
+            const statusSelect = document.getElementById('admin_status');
+            const updateBtn = document.getElementById('updateBtn');
+            const statusForm = document.getElementById('statusForm');
+            const approvalModal = new bootstrap.Modal(document.getElementById('approvalModal'));
+
+            // Update button click handler
+            updateBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const selectedStatus = statusSelect.value;
+
+                // If status is "approved", show modal
+                if (selectedStatus === 'approved') {
+                    // Pre-fill modal with existing values if any
+                    document.getElementById('modal_quoted_price').value = document.getElementById(
+                        'hidden_quoted_price').value || '';
+                    document.getElementById('modal_quotation_details').value = document.getElementById(
+                        'hidden_quotation_details').value || '';
+                    document.getElementById('modal_admin_notes').value = document.getElementById(
+                        'hidden_admin_notes').value || '';
+
+                    approvalModal.show();
+                } else {
+                    // For other statuses, submit directly
+                    statusForm.submit();
+                }
+            });
+
+            // Confirm approval button in modal
+            document.getElementById('confirmApprovalBtn').addEventListener('click', function() {
+                const quotedPrice = document.getElementById('modal_quoted_price').value;
+                const quotationDetails = document.getElementById('modal_quotation_details').value;
+                const adminNotes = document.getElementById('modal_admin_notes').value;
+
+                // Validate required fields
+                if (!quotedPrice || !quotationDetails) {
+                    alert('Please fill in the Quoted Price and Quotation Details.');
+                    return;
+                }
+
+                // Update hidden fields
+                document.getElementById('hidden_quoted_price').value = quotedPrice;
+                document.getElementById('hidden_quotation_details').value = quotationDetails;
+                document.getElementById('hidden_admin_notes').value = adminNotes;
+
+                // Close modal and submit form
+                approvalModal.hide();
+                statusForm.submit();
+            });
         });
     </script>
 @endsection

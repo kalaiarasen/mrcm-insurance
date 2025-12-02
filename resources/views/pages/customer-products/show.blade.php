@@ -139,6 +139,41 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Submission History -->
+                @if ($previousRequests->isNotEmpty())
+                    <div class="card mt-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fa fa-history"></i> Your Submission History</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group">
+                                @foreach ($previousRequests as $request)
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1">Request #{{ $request->id }}</h6>
+                                                <small class="text-muted">
+                                                    <i class="fa fa-calendar"></i>
+                                                    {{ $request->created_at->format('M d, Y H:i') }}
+                                                </small>
+                                            </div>
+                                            <span class="badge {{ $request->status_badge }}">
+                                                {{ $request->status_name }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-2">
+                                            <a href="{{ route('customer.quotations.show', $request->id) }}"
+                                                class="btn btn-sm btn-outline-primary">
+                                                <i class="fa fa-eye"></i> View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

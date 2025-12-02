@@ -6,6 +6,7 @@ use App\Models\Announcement;
 use App\Models\Claim;
 use App\Models\User;
 use App\Models\PolicyApplication;
+use App\Models\QuotationRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,12 @@ class DashboardController extends Controller
                 ->take(10)
                 ->get();
 
+            // Get quotation requests for the current user
+            $quotationRequests = QuotationRequest::with(['product', 'user'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->get();
+
             $totalUsers = User::count();
             $totalPolicies = PolicyApplication::where('user_id', auth()->id())->where('is_used', true)->count();
             $totalClaims = Claim::where('user_id', auth()->id())->count();
@@ -56,6 +63,7 @@ class DashboardController extends Controller
                 'policies',
                 'activePoliciesForClaims',
                 'claims',
+                'quotationRequests',
                 'totalUsers',
                 'totalPolicies',
                 'totalClaims',

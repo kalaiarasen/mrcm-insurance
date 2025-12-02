@@ -11,27 +11,33 @@
             max-height: 300px;
             overflow-y: auto;
         }
+
         .announcement-item {
             transition: all 0.3s ease;
         }
+
         .announcement-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
         .announcement-title {
             font-weight: 600;
         }
+
         .announcement-description {
             line-height: 1.5;
         }
+
         .quick-actions .btn {
             border-radius: 8px;
             font-weight: 500;
             transition: all 0.3s ease;
         }
+
         .quick-actions .btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
     </style>
 @endsection
@@ -69,9 +75,9 @@
                         <h5>📢 Latest Announcements</h5>
                     </div>
                     <div class="card-body">
-                        @if($announcements && $announcements->count() > 0)
+                        @if ($announcements && $announcements->count() > 0)
                             <div class="announcement-list">
-                                @foreach($announcements as $announcement)
+                                @foreach ($announcements as $announcement)
                                     <div class="announcement-item mb-3 p-3 border rounded">
                                         <h6 class="announcement-title mb-2">{{ $announcement->title }}</h6>
                                         <p class="announcement-description mb-1">{{ $announcement->description }}</p>
@@ -103,7 +109,8 @@
                             <a href="#" class="btn btn-outline-success">
                                 <i class="fa fa-file-text me-2"></i>View My Policies
                             </a>
-                            <a href="#" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#fileClaimModal">
+                            <a href="#" class="btn btn-outline-info" data-bs-toggle="modal"
+                                data-bs-target="#fileClaimModal">
                                 <i class="fa fa-exclamation-triangle me-2"></i>File a Claim
                             </a>
                             <a href="#" class="btn btn-outline-secondary">
@@ -145,7 +152,7 @@
                         <p class="f-m-light mt-1">View all your insurance policies</p>
                     </div>
                     <div class="card-body">
-                        @if($policies->isEmpty())
+                        @if ($policies->isEmpty())
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle me-2"></i>
                                 You have no policies at the moment.
@@ -166,15 +173,21 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($policies as $policy)
+                                        @foreach ($policies as $policy)
                                             <tr>
-                                                <td><strong>{{ $policy->reference_number ?? '-'}}</strong></td>
-                                                <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}</td>
-                                                <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->cover_type ?? 'N/A')) }}</td>
-                                                <td>RM {{ number_format(($policy->user->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M</td>
-                                                <td>RM {{ number_format($policy->user->policyPricing->total_payable ?? 0, 2) }}</td>
+                                                <td><strong>{{ $policy->reference_number ?? '-' }}</strong></td>
+                                                <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
+                                                </td>
+                                                <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->cover_type ?? 'N/A')) }}
+                                                </td>
+                                                <td>RM
+                                                    {{ number_format(($policy->user->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M
+                                                </td>
+                                                <td>RM
+                                                    {{ number_format($policy->user->policyPricing->total_payable ?? 0, 2) }}
+                                                </td>
                                                 <td>
-                                                    @if($policy->customer_status === 'pay_now')
+                                                    @if ($policy->customer_status === 'pay_now')
                                                         <span class="badge bg-warning text-dark">
                                                             <i class="fa fa-clock me-1"></i>Payment Required
                                                         </span>
@@ -202,9 +215,10 @@
                                                 </td>
                                                 <td>{{ $policy->created_at->format('d M Y') }}</td>
                                                 <td>
-                                                    <a href="{{ route('client-policy.show', $policy->id) }}" class="btn btn-primary btn-sm">
+                                                    <a href="{{ route('client-policy.show', $policy->id) }}"
+                                                        class="btn btn-primary btn-sm">
                                                         <i class="fa fa-eye me-1"></i>View
-                                                        @if($policy->customer_status === 'pay_now')
+                                                        @if ($policy->customer_status === 'pay_now')
                                                             & Pay
                                                         @endif
                                                     </a>
@@ -218,6 +232,61 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Quotation Requests Section -->
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header pb-0 card-no-border">
+                        <h5>📋 My Quotation Requests</h5>
+                        <p class="f-m-light mt-1">Track your insurance quotation requests</p>
+                    </div>
+                    <div class="card-body">
+                        @if ($quotationRequests->isEmpty())
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle me-2"></i>
+                                You have not submitted any quotation requests yet.
+                                <a href="{{ route('customer.products.index') }}" class="alert-link">Browse products</a> to
+                                request a quote.
+                            </div>
+                        @else
+                            <div class="table-responsive">
+                                <table class="display table-striped border datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Product</th>
+                                            <th>Submitted Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($quotationRequests as $request)
+                                            <tr>
+                                                <td><strong>#{{ $request->id }}</strong></td>
+                                                <td>{{ $request->product->title ?? 'N/A' }}</td>
+                                                <td>{{ $request->created_at->format('d M Y') }}</td>
+                                                <td>
+                                                    <span class="badge {{ $request->status_badge }}">
+                                                        {{ $request->status_name }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('customer.quotations.show', $request->id) }}"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-eye me-1"></i>View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border d-flex justify-content-between align-items-center">
@@ -227,7 +296,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        @if($claims->count() > 0)
+                        @if ($claims->count() > 0)
                             <div class="table-responsive">
                                 <table class="display table-striped border datatable">
                                     <thead>
@@ -242,12 +311,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($claims as $claim)
+                                        @foreach ($claims as $claim)
                                             <tr>
                                                 <td><strong>{{ $claim->claim_title }}</strong></td>
                                                 <td>
-                                                    @if($claim->policyApplication)
-                                                        <small class="text-muted">{{ $claim->policyApplication->reference_number ?? 'N/A' }}</small>
+                                                    @if ($claim->policyApplication)
+                                                        <small
+                                                            class="text-muted">{{ $claim->policyApplication->reference_number ?? 'N/A' }}</small>
                                                     @else
                                                         <span class="badge bg-secondary">No Policy</span>
                                                     @endif
@@ -268,13 +338,15 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-info">{{ $claim->claimDocuments->count() }}</span>
+                                                    <span
+                                                        class="badge bg-info">{{ $claim->claimDocuments->count() }}</span>
                                                 </td>
                                                 <td>{{ $claim->created_at->format('d M Y') }}</td>
                                                 <td>
                                                     <ul class="action">
                                                         <li class="edit">
-                                                            <a href="{{ route('claims.show', $claim->id) }}" title="View">
+                                                            <a href="{{ route('claims.show', $claim->id) }}"
+                                                                title="View">
                                                                 <i class="fa fa-eye"></i>
                                                             </a>
                                                         </li>
@@ -289,7 +361,8 @@
                             <div class="text-center py-4">
                                 <i class="fa fa-inbox fa-3x text-muted mb-3"></i>
                                 <p class="text-muted">No claims filed yet.</p>
-                                <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#fileClaimModal">
+                                <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#fileClaimModal">
                                     <i class="fa fa-file-alt me-1"></i>File Your First Claim
                                 </a>
                             </div>
@@ -300,120 +373,132 @@
         </div>
     </div><!-- Container-fluid Ends-->
 
-<!-- File Claim Modal -->
-<div class="modal fade" id="fileClaimModal" tabindex="-1" aria-labelledby="fileClaimModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="fileClaimModalLabel">
-                    <i class="fa fa-file-alt me-2"></i>File a Claim
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('claims.store') }}" method="POST" enctype="multipart/form-data" id="fileClaimForm">
-                @csrf
-                <div class="modal-body">
-                    @if($activePoliciesForClaims->isEmpty())
-                        <div class="alert alert-warning">
-                            <i class="fa fa-exclamation-triangle me-2"></i>
-                            <strong>No Active Policies Available</strong>
-                            <p class="mb-0">You need an active policy from this year to file a claim. Please create or activate a policy first.</p>
-                        </div>
-                    @else
-                        <!-- Policy Selection -->
-                        <div class="mb-3">
-                            <label for="policy_id" class="form-label fw-bold">
-                                Select Policy <span class="text-danger">*</span>
-                            </label>
-                            <select class="form-select" id="policy_id" name="policy_application_id" required>
-                                <option value="">-- Choose a Policy --</option>
-                                @foreach($activePoliciesForClaims as $policy)
-                                    <option value="{{ $policy->id }}">
-                                        {{ $policy->reference_number }} - {{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <small class="text-muted">Only active policies created in {{ now()->year }} are shown</small>
-                        </div>
-
-                        <!-- Action Type -->
-                        <div class="mb-3">
-                            <label for="action" class="form-label fw-bold">
-                                Action <span class="text-danger">*</span>
-                            </label>
-                            <select class="form-select" id="action" name="action" required>
-                                <option value="new" selected>New</option>
-                            </select>
-                            <small class="text-muted">This will be the status of your claim</small>
-                        </div>
-
-                        <hr>
-
-                        <!-- Incident Details -->
-                        <h6 class="mb-3 text-primary">
-                            <i class="fa fa-calendar-alt me-2"></i>Claim Internation Details
-                        </h6>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="incident_date" class="form-label fw-bold">
-                                    Incident Date <span class="text-danger">*</span>
-                                </label>
-                                <input type="date" class="form-control" id="incident_date" name="incident_date" required>
+    <!-- File Claim Modal -->
+    <div class="modal fade" id="fileClaimModal" tabindex="-1" aria-labelledby="fileClaimModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="fileClaimModalLabel">
+                        <i class="fa fa-file-alt me-2"></i>File a Claim
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form action="{{ route('claims.store') }}" method="POST" enctype="multipart/form-data"
+                    id="fileClaimForm">
+                    @csrf
+                    <div class="modal-body">
+                        @if ($activePoliciesForClaims->isEmpty())
+                            <div class="alert alert-warning">
+                                <i class="fa fa-exclamation-triangle me-2"></i>
+                                <strong>No Active Policies Available</strong>
+                                <p class="mb-0">You need an active policy from this year to file a claim. Please create
+                                    or activate a policy first.</p>
                             </div>
-                            <div class="col-md-6">
-                                <label for="notification_date" class="form-label fw-bold">
-                                    Notification Date <span class="text-danger">*</span>
+                        @else
+                            <!-- Policy Selection -->
+                            <div class="mb-3">
+                                <label for="policy_id" class="form-label fw-bold">
+                                    Select Policy <span class="text-danger">*</span>
                                 </label>
-                                <input type="date" class="form-control" id="notification_date" name="notification_date" required>
+                                <select class="form-select" id="policy_id" name="policy_application_id" required>
+                                    <option value="">-- Choose a Policy --</option>
+                                    @foreach ($activePoliciesForClaims as $policy)
+                                        <option value="{{ $policy->id }}">
+                                            {{ $policy->reference_number }} -
+                                            {{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="text-muted">Only active policies created in {{ now()->year }} are
+                                    shown</small>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="claim_title" class="form-label fw-bold">
-                                Claim Title <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="claim_title" name="claim_title" placeholder="e.g., Lip paraesthesia after extraction" required>
-                        </div>
+                            <!-- Action Type -->
+                            <div class="mb-3">
+                                <label for="action" class="form-label fw-bold">
+                                    Action <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="action" name="action" required>
+                                    <option value="new" selected>New</option>
+                                </select>
+                                <small class="text-muted">This will be the status of your claim</small>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="claim_description" class="form-label fw-bold">
-                                Claim Detail Description <span class="text-danger">*</span>
-                            </label>
-                            <textarea class="form-control" id="claim_description" name="claim_description" rows="4" placeholder="Describe the incident details..." required></textarea>
-                        </div>
+                            <hr>
 
-                        <hr>
+                            <!-- Incident Details -->
+                            <h6 class="mb-3 text-primary">
+                                <i class="fa fa-calendar-alt me-2"></i>Claim Internation Details
+                            </h6>
 
-                        <!-- Document Upload -->
-                        <h6 class="mb-3 text-primary">
-                            <i class="fa fa-upload me-2"></i>Uploaded Claim Internation Documents
-                        </h6>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="incident_date" class="form-label fw-bold">
+                                        Incident Date <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" class="form-control" id="incident_date" name="incident_date"
+                                        required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="notification_date" class="form-label fw-bold">
+                                        Notification Date <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" class="form-control" id="notification_date"
+                                        name="notification_date" required>
+                                </div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="claim_documents" class="form-label fw-bold">
-                                Upload Documents <span class="text-muted">(Optional)</span>
-                            </label>
-                            <input type="file" class="form-control" id="claim_documents" name="claim_documents[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                            <small class="text-muted">You can upload multiple files (PDF, DOC, DOCX, JPG, PNG). Max 5MB per file.</small>
-                            <div id="fileList" class="mt-2"></div>
+                            <div class="mb-3">
+                                <label for="claim_title" class="form-label fw-bold">
+                                    Claim Title <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="claim_title" name="claim_title"
+                                    placeholder="e.g., Lip paraesthesia after extraction" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="claim_description" class="form-label fw-bold">
+                                    Claim Detail Description <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="claim_description" name="claim_description" rows="4"
+                                    placeholder="Describe the incident details..." required></textarea>
+                            </div>
+
+                            <hr>
+
+                            <!-- Document Upload -->
+                            <h6 class="mb-3 text-primary">
+                                <i class="fa fa-upload me-2"></i>Uploaded Claim Internation Documents
+                            </h6>
+
+                            <div class="mb-3">
+                                <label for="claim_documents" class="form-label fw-bold">
+                                    Upload Documents <span class="text-muted">(Optional)</span>
+                                </label>
+                                <input type="file" class="form-control" id="claim_documents" name="claim_documents[]"
+                                    multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                <small class="text-muted">You can upload multiple files (PDF, DOC, DOCX, JPG, PNG). Max 5MB
+                                    per file.</small>
+                                <div id="fileList" class="mt-2"></div>
+                            </div>
+                        @endif
+                    </div>
+                    @if (!$activePoliciesForClaims->isEmpty())
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fa fa-times me-2"></i>Cancel
+                            </button>
+                            <button type="submit" class="btn btn-info">
+                                <i class="fa fa-paper-plane me-2"></i>Submit Claim
+                            </button>
                         </div>
                     @endif
-                </div>
-                @if(!$activePoliciesForClaims->isEmpty())
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fa fa-times me-2"></i>Cancel
-                        </button>
-                        <button type="submit" class="btn btn-info">
-                            <i class="fa fa-paper-plane me-2"></i>Submit Claim
-                        </button>
-                    </div>
-                @endif
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 @endsection
 @section('scripts')
@@ -429,19 +514,22 @@
     <script src="{{ asset('assets/js/datatable/datatables/dataTables.bootstrap5.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatables/datatable.custom2.js') }}"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $(".datatable").DataTable({
-                "order": [[6, "desc"]]  // Sort by Submitted Date column (index 6) in descending order
+                "order": [
+                    [6, "desc"]
+                ] // Sort by Submitted Date column (index 6) in descending order
             });
 
             // File upload preview
             document.getElementById('claim_documents').addEventListener('change', function(e) {
                 const fileList = document.getElementById('fileList');
                 fileList.innerHTML = '';
-                
+
                 Array.from(this.files).forEach((file, index) => {
                     const fileItem = document.createElement('div');
-                    fileItem.className = 'alert alert-light d-flex justify-content-between align-items-center mb-2';
+                    fileItem.className =
+                        'alert alert-light d-flex justify-content-between align-items-center mb-2';
                     fileItem.innerHTML = `
                         <span>
                             <i class="fa fa-file me-2"></i>${file.name}

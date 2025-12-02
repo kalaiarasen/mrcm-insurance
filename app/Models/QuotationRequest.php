@@ -13,12 +13,19 @@ class QuotationRequest extends Model
         'product_id',
         'user_id',
         'form_data',
-        'status',
+        'customer_status',
+        'admin_status',
+        'quoted_price',
+        'quotation_details',
+        'payment_document',
+        'payment_uploaded_at',
         'admin_notes',
     ];
 
     protected $casts = [
         'form_data' => 'array',
+        'payment_uploaded_at' => 'datetime',
+        'quoted_price' => 'decimal:2',
     ];
 
     /**
@@ -38,24 +45,36 @@ class QuotationRequest extends Model
     }
 
     /**
-     * Get status badge color
+     * Get customer status badge color
      */
     public function getStatusBadgeAttribute()
     {
-        return match($this->status) {
-            'pending' => 'bg-warning',
-            'reviewed' => 'bg-info',
-            'quoted' => 'bg-success',
-            'rejected' => 'bg-danger',
+        return match($this->customer_status) {
+            'submitted' => 'bg-secondary',
+            'pay_now' => 'bg-warning text-dark',
+            'paid' => 'bg-info',
+            'processing' => 'bg-primary',
+            'completed' => 'bg-success',
             default => 'bg-secondary',
         };
     }
 
     /**
-     * Get formatted status name
+     * Get formatted customer status name
      */
     public function getStatusNameAttribute()
     {
-        return ucfirst($this->status);
+        return match($this->customer_status) {
+            'pay_now' => 'Pay Now',
+            default => ucfirst($this->customer_status),
+        };
+    }
+
+    /**
+     * Get payment document URL
+     */
+    public function getPaymentDocumentUrlAttribute()
+    {
+        return $this->payment_document ? asset('storage/' . $this->payment_document) : null;
     }
 }
