@@ -85,6 +85,7 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
             'Phone',
             'Type of Professional Indemnity',
             'Amount (RM)',
+            'Agent',
             'Submitted At',
         ];
     }
@@ -106,6 +107,13 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
 
         $displayStatus = $statusMap[$policy->admin_status] ?? ucfirst($policy->admin_status ?? 'N/A');
         
+        $agentId = $policy->user?->agent_id;
+        $agentName = '-';
+        if ($agentId) {
+            $agent = \App\Models\User::find($agentId);
+            $agentName = $agent?->name ?? '-';
+        }
+
         return [
             $policy->reference_number ?? 'N/A',
             $policy->updated_at ? $policy->updated_at->format('d-M-Y h:i A') : 'N/A',
@@ -121,6 +129,7 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
             is_numeric($policy->user?->policyPricing?->total_payable) 
                 ? number_format($policy->user->policyPricing->total_payable, 2) 
                 : ($policy->user?->policyPricing?->total_payable ?? 'N/A'),
+            $agentName,
             $policy->submitted_at ? $policy->submitted_at->format('d-M-Y h:i A') : 'N/A',
         ];
     }

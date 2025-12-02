@@ -52,6 +52,13 @@ class YourActionController extends Controller
                 $query->where('admin_status', $request->status);
             }
 
+            // Apply agent filter
+            if ($request->filled('agent_id')) {
+                $query->whereHas('user', function($q) use ($request) {
+                    $q->where('agent_id', $request->agent_id);
+                });
+            }
+
             return DataTables::of($query)
                 ->addColumn('policy_id', function ($policy) {
                     return '<small>' . e($policy->reference_number ?? '') . '</small>';
@@ -118,6 +125,14 @@ class YourActionController extends Controller
                         return 'null';
                     }
                     return e($amount);
+                })
+                ->addColumn('agent', function ($policy) {
+                    $agentId = $policy->user?->agent_id;
+                    if ($agentId) {
+                        $agent = \App\Models\User::find($agentId);
+                        return e($agent?->name ?? '-');
+                    }
+                    return '-';
                 })
                 ->addColumn('action', function ($policy) {
                     $viewUrl = route('for-your-action.show', $policy->id);
@@ -198,13 +213,20 @@ class YourActionController extends Controller
                         $q->where('total_payable', 'like', "%{$keyword}%");
                     });
                 })
+                ->filterColumn('agent', function($query, $keyword) {
+                    $query->whereHas('user', function($q) use ($keyword) {
+                        $q->whereHas('agent', function($subQ) use ($keyword) {
+                            $subQ->where('name', 'like', "%{$keyword}%");
+                        });
+                    });
+                })
                 ->orderColumn('policy_id', function ($query, $order) {
                     $query->orderBy('reference_number', $order);
                 })
                 ->orderColumn('date_changed', function ($query, $order) {
                     $query->orderBy('updated_at', $order);
                 })
-                ->rawColumns(['policy_id', 'date_changed', 'status', 'name', 'action'])
+                ->rawColumns(['policy_id', 'date_changed', 'status', 'name', 'agent', 'action'])
                 ->make(true);
         }
 
@@ -786,9 +808,10 @@ class YourActionController extends Controller
         $endDate = $request->input('end_date');
         $policyType = $request->input('policy_type');
         $status = $request->input('status');
+        $filterAgentId = $request->input('agent_id'); // Agent filter from dropdown
         
-        // Pass agent ID if user is an agent
-        $agentId = Auth::user()->hasRole('Agent') ? Auth::id() : null;
+        // Pass agent ID if user is an agent (their own ID) or filtered agent ID
+        $agentId = Auth::user()->hasRole('Agent') ? Auth::id() : $filterAgentId;
 
         $fileName = 'policy_applications_' . date('Y-m-d_His') . '.xlsx';
 

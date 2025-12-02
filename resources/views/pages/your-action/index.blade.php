@@ -280,6 +280,15 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
+                                <label for="agentFilter" class="form-label"><i class="fa fa-user-tie me-1"></i>Agent</label>
+                                <select class="form-select" id="agentFilter">
+                                    <option value="">All Agents</option>
+                                    @foreach(\App\Models\User::role('Agent')->where('approval_status', 'approved')->orderBy('name')->get() as $agentOption)
+                                        <option value="{{ $agentOption->id }}">{{ $agentOption->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <label for="dateRangeSelect" class="form-label"><i class="fa fa-calendar me-1"></i>Date Range</label>
                                 <select class="form-select" id="dateRangeSelect">
                                     <option value="">All Time</option>
@@ -290,27 +299,32 @@
                                     <option value="custom">Custom Range</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">&nbsp;</label>
-                                <div>
-                                    <button type="button" class="btn btn-primary w-100" id="applyFiltersBtn">
+                        </div>
+                        <div class="row mb-3" id="normalApplyBtn">
+                            <div class="col-md-3 offset-md-4">
+                                <button type="button" class="btn btn-primary w-100" id="applyFiltersBtn">
+                                    <i class="fa fa-filter me-1"></i>Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                        <div id="customDateRow" style="display:none;">
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="startDate" placeholder="Start Date">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="endDate" placeholder="End Date">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-primary w-100" id="applyCustomFiltersBtn">
                                         <i class="fa fa-filter me-1"></i>Apply Filters
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row" id="customDateRow" style="display:none;">
-                            <div class="col-md-3">
-                                <label for="startDate" class="form-label">Start Date</label>
-                                <input type="date" class="form-control" id="startDate" placeholder="Start Date">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="endDate" class="form-label">End Date</label>
-                                <input type="date" class="form-control" id="endDate" placeholder="End Date">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">&nbsp;</label>
-                                <div>
+                                <div class="col-md-3">
                                     <button type="button" class="btn btn-outline-secondary w-100" id="clearFiltersBtn">
                                         <i class="fa fa-times me-1"></i>Clear All Filters
                                     </button>
@@ -349,6 +363,7 @@
                                         <th>Name / Email / Phone</th>
                                         <th>Type of Professional Indemnity</th>
                                         <th>Amount</th>
+                                        <th>Agent</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -411,6 +426,7 @@
                         d.end_date = $('#endDate').val();
                         d.policy_type = $('#policyTypeFilter').val();
                         d.status = $('#statusFilter').val();
+                        d.agent_id = $('#agentFilter').val();
                     }
                 },
                 columns: [{
@@ -456,6 +472,12 @@
                         searchable: false
                     },
                     {
+                        data: 'agent',
+                        name: 'agent',
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
                         data: 'action',
                         name: 'action',
                         orderable: false,
@@ -482,11 +504,15 @@
                 let endDate = '';
 
                 if (value === 'custom') {
-                    // Show custom date row
+                    // Show custom date row and hide normal apply button
                     $('#customDateRow').show();
+                    $('#normalApplyBtn').hide();
+                    $('#startDate').val('');
+                    $('#endDate').val('');
                 } else {
-                    // Hide custom date row
+                    // Hide custom date row and show normal apply button
                     $('#customDateRow').hide();
+                    $('#normalApplyBtn').show();
 
                     // Calculate date ranges
                     if (value === 'today') {
@@ -513,8 +539,13 @@
                 }
             });
 
-            // Apply filters button
+            // Apply filters button (for non-custom ranges)
             $('#applyFiltersBtn').on('click', function() {
+                dataTable.draw();
+            });
+
+            // Apply filters button (for custom date range)
+            $('#applyCustomFiltersBtn').on('click', function() {
                 dataTable.draw();
             });
 
@@ -522,10 +553,12 @@
             $('#clearFiltersBtn').on('click', function() {
                 $('#policyTypeFilter').val('');
                 $('#statusFilter').val('');
+                $('#agentFilter').val('');
                 $('#dateRangeSelect').val('');
                 $('#startDate').val('');
                 $('#endDate').val('');
                 $('#customDateRow').hide();
+                $('#normalApplyBtn').show();
                 dataTable.draw();
             });
 
@@ -535,6 +568,7 @@
                 const endDate = $('#endDate').val();
                 const policyType = $('#policyTypeFilter').val();
                 const status = $('#statusFilter').val();
+                const agentId = $('#agentFilter').val();
                 
                 // Build URL with parameters
                 let url = "{{ route('for-your-action.export') }}";
@@ -551,6 +585,9 @@
                 }
                 if (status) {
                     params.push('status=' + encodeURIComponent(status));
+                }
+                if (agentId) {
+                    params.push('agent_id=' + encodeURIComponent(agentId));
                 }
                 
                 if (params.length > 0) {
