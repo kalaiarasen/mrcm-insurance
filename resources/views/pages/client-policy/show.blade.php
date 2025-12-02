@@ -408,7 +408,8 @@
 
                                                 @if (($pricing->loading_amount ?? 0) > 0)
                                                     <div class="pricing-row d-flex justify-content-between info-label">
-                                                        <span>Loading ({{ number_format($pricing->loading_percentage ?? 0, 2) }}%)</span>
+                                                        <span>Loading
+                                                            ({{ number_format($pricing->loading_percentage ?? 0, 2) }}%)</span>
                                                         <span>RM {{ number_format($pricing->loading_amount, 2) }}</span>
                                                     </div>
                                                 @endif
@@ -795,103 +796,155 @@
                 }
             @endphp
 
-            <!-- Step 1: Applicant Details -->
+            <!-- Step 1: Applicant Details - Title -->
             <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="fa fa-user me-2"></i>Step 1: Details of the Applicant
+                </h5>
+            </div>
+
+            <!-- Personal Information Card -->
+            <div class="col-md-6">
                 <div class="card info-card mb-3">
                     <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-user me-2"></i>Step 1: Details of the Applicant
-                        </h5>
+                        <h6 class="text-primary mb-3"><i class="fa fa-id-card me-2"></i>Personal Information</h6>
 
-                        <!-- Personal Information -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h6 class="text-primary mb-3"><i class="fa fa-id-card me-2"></i>Personal Information</h6>
-                            </div>
-                            <div class="col-md-3">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <div class="info-label">Title</div>
                                 <div class="info-value">{{ $profile ? strtoupper($profile->title) : 'N/A' }}</div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <div class="info-label">Full Name</div>
                                 <div class="info-value">{{ $policyApplication->user->name ?? 'N/A' }}</div>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <div class="info-label">Nationality Status</div>
                                 <div class="info-value">
                                     {{ $profile ? ucfirst(str_replace('_', ' ', $profile->nationality_status)) : 'N/A' }}
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <div class="info-label">Gender</div>
                                 <div class="info-value">{{ $profile ? ucfirst($profile->gender) : 'N/A' }}</div>
                             </div>
                         </div>
 
-                        <div class="row mb-4">
-                            <div class="col-md-4">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <div class="info-label">NRIC Number</div>
                                 <div class="info-value">
                                     {{ $profile && $profile->nric_number ? $profile->nric_number : 'N/A' }}</div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="info-label">Passport Number</div>
                                 <div class="info-value">
                                     {{ $profile && $profile->passport_number ? $profile->passport_number : 'N/A' }}</div>
                             </div>
-                            <div class="col-md-4">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="info-label">Contact Number</div>
                                 <div class="info-value">{{ $contact ? $contact->contact_no : 'N/A' }}</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Addresses -->
-                        @foreach (['mailing' => 'Mailing Address', 'primary_clinic' => 'Primary Practicing Address', 'secondary_clinic' => 'Secondary Practicing Address'] as $type => $label)
-                            @php
-                                $address = $addresses->firstWhere('type', $type);
-                            @endphp
-                            @if ($address && ($address->address || $address->clinic_name))
-                                <div class="row mb-4">
-                                    <div class="col-12">
-                                        <h6 class="text-primary mb-3"><i
-                                                class="fa fa-map-marker-alt me-2"></i>{{ $label }}</h6>
-                                    </div>
+            <!-- Addresses Cards -->
+            @foreach (['mailing' => 'Mailing Address', 'primary_clinic' => 'Primary Practicing Address', 'secondary_clinic' => 'Secondary Practicing Address'] as $type => $label)
+                @php
+                    $address = $addresses->firstWhere('type', $type);
+                @endphp
+                @if ($address && ($address->address || $address->clinic_name))
+                    <div class="col-md-6">
+                        <div class="card info-card mb-3">
+                            <div class="card-body">
+                                <h6 class="text-primary mb-3"><i
+                                        class="fa fa-map-marker-alt me-2"></i>{{ $label }}
+                                </h6>
+
+                                <div class="row">
                                     @if ($type !== 'mailing')
-                                        <div class="col-md-3">
+                                        <div class="col-md-12 mb-3">
                                             <div class="info-label">Type</div>
                                             <div class="info-value">
                                                 {{ $address->clinic_type ? ucfirst($address->clinic_type) : 'N/A' }}</div>
                                         </div>
-                                        <div class="col-md-9">
+                                        <div class="col-md-12 mb-3">
                                             <div class="info-label">Clinic/Hospital Name</div>
                                             <div class="info-value">{{ $address->clinic_name ?? 'N/A' }}</div>
                                         </div>
                                     @endif
-                                    <div class="col-md-6">
+                                    <div class="col-md-12 mb-3">
                                         <div class="info-label">Address</div>
                                         <div class="info-value">{{ $address->address ?? 'N/A' }}</div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <div class="info-label">Postcode</div>
                                         <div class="info-value">{{ $address->postcode ?? 'N/A' }}</div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <div class="info-label">City</div>
                                         <div class="info-value">{{ $address->city ?? 'N/A' }}</div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <div class="info-label">State</div>
                                         <div class="info-value">{{ $address->state ?? 'N/A' }}</div>
                                     </div>
                                 </div>
-                            @endif
-                        @endforeach
-
-                        <!-- Qualifications -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h6 class="text-primary mb-3"><i class="fa fa-graduation-cap me-2"></i>Qualifications</h6>
                             </div>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
+
+            <!-- Registration Details Card -->
+            <div class="col-md-6">
+                <div class="card info-card mb-3">
+                    <div class="card-body">
+                        <h6 class="text-primary mb-3"><i class="fa fa-id-badge me-2"></i>Registration Details</h6>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="info-label">Registration Council</div>
+                                <div class="info-value">
+                                    @if ($profile)
+                                        @if ($profile->registration_council === 'mmc')
+                                            Malaysian Medical Council
+                                        @elseif($profile->registration_council === 'mdc')
+                                            Malaysian Dental Council
+                                        @elseif($profile->registration_council === 'others')
+                                            {{ $profile->other_council ?? 'Others' }}
+                                        @else
+                                            {{ ucfirst($profile->registration_council) }}
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="info-label">Registration Number</div>
+                                <div class="info-value">{{ $profile ? $profile->registration_number : 'N/A' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qualifications Card -->
+            <div class="col-12">
+                <div class="card info-card mb-3">
+                    <div class="card-body">
+                        <h6 class="text-primary mb-3"><i class="fa fa-graduation-cap me-2"></i>Qualifications</h6>
+
+                        <div class="row">
                             @forelse($qualifications as $index => $qual)
                                 <div class="col-md-4">
                                     <div class="card bg-light mb-3">
@@ -912,87 +965,58 @@
                                 </div>
                             @endforelse
                         </div>
-
-                        <!-- Registration Details -->
-                        <div class="row">
-                            <div class="col-12">
-                                <h6 class="text-primary mb-3"><i class="fa fa-id-badge me-2"></i>Registration Details</h6>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-label">Registration Council</div>
-                                <div class="info-value">
-                                    @if ($profile)
-                                        @if ($profile->registration_council === 'mmc')
-                                            Malaysian Medical Council
-                                        @elseif($profile->registration_council === 'mdc')
-                                            Malaysian Dental Council
-                                        @elseif($profile->registration_council === 'others')
-                                            {{ $profile->other_council ?? 'Others' }}
-                                        @else
-                                            {{ ucfirst($profile->registration_council) }}
-                                        @endif
-                                    @else
-                                        N/A
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-label">Registration Number</div>
-                                <div class="info-value">{{ $profile ? $profile->registration_number : 'N/A' }}</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 2: Healthcare Services -->
+            <!-- Step 2: Healthcare Services - Title -->
+            <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="fa fa-hospital me-2"></i>Step 2: Details of Healthcare Services Business
+                </h5>
+            </div>
+
+            <!-- Healthcare Services Card -->
             <div class="col-12">
                 <div class="card info-card mb-3">
                     <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-hospital me-2"></i>Step 2: Details of Healthcare Services Business
-                        </h5>
-
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-6 mb-3">
                                 <div class="info-label">Professional Indemnity Type</div>
                                 <div class="info-value">
                                     {{ $healthcare ? formatFieldName($healthcare->professional_indemnity_type) : 'N/A' }}
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6 mb-3">
                                 <div class="info-label">Employment Status</div>
                                 <div class="info-value">
                                     {{ $healthcare ? formatFieldName($healthcare->employment_status) : 'N/A' }}</div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6 mb-3">
                                 <div class="info-label">Specialty Area</div>
                                 <div class="info-value">
                                     {{ $healthcare && $healthcare->specialty_area ? formatFieldName($healthcare->specialty_area) : 'N/A' }}
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6 mb-3">
                                 <div class="info-label">Cover Type</div>
                                 <div class="info-value">
                                     {{ $healthcare && $healthcare->cover_type ? formatFieldName($healthcare->cover_type) : 'N/A' }}
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6 mb-3">
                                 <div class="info-label">Service Type</div>
                                 <div class="info-value">
                                     {{ $healthcare && $healthcare->service_type ? formatFieldName($healthcare->service_type) : 'N/A' }}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 mb-3">
                                 <div class="info-label">Practice Area</div>
                                 <div class="info-value">
                                     {{ $healthcare && $healthcare->practice_area ? formatFieldName($healthcare->practice_area) : 'N/A' }}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="info-label">Locum Practice Location</div>
                                 <div class="info-value">
                                     {{ $healthcare && $healthcare->locum_practice_location ? formatFieldName($healthcare->locum_practice_location) : 'N/A' }}
@@ -1003,28 +1027,39 @@
                 </div>
             </div>
 
-            <!-- Step 3: Pricing Details -->
+            <!-- Step 3: Pricing Details - Title -->
             <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="fa fa-dollar-sign me-2"></i>Step 3: Pricing Details
+                </h5>
+            </div>
+
+            <!-- Policy Details Card -->
+            <div class="col-md-6">
                 <div class="card info-card mb-3">
                     <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-dollar-sign me-2"></i>Step 3: Pricing Details
-                        </h5>
+                        <h6 class="text-primary mb-3"><i class="fa fa-calendar-alt me-2"></i>Policy Details</h6>
 
-                        <div class="row mb-4">
-                            <div class="col-md-4">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
                                 <div class="info-label">Policy Start Date</div>
                                 <div class="info-value">
                                     {{ $pricing && $pricing->policy_start_date ? \Carbon\Carbon::parse($pricing->policy_start_date)->format('d M Y') : 'N/A' }}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
                                 <div class="info-label">Policy Expiry Date</div>
                                 <div class="info-value">
                                     {{ $pricing && $pricing->policy_expiry_date ? \Carbon\Carbon::parse($pricing->policy_expiry_date)->format('d M Y') : 'N/A' }}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="info-label">Liability Limit</div>
                                 <div class="info-value">
                                     @if ($pricing && $pricing->liability_limit)
@@ -1035,77 +1070,86 @@
                                 </div>
                             </div>
                         </div>
-
-                        @if ($pricing)
-                            <div class="row">
-                                <div class="col-md-6 offset-md-3">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <h6 class="text-center mb-3"><strong>Pricing Breakdown</strong></h6>
-
-                                            <div class="pricing-row d-flex justify-content-between info-label">
-                                                <span>Premium Per Annum</span>
-                                                <span>RM {{ number_format($pricing->base_premium ?? 0, 2) }}</span>
-                                            </div>
-
-                                            @if (($pricing->loading_amount ?? 0) > 0)
-                                                <div class="pricing-row d-flex justify-content-between info-label">
-                                                    <span>Loading ({{ number_format($pricing->loading_percentage ?? 0, 2) }}%)</span>
-                                                    <span>RM {{ number_format($pricing->loading_amount, 2) }}</span>
-                                                </div>
-                                            @endif
-
-                                            <div class="pricing-row d-flex justify-content-between info-label">
-                                                <span>Gross Premium</span>
-                                                <span>RM {{ number_format($pricing->gross_premium ?? 0, 2) }}</span>
-                                            </div>
-
-                                            @if ($pricing->locum_addon > 0)
-                                                <div class="pricing-row d-flex justify-content-between info-label">
-                                                    <span>Locum Extension</span>
-                                                    <span>RM {{ number_format($pricing->locum_addon, 2) }}</span>
-                                                </div>
-                                            @endif
-
-                                            <div class="pricing-row d-flex justify-content-between info-label">
-                                                <span>8% SST</span>
-                                                <span>RM {{ number_format($pricing->sst ?? 0, 2) }}</span>
-                                            </div>
-
-                                            <div class="pricing-row d-flex justify-content-between info-label">
-                                                <span>Stamp Duty</span>
-                                                <span>RM {{ number_format($pricing->stamp_duty ?? 10, 2) }}</span>
-                                            </div>
-
-                                            @if (($pricing->wallet_used ?? 0) > 0)
-                                                <div
-                                                    class="pricing-row d-flex justify-content-between info-label text-success">
-                                                    <span>Wallet Amount Used</span>
-                                                    <span>- RM {{ number_format($pricing->wallet_used, 2) }}</span>
-                                                </div>
-                                            @endif
-
-                                            <div class="pricing-row d-flex justify-content-between info-label">
-                                                <span><strong>Total Payable</strong></span>
-                                                <span><strong>RM
-                                                        {{ number_format($pricing->total_payable ?? 0, 2) }}</strong></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
 
-            <!-- Step 4: Risk Management -->
+            <!-- Pricing Breakdown Card -->
+            @if ($pricing)
+                <div class="col-md-6">
+                    <div class="card info-card mb-3">
+                        <div class="card-body">
+                            <h6 class="text-primary mb-3"><i class="fa fa-calculator me-2"></i>Pricing Breakdown</h6>
+
+                            <div class="pricing-row d-flex justify-content-between info-label">
+                                <span>Premium Per Annum</span>
+                                <span>RM {{ number_format($pricing->base_premium ?? 0, 2) }}</span>
+                            </div>
+
+                            @if (($pricing->loading_amount ?? 0) > 0)
+                                <div class="pricing-row d-flex justify-content-between info-label">
+                                    <span>Loading ({{ number_format($pricing->loading_percentage ?? 0, 2) }}%)</span>
+                                    <span>RM {{ number_format($pricing->loading_amount, 2) }}</span>
+                                </div>
+                            @endif
+
+                            <div class="pricing-row d-flex justify-content-between info-label">
+                                <span>Gross Premium</span>
+                                <span>RM {{ number_format($pricing->gross_premium ?? 0, 2) }}</span>
+                            </div>
+
+                            @if ($pricing->locum_addon > 0)
+                                <div class="pricing-row d-flex justify-content-between info-label">
+                                    <span>Locum Extension</span>
+                                    <span>RM {{ number_format($pricing->locum_addon, 2) }}</span>
+                                </div>
+                            @endif
+
+                            @if ($pricing->discount_percentage > 0)
+                                <div class="pricing-row d-flex justify-content-between info-label">
+                                    <span>Discount ({{ number_format($pricing->discount_percentage, 2) }}%)</span>
+                                    <span class="text-success">- RM
+                                        {{ number_format($pricing->discount_amount ?? 0, 2) }}</span>
+                                </div>
+                            @endif
+
+                            <div class="pricing-row d-flex justify-content-between info-label">
+                                <span>8% SST</span>
+                                <span>RM {{ number_format($pricing->sst ?? 0, 2) }}</span>
+                            </div>
+
+                            <div class="pricing-row d-flex justify-content-between info-label">
+                                <span>Stamp Duty</span>
+                                <span>RM {{ number_format($pricing->stamp_duty ?? 10, 2) }}</span>
+                            </div>
+
+                            @if (($pricing->wallet_used ?? 0) > 0)
+                                <div class="pricing-row d-flex justify-content-between info-label text-success">
+                                    <span>Wallet Amount Used</span>
+                                    <span>- RM {{ number_format($pricing->wallet_used, 2) }}</span>
+                                </div>
+                            @endif
+
+                            <div class="pricing-row d-flex justify-content-between info-label">
+                                <span><strong>Total Payable</strong></span>
+                                <span><strong>RM {{ number_format($pricing->total_payable ?? 0, 2) }}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Step 4: Risk Management - Title -->
+            <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="fa fa-shield-alt me-2"></i>Step 4: Risk Management
+                </h5>
+            </div>
+
+            <!-- Risk Management Card -->
             <div class="col-12">
                 <div class="card info-card mb-3">
                     <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-shield-alt me-2"></i>Step 4: Risk Management
-                        </h5>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -1169,13 +1213,17 @@
                 </div>
             </div>
 
-            <!-- Step 5: Insurance History -->
+            <!-- Step 5: Insurance History - Title -->
+            <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="fa fa-history me-2"></i>Step 5: Insurance History
+                </h5>
+            </div>
+
+            <!-- Insurance History Card -->
             <div class="col-12">
                 <div class="card info-card mb-3">
                     <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-history me-2"></i>Step 5: Insurance History
-                        </h5>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -1240,13 +1288,17 @@
                 </div>
             </div>
 
-            <!-- Step 6: Claims Experience -->
+            <!-- Step 6: Claims Experience - Title -->
+            <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="fa fa-exclamation-triangle me-2"></i>Step 6: Claims Experience
+                </h5>
+            </div>
+
+            <!-- Claims Experience Card -->
             <div class="col-12">
                 <div class="card info-card mb-3">
                     <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-exclamation-triangle me-2"></i>Step 6: Claims Experience
-                        </h5>
 
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -1322,13 +1374,17 @@
                 </div>
             </div>
 
-            <!-- Step 7 & 8: Declarations and Signature -->
+            <!-- Step 7 & 8: Declarations and Signature - Title -->
+            <div class="col-12">
+                <h5 class="mb-3">
+                    <i class="fa fa-file-signature me-2"></i>Step 7 & 8: Declarations and Signature
+                </h5>
+            </div>
+
+            <!-- Declarations and Signature Card -->
             <div class="col-12">
                 <div class="card info-card mb-3">
                     <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fa fa-file-signature me-2"></i>Step 7 & 8: Declarations and Signature
-                        </h5>
 
                         <div class="row mb-4">
                             <div class="col-md-6">
