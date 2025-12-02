@@ -280,4 +280,88 @@ class PolicyHolderController extends Controller
         // Use the same view as for-your-action but in read-only mode from policy holder context
         return view('pages.your-action.show', compact('policyApplication'));
     }
+
+    /**
+     * Search for a client by client code (Agent only)
+     */
+    public function searchByCode(Request $request)
+    {
+        // Ensure user is an agent
+        if (!Auth::user()->hasRole('Agent')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $request->validate([
+            'client_code' => 'required|string'
+        ]);
+
+        // Find client by client code
+        $client = User::where('client_code', $request->client_code)->first();
+
+        if (!$client) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Client not found with the provided code'
+            ], 404);
+        }
+
+        // Check if client already has an agent
+        if ($client->agent_id !== null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This client is already assigned to an agent'
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'client' => [
+                'id' => $client->id,
+                'name' => $client->name,
+                'email' => $client->email,
+                'contact_no' => $client->contact_no,
+                'client_code' => $client->client_code
+            ]
+        ]);
+    }
+
+    /**
+     * Assign a client to the logged-in agent
+     */
+    public function assignAgent(Request $request)
+    {
+        // Ensure user is an agent
+        if (!Auth::user()->hasRole('Agent')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $request->validate([
+            'client_id' => 'required|exists:users,id'
+        ]);
+
+        $client = User::findOrFail($request->client_id);
+
+        // Check if client already has an agent
+        if ($client->agent_id !== null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This client is already assigned to an agent'
+            ], 422);
+        }
+
+        // Assign the current agent to the client
+        $client->agent_id = Auth::id();
+        $client->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Client successfully assigned to you as a referral'
+        ]);
+    }
 }

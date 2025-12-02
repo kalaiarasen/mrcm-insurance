@@ -14,6 +14,7 @@ use App\Models\RiskManagement;
 use App\Models\InsuranceHistory;
 use App\Models\ClaimsExperience;
 use App\Models\PolicyApplication;
+use App\Models\AgentCommission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -161,7 +162,7 @@ class PolicySubmissionController extends Controller
 
             PolicyPricing::where('user_id', $currentUser->id)->update(['is_used' => false]);
             
-            PolicyPricing::create([
+            $policyPricing = PolicyPricing::create([
                 'user_id' => $currentUser->id,
                 'policy_start_date' => $applicationData['policy_start_date'] ?? null,
                 'policy_expiry_date' => $applicationData['policy_expiry_date'] ?? null,
@@ -222,7 +223,7 @@ class PolicySubmissionController extends Controller
             ]);
 
             // PolicyApplication::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            PolicyApplication::create([
+            $policyApplication = PolicyApplication::create([
                 'user_id' => $currentUser->id,
                 'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',
                 'agree_declaration' => $applicationData['agree_declaration_final'] === 'yes',
@@ -233,6 +234,38 @@ class PolicySubmissionController extends Controller
                 'submitted_at' => now(),
                 'is_used' => true,
             ]);
+
+            // Calculate and create agent commission if client was referred by an agent
+            if ($currentUser->agent_id) {
+                $agent = User::find($currentUser->agent_id);
+                
+                if ($agent && $agent->commission_percentage > 0) {
+                    // Commission base is base premium + locum addon (excluding loading)
+                    $basePremium = floatval($policyPricing->base_premium);
+                    $locumAddon = floatval($policyPricing->locum_addon);
+                    $commissionBase = $basePremium + $locumAddon;
+                    
+                    // Calculate commission amount
+                    $commissionAmount = $commissionBase * (floatval($agent->commission_percentage) / 100);
+                    
+                    // Create commission record
+                    AgentCommission::create([
+                        'agent_id' => $agent->id,
+                        'policy_application_id' => $policyApplication->id,
+                        'client_id' => $currentUser->id,
+                        'commission_rate' => $agent->commission_percentage,
+                        'base_amount' => $commissionBase,
+                        'commission_amount' => $commissionAmount,
+                    ]);
+
+                    Log::info('Agent commission created', [
+                        'agent_id' => $agent->id,
+                        'client_id' => $currentUser->id,
+                        'policy_application_id' => $policyApplication->id,
+                        'commission_amount' => $commissionAmount,
+                    ]);
+                }
+            }
 
             if (!$currentUser->hasRole('client')) {
                 $currentUser->assignRole('client');

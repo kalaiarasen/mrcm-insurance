@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\AgentCommissionController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ClaimsController;
 use App\Http\Controllers\CustomerProductController;
@@ -43,6 +44,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('policy-holders/{user}', [PolicyHolderController::class, 'show'])->name('policy-holders.show');
     Route::put('policy-holders/{user}', [PolicyHolderController::class, 'update'])->name('policy-holders.update');
     Route::get('policy-holders/{user}/application/{application}', [PolicyHolderController::class, 'showApplication'])->name('policy-holders.application.show');
+    
+    // Agent Referral Management
+    Route::post('policy-holders/search-by-code', [PolicyHolderController::class, 'searchByCode'])->name('policy-holders.search-by-code');
+    Route::post('policy-holders/assign-agent', [PolicyHolderController::class, 'assignAgent'])->name('policy-holders.assign-agent');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('client-policy/{id}', [DashboardController::class, 'showPolicy'])->name('client-policy.show');
@@ -74,6 +79,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('agents', AgentController::class);
     Route::post('agents/{agent}/approve', [AgentController::class, 'approve'])->name('agents.approve');
     Route::post('agents/{agent}/reject', [AgentController::class, 'reject'])->name('agents.reject');
+    
+    // Agent Commission Dashboard
+    Route::get('agent/commissions', [AgentCommissionController::class, 'index'])->name('agent.commissions');
+    
     Route::resource('discounts', DiscountController::class);
     
     // Wallet Management

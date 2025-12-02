@@ -110,7 +110,13 @@
                                 <h5>Policies</h5>
                                 <p class="f-m-light mt-1">Policy status update</p>
                             </div>
-                            <div class="header-actions">
+                            <div class="header-actions d-flex gap-2">
+                                @hasrole('Agent')
+                                <button class="btn btn-success btn-sm" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#addReferralModal">
+                                    <i class="fa fa-user-plus me-1"></i>Add Referral Client
+                                </button>
+                                @endhasrole
                                 <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#dateFilterCollapse" aria-expanded="false"
                                     aria-controls="dateFilterCollapse">
@@ -284,6 +290,44 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Referral Client Modal (Agent Only) -->
+    @hasrole('Agent')
+    <div class="modal fade" id="addReferralModal" tabindex="-1" aria-labelledby="addReferralLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addReferralLabel">Add Referral Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="clientCode" class="form-label fw-bold">Client Code</label>
+                        <input type="text" class="form-control" id="clientCode" name="client_code" 
+                            placeholder="Enter client code" required>
+                        <div class="invalid-feedback d-block" id="clientCodeError"></div>
+                        <small class="text-muted">Enter the client code to assign them as your referral</small>
+                    </div>
+                    <div id="clientPreview" style="display: none;" class="alert alert-info">
+                        <h6 class="mb-2"><i class="fa fa-user me-2"></i>Client Information</h6>
+                        <p class="mb-1"><strong>Name:</strong> <span id="previewName"></span></p>
+                        <p class="mb-1"><strong>Email:</strong> <span id="previewEmail"></span></p>
+                        <p class="mb-0"><strong>Contact:</strong> <span id="previewContact"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="searchClientBtn">
+                        <i class="fa fa-search me-1"></i>Search Client
+                    </button>
+                    <button type="button" class="btn btn-success" id="assignClientBtn" style="display: none;">
+                        <i class="fa fa-check me-1"></i>Assign to Me
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endhasrole
 @endsection
 @section('scripts')
     <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
@@ -705,5 +749,121 @@
                 }
             });
         }
+
+        // Add Referral Client functionality (Agent Only)
+        @hasrole('Agent')
+        let foundClientId = null;
+
+        // Search Client by Code
+        document.getElementById('searchClientBtn')?.addEventListener('click', function() {
+            const clientCode = document.getElementById('clientCode').value.trim();
+            const errorElement = document.getElementById('clientCodeError');
+            const previewDiv = document.getElementById('clientPreview');
+            const assignBtn = document.getElementById('assignClientBtn');
+
+            // Reset
+            errorElement.textContent = '';
+            previewDiv.style.display = 'none';
+            assignBtn.style.display = 'none';
+            foundClientId = null;
+
+            if (!clientCode) {
+                errorElement.textContent = 'Please enter a client code';
+                errorElement.style.color = '#dc3545';
+                return;
+            }
+
+            // Search for client
+            $.ajax({
+                url: '/policy-holders/search-by-code',
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                data: { client_code: clientCode },
+                success: function(response) {
+                    if (response.success) {
+                        const client = response.client;
+                        foundClientId = client.id;
+
+                        // Show client preview
+                        document.getElementById('previewName').textContent = client.name;
+                        document.getElementById('previewEmail').textContent = client.email;
+                        document.getElementById('previewContact').textContent = client.contact_no || 'N/A';
+                        previewDiv.style.display = 'block';
+                        assignBtn.style.display = 'inline-block';
+
+                        showNotification('Client found! Click "Assign to Me" to add as referral.', 'success');
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 404) {
+                        errorElement.textContent = xhr.responseJSON.message || 'Client not found';
+                        errorElement.style.color = '#dc3545';
+                    } else if (xhr.status === 422) {
+                        errorElement.textContent = xhr.responseJSON.message || 'Client already assigned to an agent';
+                        errorElement.style.color = '#dc3545';
+                    } else {
+                        showNotification('Error searching for client', 'error');
+                    }
+                }
+            });
+        });
+
+        // Assign Client to Agent
+        document.getElementById('assignClientBtn')?.addEventListener('click', function() {
+            if (!foundClientId) {
+                showNotification('No client selected', 'error');
+                return;
+            }
+
+            $.ajax({
+                url: '/policy-holders/assign-agent',
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                data: { client_id: foundClientId },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addReferralModal'));
+                        modal.hide();
+
+                        // Reset form
+                        document.getElementById('clientCode').value = '';
+                        document.getElementById('clientPreview').style.display = 'none';
+                        document.getElementById('assignClientBtn').style.display = 'none';
+                        foundClientId = null;
+
+                        // Reload table
+                        if (dataTable) {
+                            dataTable.ajax.reload();
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        showNotification(xhr.responseJSON.message || 'Client already assigned', 'error');
+                    } else {
+                        showNotification('Error assigning client', 'error');
+                    }
+                }
+            });
+        });
+
+        // Reset modal when closed
+        document.getElementById('addReferralModal')?.addEventListener('hidden.bs.modal', function() {
+            document.getElementById('clientCode').value = '';
+            document.getElementById('clientCodeError').textContent = '';
+            document.getElementById('clientPreview').style.display = 'none';
+            document.getElementById('assignClientBtn').style.display = 'none';
+            foundClientId = null;
+        });
+        @endhasrole
     </script>
 @endsection

@@ -296,6 +296,35 @@
                                 <span>Customer List</span>
                             </a>
                         </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agent.commissions') ? 'active' : '' }}"
+                                href="{{ route('agent.commissions') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-price') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-price') }}"></use>
+                                </svg>
+                                <span>My Commissions</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav" href="#"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
+                                </svg>
+                                <span>Logout</span>
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </li>
                     @endhasrole
                     {{-- <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
