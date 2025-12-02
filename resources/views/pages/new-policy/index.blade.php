@@ -408,7 +408,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="institution1" class="form-label">1. Institution <span
                                                 class="text-danger">*</span></label>
@@ -416,7 +416,7 @@
                                             name="institution_1" placeholder="Institution" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="qualification1" class="form-label">1. Degree or Qualification <span
                                                 class="text-danger">*</span></label>
@@ -424,7 +424,7 @@
                                             name="qualification_1" placeholder="Degree or Qualification" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="yearObtained1" class="form-label">1. Year Obtained <span
                                                 class="text-danger">*</span></label>
@@ -433,21 +433,21 @@
                                             max="2030" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="institution2" class="form-label">2. Institution</label>
                                         <input type="text" class="form-control" id="institution2"
                                             name="institution_2" placeholder="Institution">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="qualification2" class="form-label">2. Degree or Qualification</label>
                                         <input type="text" class="form-control" id="qualification2"
                                             name="qualification_2" placeholder="Degree or Qualification">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="yearObtained2" class="form-label">2. Year Obtained</label>
                                         <input type="number" class="form-control" id="yearObtained2"
@@ -455,21 +455,21 @@
                                             max="2030">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="institution3" class="form-label">3. Institution</label>
                                         <input type="text" class="form-control" id="institution3"
                                             name="institution_3" placeholder="Institution">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="qualification3" class="form-label">3. Degree or Qualification</label>
                                         <input type="text" class="form-control" id="qualification3"
                                             name="qualification_3" placeholder="Degree or Qualification">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="yearObtained3" class="form-label">3. Year Obtained</label>
                                         <input type="number" class="form-control" id="yearObtained3"
