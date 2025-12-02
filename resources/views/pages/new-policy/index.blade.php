@@ -53,7 +53,7 @@
                                 Step 1 of 8
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-none d-md-flex justify-content-between flex-wrap">
                             <small class="text-muted">Step 1: Applicant Details</small>
                             <small class="text-muted">Step 2: Healthcare Services</small>
                             <small class="text-muted">Step 3: Pricing Details</small>
@@ -62,6 +62,16 @@
                             <small class="text-muted">Step 6: Claims Experience</small>
                             <small class="text-muted">Step 7: Data Protection</small>
                             <small class="text-muted">Step 8: Declaration</small>
+                        </div>
+                        <div class="d-flex d-md-none justify-content-between flex-wrap">
+                            <small class="text-muted me-1">Step 1</small>
+                            <small class="text-muted me-1">Step 2</small>
+                            <small class="text-muted me-1">Step 3</small>
+                            <small class="text-muted me-1">Step 4</small>
+                            <small class="text-muted me-1">Step 5</small>
+                            <small class="text-muted me-1">Step 6</small>
+                            <small class="text-muted me-1">Step 7</small>
+                            <small class="text-muted">Step 8</small>
                         </div>
 
                         <!-- Debug Panel (for testing) -->
@@ -331,7 +341,8 @@
                     <!-- Secondary Practicing Address Card -->
                     <div class="card mb-3">
                         <div class="card-header pb-0 card-no-border">
-                            <h5><i class="fa fa-hospital me-2"></i>Secondary Practicing Address <small class="text-muted">(Optional)</small></h5>
+                            <h5><i class="fa fa-hospital me-2"></i>Secondary Practicing Address <small
+                                    class="text-muted">(Optional)</small></h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -678,7 +689,8 @@
                 </div>
             </div>
             <!-- Card 3: Pricing Details -->
-            <div class="col-md-12" id="step3Card" style="display: none;" data-user-loading="{{ auth()->user()->loading ?? 0 }}">
+            <div class="col-md-12" id="step3Card" style="display: none;"
+                data-user-loading="{{ auth()->user()->loading ?? 0 }}">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border" style="position: relative;">
                         <h5>3. Pricing Details</h5>
@@ -764,9 +776,11 @@
                                 <div class="row mb-2" id="loadingRow" style="display: none;">
                                     <div class="col-md-6">
                                         <span>Loading (<span id="displayLoadingPercentage">0</span>%)</span>
-                                        <i class="fa fa-info-circle text-muted ms-1" data-bs-toggle="tooltip" title="Additional percentage applied to Premium Per Annum based on risk assessment"></i>
+                                        <i class="fa fa-info-circle text-muted ms-1" data-bs-toggle="tooltip"
+                                            title="Additional percentage applied to Premium Per Annum based on risk assessment"></i>
                                     </div>
-                                    <div class="col-md-6"><span>: RM <span id="displayLoadingAmount">0.00</span></span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayLoadingAmount">0.00</span></span>
+                                    </div>
                                 </div>
 
                                 <div class="row mb-2">
@@ -856,8 +870,10 @@
 
                             <!-- Hidden fields to store calculated values -->
                             <input type="hidden" id="displayBasePremiumInput" name="displayBasePremium" value="0">
-                            <input type="hidden" id="displayLoadingPercentageInput" name="displayLoadingPercentage" value="0">
-                            <input type="hidden" id="displayLoadingAmountInput" name="displayLoadingAmount" value="0">
+                            <input type="hidden" id="displayLoadingPercentageInput" name="displayLoadingPercentage"
+                                value="0">
+                            <input type="hidden" id="displayLoadingAmountInput" name="displayLoadingAmount"
+                                value="0">
                             <input type="hidden" id="displayGrossPremiumInput" name="displayGrossPremium"
                                 value="0">
                             <input type="hidden" id="displayLocumAddonInput" name="displayLocumAddon" value="0">
