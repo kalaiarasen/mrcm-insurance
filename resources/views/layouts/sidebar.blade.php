@@ -92,7 +92,7 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav" href="">
+                            <a class="sidebar-link sidebar-title link-nav" href="{{ route('my-policies.index') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
                                 </svg>
@@ -104,7 +104,8 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav" href="">
+                            <a class="sidebar-link sidebar-title link-nav" href="#"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
                                 </svg>
@@ -113,6 +114,9 @@
                                 </svg>
                                 <span>Logout</span>
                             </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
                         </li>
                     @endrole
                     @hasanyrole('Super Admin|Admin|Agent')

@@ -6,6 +6,7 @@ use App\Http\Controllers\ClaimsController;
 use App\Http\Controllers\CustomerProductController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\MyPoliciesController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyHolderController;
 use App\Http\Controllers\ProductController;
@@ -96,6 +97,9 @@ Route::middleware(['auth'])->group(function () {
     // Profile Management
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // My Policies (Combined view of Professional Indemnity and Other Policies)
+    Route::get('my-policies', [MyPoliciesController::class, 'index'])->name('my-policies.index');
 
     // Quotation Request Management (Admin)
     Route::resource('quotation-requests', QuotationRequestController::class)->only(['index', 'show', 'update', 'destroy']);

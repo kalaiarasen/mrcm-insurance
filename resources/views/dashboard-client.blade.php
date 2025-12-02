@@ -237,8 +237,8 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
-                        <h5>📋 My Quotation Requests</h5>
-                        <p class="f-m-light mt-1">Track your insurance quotation requests</p>
+                        <h5>📋 Other Policies</h5>
+                        <p class="f-m-light mt-1">Track your insurance other policies requests</p>
                     </div>
                     <div class="card-body">
                         @if ($quotationRequests->isEmpty())
