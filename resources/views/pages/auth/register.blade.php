@@ -71,6 +71,18 @@
                                     <input class="form-control" type="email" name="email" value="{{ old('email') }}" required>
                                 </div>
                                 <div class="form-group">
+                                    <label class="col-form-label">Referring Agent (Optional)</label>
+                                    <select class="form-select" name="agent_id">
+                                        <option value="">-- Select Agent (Optional) --</option>
+                                        @foreach($agents as $agent)
+                                            <option value="{{ $agent->id }}" {{ old('agent_id') == $agent->id ? 'selected' : '' }}>
+                                                {{ $agent->name }} - {{ $agent->email }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">Select an agent if you were referred by one</small>
+                                </div>
+                                <div class="form-group">
                                     <label class="col-form-label">Password</label>
                                     <div class="form-input position-relative">
                                         <input class="form-control" type="password" name="password" required>

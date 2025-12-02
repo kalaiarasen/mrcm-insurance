@@ -84,6 +84,8 @@
                                 </div>
                                 <p class="mt-4 mb-0 text-center">Don't have account?<a class="ms-2"
                                         href="{{ route('register') }}">Create Account</a></p>
+                                <p class="mt-2 mb-0 text-center">Want to become an agent?<a class="ms-2"
+                                        href="{{ route('agent.register') }}">Apply Here</a></p>
                                 {{-- <p class="mt-2 mb-0 text-center"><a class="text-muted"
                                         href="{{ route('password.request') }}">Forgot Password?</a></p> --}}
                             </form>

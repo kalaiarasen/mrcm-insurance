@@ -72,6 +72,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('agents', AgentController::class);
+    Route::post('agents/{agent}/approve', [AgentController::class, 'approve'])->name('agents.approve');
+    Route::post('agents/{agent}/reject', [AgentController::class, 'reject'])->name('agents.reject');
     Route::resource('discounts', DiscountController::class);
     
     // Wallet Management

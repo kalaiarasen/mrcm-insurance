@@ -58,6 +58,16 @@
                                     @enderror
                                 </div>
 
+                                @if($user->hasRole('Client') && $user->client_code)
+                                    <div class="col-md-12 mb-3">
+                                        <label for="client_code" class="form-label">Client Code</label>
+                                        <input type="text" class="form-control" id="client_code" 
+                                            value="{{ $user->client_code }}" readonly disabled 
+                                            style="background-color: #e9ecef;">
+                                        <small class="text-muted">Your unique client identifier</small>
+                                    </div>
+                                @endif
+
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label">Email Address <span
                                             class="text-danger">*</span></label>
