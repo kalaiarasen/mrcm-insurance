@@ -66,10 +66,49 @@
         </div>
     </div>
     <div class="container-fluid default-dashboard">
-        <!-- First Row - Announcements and Action Buttons -->
+        <!-- Welcome Banner with Wallet -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card" style="background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h3 class="text-primary mb-3">
+                                    {{ $dashboardSetting->welcome_title ?? 'Welcome to MRCM Services!' }}
+                                </h3>
+                                <p class="text-muted mb-4" style="white-space: pre-line;">
+                                    {{ $dashboardSetting->welcome_description ?? 'Welcome to your dashboard!' }}</p>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <a href="{{ route('new-policy') }}" class="btn btn-primary">
+                                        <i class="fa fa-plus me-2"></i>APPLY Professional Indemnity
+                                    </a>
+                                    <a href="{{ route('customer.products.index') }}" class="btn btn-info">
+                                        <i class="fa fa-search me-2"></i>Check our other products
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-primary mb-2">WALLET BALANCE</h6>
+                                        <h2 class="mb-3">RM {{ number_format($walletAmount, 2) }}</h2>
+                                        <p class="text-muted small mb-0">
+                                            This amount has no expiry.<br>
+                                            You may apply the earned rebate to any of our products.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements and Action Buttons -->
         <div class="row mb-4">
             <!-- Announcements Section -->
-            <div class="col-lg-7">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>📢 Latest Announcements</h5>
@@ -96,7 +135,7 @@
             </div>
 
             <!-- Quick Actions Section -->
-            <div class="col-lg-5">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>⚡ Quick Actions</h5>
@@ -106,37 +145,16 @@
                             <a href="{{ route('new-policy') }}" class="btn btn-primary">
                                 <i class="fa fa-plus me-2"></i>New Policy Application
                             </a>
-                            <a href="#" class="btn btn-outline-success">
+                            <a href="{{ route('my-policies.index') }}" class="btn btn-outline-success">
                                 <i class="fa fa-file-text me-2"></i>View My Policies
                             </a>
                             <a href="#" class="btn btn-outline-info" data-bs-toggle="modal"
                                 data-bs-target="#fileClaimModal">
                                 <i class="fa fa-exclamation-triangle me-2"></i>File a Claim
                             </a>
-                            <a href="#" class="btn btn-outline-secondary">
+                            <a href="{{ route('profile.edit') }}" class="btn btn-outline-secondary">
                                 <i class="fa fa-user me-2"></i>Update Profile
                             </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card widget-1">
-                            <div class="card-body">
-                                <div class="widget-content">
-                                    <div class="widget-round secondary">
-                                        <div class="bg-round"><svg>
-                                                <use href="{{ asset('assets/svg/icon-sprite.svg#c-revenue') }}"> </use>
-                                            </svg><svg class="half-circle svg-fill">
-                                                <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}"></use>
-                                            </svg></div>
-                                    </div>
-                                    <div>
-                                        <h4>RM <span>{{ number_format($walletAmount, 2) }}</span></h4><span
-                                            class="f-light">Wallet Amount</span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -245,7 +263,8 @@
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle me-2"></i>
                                 You have not submitted any quotation requests yet.
-                                <a href="{{ route('customer.products.index') }}" class="alert-link">Browse products</a> to
+                                <a href="{{ route('customer.products.index') }}" class="alert-link">Browse products</a>
+                                to
                                 request a quote.
                             </div>
                         @else

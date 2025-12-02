@@ -257,6 +257,19 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('dashboard-settings.*') ? 'active' : '' }}"
+                                href="{{ route('dashboard-settings.edit') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                                </svg>
+                                <span>Dashboard Settings</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agents.*') ? 'active' : '' }}"
                                 href="{{ route('agents.index') }}">
                                 <svg class="stroke-icon">

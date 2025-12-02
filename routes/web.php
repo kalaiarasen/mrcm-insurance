@@ -5,6 +5,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ClaimsController;
 use App\Http\Controllers\CustomerProductController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardSettingController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\MyPoliciesController;
 use App\Http\Controllers\PolicyController;
@@ -81,6 +82,10 @@ Route::middleware(['auth'])->group(function () {
     // Get active discount by date
     Route::get('discounts-api/active', [DiscountController::class, 'getActiveDiscount'])->name('discounts.active');
     Route::post('discounts-api/validate-voucher', [DiscountController::class, 'validateVoucher'])->name('discounts.validate-voucher');
+
+    // Dashboard Settings
+    Route::get('dashboard-settings', [DashboardSettingController::class, 'edit'])->name('dashboard-settings.edit');
+    Route::put('dashboard-settings', [DashboardSettingController::class, 'update'])->name('dashboard-settings.update');
 
     // Product Management (Admin)
     Route::resource('products', ProductController::class);

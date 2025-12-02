@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use App\Models\Claim;
+use App\Models\DashboardSetting;
 use App\Models\User;
 use App\Models\PolicyApplication;
 use App\Models\QuotationRequest;
@@ -52,6 +53,9 @@ class DashboardController extends Controller
                 ->latest()
                 ->get();
 
+            // Get dashboard settings
+            $dashboardSetting = DashboardSetting::first();
+
             $totalUsers = User::count();
             $totalPolicies = PolicyApplication::where('user_id', auth()->id())->where('is_used', true)->count();
             $totalClaims = Claim::where('user_id', auth()->id())->count();
@@ -64,6 +68,7 @@ class DashboardController extends Controller
                 'activePoliciesForClaims',
                 'claims',
                 'quotationRequests',
+                'dashboardSetting',
                 'totalUsers',
                 'totalPolicies',
                 'totalClaims',
