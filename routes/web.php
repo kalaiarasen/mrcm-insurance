@@ -9,6 +9,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyHolderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuotationRequestController;
 use App\Http\Controllers\YourActionController;
 use App\Http\Controllers\WalletController;
@@ -91,6 +92,10 @@ Route::middleware(['auth'])->group(function () {
     // Client Quotation Request View
     Route::get('my-quotations/{id}', [CustomerProductController::class, 'showQuotation'])->name('customer.quotations.show');
     Route::post('my-quotations/{id}/upload-payment', [CustomerProductController::class, 'uploadPayment'])->name('customer.quotations.upload-payment');
+
+    // Profile Management
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Quotation Request Management (Admin)
     Route::resource('quotation-requests', QuotationRequestController::class)->only(['index', 'show', 'update', 'destroy']);

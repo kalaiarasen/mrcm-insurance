@@ -41,7 +41,8 @@
                     @role('Client')
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                                href="{{ route('dashboard') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
                                 </svg>
@@ -53,7 +54,8 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}" href="{{ route('new-policy') }}">
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}"
+                                href="{{ route('new-policy') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
                                 </svg>
@@ -78,7 +80,7 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav" href="">
+                            <a class="sidebar-link sidebar-title link-nav" href="{{ route('profile.edit') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
                                 </svg>
