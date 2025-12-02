@@ -94,15 +94,15 @@
         <div class="row widget-grid">
             <!-- Card 1: Details of the Applicant -->
             <div class="col-md-12" id="step1Card">
-                <div class="card">
-                    <div class="card-header pb-0 card-no-border">
-                        <h5>1. Details of the Applicant</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="policyApplicationForm">
-                            <!-- Personal Information Row -->
-                            <div class="row mb-3">
-                                <div class="col-md-2">
+                <form id="policyApplicationForm">
+                    <!-- Personal Information Card -->
+                    <div class="card mb-3">
+                        <div class="card-header pb-0 card-no-border">
+                            <h5><i class="fa fa-user me-2"></i>Personal Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="applicantTitle" class="form-label">Title <span
                                                 class="text-danger">*</span></label>
@@ -120,7 +120,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="fullName" class="form-label">Full Name <span
                                                 class="text-danger">*</span></label>
@@ -128,7 +128,7 @@
                                             placeholder="Full Name" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="nationalityStatus" class="form-label">Nationality Status <span
                                                 class="text-danger">*</span></label>
@@ -140,7 +140,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="nricNumber" class="form-label">NRIC Number (XXXXXX-XX-XXXX) <span
                                                 class="text-danger" id="nricRequired">*</span></label>
@@ -148,7 +148,7 @@
                                             placeholder="NRIC Number (XXXXXX-XX-XXXX)">
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="passportNumber" class="form-label">Passport Number <span
                                                 class="text-danger" id="passportRequired"
@@ -158,10 +158,17 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Contact Information Row -->
-                            <div class="row mb-3">
-                                <div class="col-md-2">
+                    <!-- Contact Information Card -->
+                    <div class="card mb-3">
+                        <div class="card-header pb-0 card-no-border">
+                            <h5><i class="fa fa-phone me-2"></i>Contact Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="gender" class="form-label">Gender <span
                                                 class="text-danger">*</span></label>
@@ -172,7 +179,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="contactNo" class="form-label">Contact No <span
                                                 class="text-danger">*</span></label>
@@ -180,7 +187,7 @@
                                             placeholder="Contact No" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="emailAddress" class="form-label">Email address <span
                                                 class="text-danger">*</span></label>
@@ -189,14 +196,16 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Mailing Address Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>Mailing Address</h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
+                    <!-- Mailing Address Card -->
+                    <div class="card mb-3">
+                        <div class="card-header pb-0 card-no-border">
+                            <h5><i class="fa fa-envelope me-2"></i>Mailing Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="mailingAddress" class="form-label">Address <span
@@ -205,9 +214,7 @@
                                             name="mailing_address" placeholder="Address" required>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="mailingPostCode" class="form-label">PostCode <span
                                                 class="text-danger">*</span></label>
@@ -215,7 +222,7 @@
                                             name="mailing_postcode" placeholder="PostCode" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="mailingCity" class="form-label">City <span
                                                 class="text-danger">*</span></label>
@@ -223,7 +230,7 @@
                                             placeholder="City" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="mailingState" class="form-label">State <span
                                                 class="text-danger">*</span></label>
@@ -231,7 +238,7 @@
                                             name="mailing_state" placeholder="State" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="mailingCountry" class="form-label">Country <span
                                                 class="text-danger">*</span></label>
@@ -240,16 +247,19 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Primary Practicing Address Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>Primary Practicing Address:</h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-3">
+                    <!-- Primary Practicing Address Card -->
+                    <div class="card mb-3">
+                        <div class="card-header pb-0 card-no-border">
+                            <h5><i class="fa fa-hospital me-2"></i>Primary Practicing Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="mb-3">
+                                        <label class="form-label">Clinic Type <span class="text-danger">*</span></label>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="primary_clinic_type"
                                                 id="primaryGovernment" value="government" required>
@@ -266,7 +276,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="primaryClinicName" class="form-label">Name of clinic/hospital <span
                                                 class="text-danger">*</span></label>
@@ -274,9 +284,7 @@
                                             name="primary_clinic_name" placeholder="Name of clinic/hospital" required>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="primaryAddress" class="form-label">Address <span
                                                 class="text-danger">*</span></label>
@@ -284,7 +292,7 @@
                                             name="primary_address" placeholder="Address" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="primaryPostCode" class="form-label">PostCode <span
                                                 class="text-danger">*</span></label>
@@ -292,7 +300,7 @@
                                             name="primary_postcode" placeholder="PostCode" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="primaryCity" class="form-label">City <span
                                                 class="text-danger">*</span></label>
@@ -300,7 +308,7 @@
                                             placeholder="City" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="primaryState" class="form-label">State <span
                                                 class="text-danger">*</span></label>
@@ -308,7 +316,7 @@
                                             name="primary_state" placeholder="State" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="primaryCountry" class="form-label">Country <span
                                                 class="text-danger">*</span></label>
@@ -317,16 +325,19 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Secondary Practicing Address Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>Secondary Practicing Address:</h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-3">
+                    <!-- Secondary Practicing Address Card -->
+                    <div class="card mb-3">
+                        <div class="card-header pb-0 card-no-border">
+                            <h5><i class="fa fa-hospital me-2"></i>Secondary Practicing Address <small class="text-muted">(Optional)</small></h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="mb-3">
+                                        <label class="form-label">Clinic Type</label>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="secondary_clinic_type"
                                                 id="secondaryGovernment" value="government">
@@ -343,7 +354,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="secondaryClinicName" class="form-label">Name of
                                             clinic/hospital</label>
@@ -351,37 +362,35 @@
                                             name="secondary_clinic_name" placeholder="Name of clinic/hospital">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="secondaryAddress" class="form-label">Address</label>
                                         <input type="text" class="form-control" id="secondaryAddress"
                                             name="secondary_address" placeholder="Address">
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="secondaryPostCode" class="form-label">PostCode</label>
                                         <input type="text" class="form-control" id="secondaryPostCode"
                                             name="secondary_postcode" placeholder="PostCode">
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="secondaryCity" class="form-label">City</label>
                                         <input type="text" class="form-control" id="secondaryCity"
                                             name="secondary_city" placeholder="City">
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="secondaryState" class="form-label">State</label>
                                         <input type="text" class="form-control" id="secondaryState"
                                             name="secondary_state" placeholder="State">
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="secondaryCountry" class="form-label">Country</label>
                                         <input type="text" class="form-control" id="secondaryCountry"
@@ -389,96 +398,97 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Qualifications Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>Please indicate your qualification(s):</h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
+                    <!-- Qualifications Card -->
+                    <div class="card mb-3">
+                        <div class="card-header pb-0 card-no-border">
+                            <h5><i class="fa fa-graduation-cap me-2"></i>Qualifications</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="institution1" class="form-label">1. Institution <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="institution1"
-                                            name="institution_1" placeholder="1. Institution" required>
+                                            name="institution_1" placeholder="Institution" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="qualification1" class="form-label">1. Degree or Qualification <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="qualification1"
-                                            name="qualification_1" placeholder="1. Degree or Qualification" required>
+                                            name="qualification_1" placeholder="Degree or Qualification" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="yearObtained1" class="form-label">1. Year Obtained <span
                                                 class="text-danger">*</span></label>
                                         <input type="number" class="form-control" id="yearObtained1"
-                                            name="year_obtained_1" placeholder="1. Year Obtained" min="1950"
+                                            name="year_obtained_1" placeholder="Year Obtained" min="1950"
                                             max="2030" required>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="institution2" class="form-label">2. Institution</label>
                                         <input type="text" class="form-control" id="institution2"
-                                            name="institution_2" placeholder="2. Institution">
+                                            name="institution_2" placeholder="Institution">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="qualification2" class="form-label">2. Degree or Qualification</label>
                                         <input type="text" class="form-control" id="qualification2"
-                                            name="qualification_2" placeholder="2. Degree or Qualification">
+                                            name="qualification_2" placeholder="Degree or Qualification">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="yearObtained2" class="form-label">2. Year Obtained</label>
                                         <input type="number" class="form-control" id="yearObtained2"
-                                            name="year_obtained_2" placeholder="2. Year Obtained" min="1950"
+                                            name="year_obtained_2" placeholder="Year Obtained" min="1950"
                                             max="2030">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="institution3" class="form-label">3. Institution</label>
                                         <input type="text" class="form-control" id="institution3"
-                                            name="institution_3" placeholder="3. Institution">
+                                            name="institution_3" placeholder="Institution">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="qualification3" class="form-label">3. Degree or Qualification</label>
                                         <input type="text" class="form-control" id="qualification3"
-                                            name="qualification_3" placeholder="3. Degree or Qualification">
+                                            name="qualification_3" placeholder="Degree or Qualification">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="yearObtained3" class="form-label">3. Year Obtained</label>
                                         <input type="number" class="form-control" id="yearObtained3"
-                                            name="year_obtained_3" placeholder="3. Year Obtained" min="1950"
+                                            name="year_obtained_3" placeholder="Year Obtained" min="1950"
                                             max="2030">
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>Please provide the details of your registration below:</h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
+                    <!-- Registration Details Card -->
+                    <div class="card mb-3">
+                        <div class="card-header pb-0 card-no-border">
+                            <h5><i class="fa fa-id-card me-2"></i>Registration Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="registrationCouncil" class="form-label">Select your Licensing /
                                             Registration Body <span class="text-danger">*</span></label>
@@ -491,7 +501,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4" id="otherCouncilField" style="display:none;">
+                                <div class="col-md-6" id="otherCouncilField" style="display:none;">
                                     <div class="mb-3">
                                         <label for="otherCouncil" class="form-label">Please specify <span
                                                 class="text-danger">*</span></label>
@@ -499,7 +509,7 @@
                                             name="other_council" placeholder="Please specify">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="registrationNumber" class="form-label"
                                             id="registrationNumberLabel">Registration Number <span
@@ -510,17 +520,22 @@
                                 </div>
                             </div>
 
-                            <!-- Form Actions -->
-                            <div class="row mt-4">
+                        </div>
+                    </div>
+
+                    <!-- Form Actions Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
                                 <div class="col-md-12 text-end">
                                     <button type="button" class="btn btn-light me-2" id="step1PrevBtn"
                                         style="display: none;">Previous Step</button>
                                     <button type="submit" class="btn btn-primary" id="step1NextBtn">Next Step</button>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
             <!-- Card 2: Details of Healthcare Services Business -->
             <div class="col-md-12" id="step2Card" style="display: none;">
