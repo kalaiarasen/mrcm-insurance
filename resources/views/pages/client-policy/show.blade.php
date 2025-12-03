@@ -1445,6 +1445,14 @@
                             </h5>
 
                             @if ($policyApplication->payment_document)
+                                @php
+                                    // Check if payment document is old imported data (starts with app/Document)
+                                    if (str_starts_with($policyApplication->payment_document, 'app/Document')) {
+                                        $paymentDocUrl = route('signature.show', ['path' => base64_encode($policyApplication->payment_document)]);
+                                    } else {
+                                        $paymentDocUrl = Storage::url($policyApplication->payment_document);
+                                    }
+                                @endphp
                                 <!-- Payment Already Uploaded -->
                                 <div class="card border border-success">
                                     <div class="card-body">
@@ -1454,7 +1462,7 @@
                                         <p class="mb-3"><strong>Uploaded:</strong>
                                             {{ $policyApplication->payment_received_at ? $policyApplication->payment_received_at->format('d M Y, h:i A') : 'N/A' }}
                                         </p>
-                                        <a href="{{ Storage::url($policyApplication->payment_document) }}"
+                                        <a href="{{ $paymentDocUrl }}"
                                             target="_blank" class="btn btn-sm btn-primary">
                                             <i class="fa fa-eye me-1"></i>View Payment Document
                                         </a>
