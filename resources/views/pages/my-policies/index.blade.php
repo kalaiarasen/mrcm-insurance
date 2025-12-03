@@ -64,18 +64,18 @@
                                                 </td>
                                                 <td>{{ $policy->created_at->format('M d, Y') }}</td>
                                                 <td>
-                                                    @if ($policy->user->policyPricing)
-                                                        {{ \Carbon\Carbon::parse($policy->user->policyPricing->policy_start_date)->format('M d, Y') }}
+                                                    @if ($policy->policyPricing)
+                                                        {{ \Carbon\Carbon::parse($policy->policyPricing->policy_start_date)->format('M d, Y') }}
                                                         -
-                                                        {{ \Carbon\Carbon::parse($policy->user->policyPricing->policy_expiry_date)->format('M d, Y') }}
+                                                        {{ \Carbon\Carbon::parse($policy->policyPricing->policy_expiry_date)->format('M d, Y') }}
                                                     @else
                                                         <span class="text-muted">N/A</span>
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if ($policy->user->policyPricing)
+                                                    @if ($policy->policyPricing)
                                                         <strong>RM
-                                                            {{ number_format($policy->user->policyPricing->total_payable, 2) }}</strong>
+                                                            {{ number_format($policy->policyPricing->total_payable, 2) }}</strong>
                                                     @else
                                                         <span class="text-muted">N/A</span>
                                                     @endif

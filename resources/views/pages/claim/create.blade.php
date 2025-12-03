@@ -12,14 +12,14 @@
             margin-bottom: 20px;
             border-left: 3px solid #0d6efd;
         }
-        
+
         .policy-selector {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
-        
+
         .policy-card {
             padding: 15px;
             border: 2px solid #dee2e6;
@@ -27,28 +27,28 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .policy-card:hover {
             border-color: #0d6efd;
             box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
         }
-        
+
         .policy-card.active {
             border-color: #0d6efd;
             background-color: rgba(13, 110, 253, 0.05);
         }
-        
+
         .policy-info {
             font-size: 0.9rem;
             color: var(--light-font);
             margin-top: 8px;
         }
-        
+
         .form-label {
             font-weight: 600;
             color: var(--body-font-color);
         }
-        
+
         .file-upload-area {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
@@ -58,21 +58,21 @@
             transition: all 0.3s ease;
             background-color: var(--light-background);
         }
-        
+
         .file-upload-area:hover {
             border-color: #0d6efd;
             background-color: rgba(13, 110, 253, 0.02);
         }
-        
+
         .file-upload-area.dragover {
             border-color: #0d6efd;
             background-color: rgba(13, 110, 253, 0.1);
         }
-        
+
         .file-list {
             margin-top: 15px;
         }
-        
+
         .file-item {
             display: flex;
             justify-content: space-between;
@@ -83,7 +83,7 @@
             border-radius: 4px;
             margin-bottom: 8px;
         }
-        
+
         .file-name {
             flex-grow: 1;
             margin-left: 10px;
@@ -142,14 +142,14 @@
                             <p class="text-muted mb-0">Choose the policy related to this claim</p>
                         </div>
                         <div class="card-body">
-                            @if($policies->isEmpty())
+                            @if ($policies->isEmpty())
                                 <div class="alert alert-info">
                                     <i class="fa fa-info-circle me-2"></i>
                                     You have no active paid policies. Please complete payment for a policy first.
                                 </div>
                             @else
                                 <div class="policy-selector">
-                                    @foreach($policies as $policy)
+                                    @foreach ($policies as $policy)
                                         <div class="policy-card" onclick="selectPolicy({{ $policy->id }})">
                                             <div class="d-flex justify-content-between align-items-start">
                                                 <div>
@@ -157,8 +157,9 @@
                                                         <strong>{{ $policy->reference_number ?? 'N/A' }}</strong>
                                                     </h6>
                                                 </div>
-                                                <input type="radio" name="policy_application_id" value="{{ $policy->id }}" 
-                                                       id="policy_{{ $policy->id }}" class="form-check-input">
+                                                <input type="radio" name="policy_application_id"
+                                                    value="{{ $policy->id }}" id="policy_{{ $policy->id }}"
+                                                    class="form-check-input">
                                             </div>
                                             <div class="policy-info">
                                                 <p class="mb-1">
@@ -167,7 +168,9 @@
                                                 </p>
                                                 <p class="mb-1">
                                                     <i class="fa fa-shield-alt me-1"></i>
-                                                    RM {{ number_format(($policy->user->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M Coverage
+                                                    RM
+                                                    {{ number_format(($policy->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M
+                                                    Coverage
                                                 </p>
                                                 <p class="mb-0">
                                                     <i class="fa fa-calendar me-1"></i>
@@ -193,17 +196,22 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="incident_date" class="form-label">Incident Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control @error('incident_date') is-invalid @enderror" 
-                                           id="incident_date" name="incident_date" value="{{ old('incident_date') }}" required>
+                                    <label for="incident_date" class="form-label">Incident Date <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control @error('incident_date') is-invalid @enderror"
+                                        id="incident_date" name="incident_date" value="{{ old('incident_date') }}"
+                                        required>
                                     @error('incident_date')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="notification_date" class="form-label">Notification Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control @error('notification_date') is-invalid @enderror" 
-                                           id="notification_date" name="notification_date" value="{{ old('notification_date') }}" required>
+                                    <label for="notification_date" class="form-label">Notification Date <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date"
+                                        class="form-control @error('notification_date') is-invalid @enderror"
+                                        id="notification_date" name="notification_date"
+                                        value="{{ old('notification_date') }}" required>
                                     @error('notification_date')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
@@ -211,20 +219,22 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="claim_title" class="form-label">Claim Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('claim_title') is-invalid @enderror" 
-                                       id="claim_title" name="claim_title" placeholder="e.g., Lip paraesthesia after extraction" 
-                                       value="{{ old('claim_title') }}" required>
+                                <label for="claim_title" class="form-label">Claim Title <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('claim_title') is-invalid @enderror"
+                                    id="claim_title" name="claim_title"
+                                    placeholder="e.g., Lip paraesthesia after extraction" value="{{ old('claim_title') }}"
+                                    required>
                                 @error('claim_title')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
 
                             <div class="mb-3">
-                                <label for="claim_description" class="form-label">Claim Detail Description <span class="text-danger">*</span></label>
-                                <textarea class="form-control @error('claim_description') is-invalid @enderror" 
-                                          id="claim_description" name="claim_description" rows="5" 
-                                          placeholder="Describe the incident in detail..." required>{{ old('claim_description') }}</textarea>
+                                <label for="claim_description" class="form-label">Claim Detail Description <span
+                                        class="text-danger">*</span></label>
+                                <textarea class="form-control @error('claim_description') is-invalid @enderror" id="claim_description"
+                                    name="claim_description" rows="5" placeholder="Describe the incident in detail..." required>{{ old('claim_description') }}</textarea>
                                 @error('claim_description')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -236,14 +246,17 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5><i class="fa fa-upload me-2"></i>Step 3: Upload Claim Internation Documents</h5>
-                            <p class="text-muted mb-0">Upload supporting documents (PDF, JPG, PNG, DOC, DOCX - Max 5MB each)</p>
+                            <p class="text-muted mb-0">Upload supporting documents (PDF, JPG, PNG, DOC, DOCX - Max 5MB
+                                each)</p>
                         </div>
                         <div class="card-body">
                             <div class="file-upload-area" id="fileUploadArea">
                                 <i class="fa fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
                                 <p>Drag and drop your documents here or click to select</p>
-                                <small class="text-muted">Supported formats: PDF, JPG, JPEG, PNG, DOC, DOCX (Max 5MB each)</small>
-                                <input type="file" name="documents[]" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="d-none">
+                                <small class="text-muted">Supported formats: PDF, JPG, JPEG, PNG, DOC, DOCX (Max 5MB
+                                    each)</small>
+                                <input type="file" name="documents[]" id="fileInput" multiple
+                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="d-none">
                             </div>
 
                             <div id="fileList" class="file-list"></div>
@@ -309,7 +322,7 @@
             selectedFiles = Array.from(files);
             updateFileList();
             updateSubmitButton();
-            
+
             // Update the actual form input
             const dataTransfer = new DataTransfer();
             selectedFiles.forEach(file => dataTransfer.items.add(file));

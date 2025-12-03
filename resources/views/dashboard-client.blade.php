@@ -263,7 +263,7 @@
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle me-2"></i>
                                 You have not submitted any quotation requests yet.
-                                <a href="{{ route('customer.products.index') }}" class="alert-link">Browse products</a>
+                                <a href="{{ route('customer.products.index') }}" class="alert-link text-dark">Browse products</a>
                                 to
                                 request a quote.
                             </div>
