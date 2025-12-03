@@ -37,10 +37,10 @@ class UsersOldDataSeeder extends Seeder
                 $tnyStatus
             ] = $row;
 
-            $roleId = match ((int)$tnyUserType) {
-                1 => 2,  // admin
-                2 => 3,  // client
-                default => 3,
+            $roleName = match ((int)$tnyUserType) {
+                1 => 'Admin',
+                2 => 'Client',
+                default => 'Client',
             };
 
             // Prevent duplicate emails
@@ -59,14 +59,8 @@ class UsersOldDataSeeder extends Seeder
                 'old_member_id' => $numMemberID,
             ]);
 
-            // Assign role
-            DB::table('model_has_roles')->updateOrInsert(
-                [
-                    'model_id' => $user->id,
-                    'model_type' => 'App\\Models\\User',
-                ],
-                ['role_id' => $roleId]
-            );
+            // Assign role using Spatie's method
+            $user->assignRole($roleName);
 
 //             Save mapping for other seeders
 //            self::$userMap[$numUserID] = $user->id;
