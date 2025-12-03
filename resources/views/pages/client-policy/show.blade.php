@@ -644,7 +644,7 @@
                                         <div class="col-md-12">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="authorize_payment"
-                                                    name="authorize_payment" required>
+                                                    name="authorize_payment">
                                                 <label class="form-check-label" for="authorize_payment">
                                                     I hereby authorise Great Eastern General Insurance (Malaysia) Berhad
                                                     (GEGM) to charge one-off payment to premium for the above insurance
@@ -1668,6 +1668,7 @@
             const creditCardSection = document.getElementById('creditCardSection');
             const paymentTypeInput = document.getElementById('payment_type');
             const paymentDocument = document.getElementById('payment_document');
+            const authorizePayment = document.getElementById('authorize_payment');
 
             if (proofMethod && creditCardMethod && proofSection && creditCardSection) {
                 proofMethod.addEventListener('change', function() {
@@ -1676,6 +1677,7 @@
                         creditCardSection.classList.add('d-none');
                         if (paymentTypeInput) paymentTypeInput.value = 'proof';
                         if (paymentDocument) paymentDocument.setAttribute('required', 'required');
+                        if (authorizePayment) authorizePayment.removeAttribute('required');
                     }
                 });
 
@@ -1685,6 +1687,7 @@
                         proofSection.classList.add('d-none');
                         if (paymentTypeInput) paymentTypeInput.value = 'credit_card';
                         if (paymentDocument) paymentDocument.removeAttribute('required');
+                        if (authorizePayment) authorizePayment.setAttribute('required', 'required');
                     }
                 });
             }
