@@ -89,16 +89,26 @@
                 </li>
                 <li class="profile-nav onhover-dropdown pe-0 py-0">
                     <div class="d-flex profile-media">
-                        <img class="b-r-10" src="{{ asset('assets/images/dashboard/profile.png') }}" alt="" />
+                        <img class="b-r-10" 
+                            src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/images/dashboard/profile.png') }}" 
+                            alt="Profile" 
+                            style="width: 40px; height: 40px; object-fit: cover;" />
                         <div class="flex-grow-1">
                             <span>{{ Auth::user()->name }}</span>
                             <p class="mb-0">{{ Auth::user()->roles->first()->name ?? 'User' }} <i class="middle fa-solid fa-angle-down"></i></p>
                         </div>
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
-                        <li>
-                            <a href="javascript:void(0)"><i data-feather="user"></i><span>Account </span></a>
-                        </li>
+                        @hasrole('Agent')
+                            <li>
+                                <a href="{{ route('agent.profile') }}"><i data-feather="user"></i><span>Account</span></a>
+                            </li>
+                        @endhasrole
+                        @hasrole('Client')
+                            <li>
+                                <a href="{{ route('profile.edit') }}"><i data-feather="user"></i><span>Account</span></a>
+                            </li>
+                        @endhasrole
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

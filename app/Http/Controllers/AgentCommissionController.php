@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\AgentCommission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class AgentCommissionController extends Controller
@@ -118,23 +120,37 @@ class AgentCommissionController extends Controller
 
         $agent = Auth::user();
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $agent->id,
             'contact_no' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date',
             'location' => 'nullable|string|max:255',
             'bank_account_number' => 'nullable|string|max:50',
+            'profile_image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
             'subscribe_newsletter' => 'nullable|boolean',
         ]);
 
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            // Delete old image if exists
+            if ($agent->profile_image && Storage::disk('public')->exists($agent->profile_image)) {
+                Storage::disk('public')->delete($agent->profile_image);
+            }
+
+            // Store new image
+            $path = $request->file('profile_image')->store('profile-images', 'public');
+            $validated['profile_image'] = $path;
+        }
+
         $agent->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'contact_no' => $request->contact_no,
-            'date_of_birth' => $request->date_of_birth,
-            'location' => $request->location,
-            'bank_account_number' => $request->bank_account_number,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'contact_no' => $validated['contact_no'] ?? null,
+            'date_of_birth' => $validated['date_of_birth'] ?? null,
+            'location' => $validated['location'] ?? null,
+            'bank_account_number' => $validated['bank_account_number'] ?? null,
+            'profile_image' => $validated['profile_image'] ?? $agent->profile_image,
             'subscribe_newsletter' => $request->has('subscribe_newsletter'),
         ]);
 

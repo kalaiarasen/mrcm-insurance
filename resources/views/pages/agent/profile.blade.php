@@ -41,11 +41,30 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="profileForm">
+                        <form id="profileForm" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             
                             <div class="row">
+                                <!-- Profile Image Upload -->
+                                <div class="col-md-12 mb-4 text-center">
+                                    <div class="mb-3">
+                                        <img id="profileImagePreview" 
+                                            src="{{ $agent->profile_image ? asset('storage/' . $agent->profile_image) : asset('assets/images/dashboard/profile.png') }}" 
+                                            alt="Profile Image" 
+                                            class="rounded-circle" 
+                                            style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #f0f0f0;">
+                                    </div>
+                                    <div>
+                                        <label for="profile_image" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-camera me-1"></i>Upload Photo
+                                        </label>
+                                        <input type="file" class="d-none" id="profile_image" name="profile_image" accept="image/*">
+                                        <div class="invalid-feedback d-block" id="profileImageError"></div>
+                                        <div class="text-muted small mt-2">Accepted formats: JPG, PNG, GIF (Max: 2MB)</div>
+                                    </div>
+                                </div>
+
                                 <!-- Basic Information -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -161,7 +180,9 @@
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json',
                     },
-                    data: $(this).serialize(),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(response) {
                         if (response.success) {
                             showNotification(response.message, 'success');
@@ -195,7 +216,8 @@
                 'contact_no': 'contactNoError',
                 'date_of_birth': 'dateOfBirthError',
                 'location': 'locationError',
-                'bank_account_number': 'bankAccountNumberError'
+                'bank_account_number': 'bankAccountNumberError',
+                'profile_image': 'profileImageError'
             };
 
             for (const field in errors) {
@@ -217,7 +239,8 @@
                 'contactNoError',
                 'dateOfBirthError',
                 'locationError',
-                'bankAccountNumberError'
+                'bankAccountNumberError',
+                'profileImageError'
             ];
 
             errorFields.forEach(fieldId => {
@@ -227,6 +250,18 @@
                 }
             });
         }
+
+        // Profile image preview
+        document.getElementById('profile_image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImagePreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
         // Show Notification Function
         function showNotification(message, type = 'info') {

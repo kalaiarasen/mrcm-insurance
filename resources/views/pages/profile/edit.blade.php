@@ -43,11 +43,32 @@
                         <h5 class="mb-0"><i class="fa fa-user"></i> Profile Information</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('profile.update') }}" method="POST">
+                        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
                             <div class="row">
+                                <!-- Profile Image Upload -->
+                                <div class="col-md-12 mb-4 text-center">
+                                    <div class="mb-3">
+                                        <img id="profileImagePreview" 
+                                            src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/images/dashboard/profile.png') }}" 
+                                            alt="Profile Image" 
+                                            class="rounded-circle" 
+                                            style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #f0f0f0;">
+                                    </div>
+                                    <div>
+                                        <label for="profile_image" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-camera me-1"></i>Upload Photo
+                                        </label>
+                                        <input type="file" class="d-none" id="profile_image" name="profile_image" accept="image/*">
+                                        @error('profile_image')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                        <div class="text-muted small mt-2">Accepted formats: JPG, PNG, GIF (Max: 2MB)</div>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-12 mb-3">
                                     <label for="name" class="form-label">Full Name <span
                                             class="text-danger">*</span></label>
@@ -150,6 +171,18 @@
                     bsAlert.close();
                 });
             }, 5000);
+
+            // Profile image preview
+            document.getElementById('profile_image').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('profileImagePreview').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
         });
     </script>
 @endsection

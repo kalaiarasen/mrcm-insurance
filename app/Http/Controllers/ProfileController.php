@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -34,6 +35,7 @@ class ProfileController extends Controller
                 Rule::unique('users')->ignore($user->id)
             ],
             'contact_no' => 'nullable|string|max:20',
+            'profile_image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
             'current_password' => 'nullable|required_with:new_password',
             'new_password' => 'nullable|min:8|confirmed',
         ]);
@@ -42,6 +44,18 @@ class ProfileController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->contact_no = $validated['contact_no'];
+
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            // Delete old image if exists
+            if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+
+            // Store new image
+            $path = $request->file('profile_image')->store('profile-images', 'public');
+            $user->profile_image = $path;
+        }
 
         // Update password if provided
         if ($request->filled('current_password')) {
