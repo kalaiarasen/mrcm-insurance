@@ -102,6 +102,7 @@ class ExcelMedicalSeeder extends Seeder
                 DB::table('applicant_profiles')->updateOrInsert(
                     ['user_id' => $user->id],
                     [
+                        'title'           => $user->title,
                         'nric_number'      => $nric ?: null,
                         'passport_number'  => $passport_no ?: null,
                         'updated_at'       => now(),

@@ -64,6 +64,7 @@ class ExcelDentalSeeder extends Seeder
             DB::table('applicant_profiles')->updateOrInsert(
                 ['user_id' => $user->id],
                 [
+                    'title' => $user->title,
                     'nationality_status' => $data['Nationality Status'] ?? null,
                     'nric_number' => $data['NRIC Number'] ?? null,
                     'passport_number' => $data['Passport Number'] ?? null,

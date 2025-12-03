@@ -1414,7 +1414,17 @@
                                 <div class="info-label">Applicant Signature</div>
                                 <div class="signature-box">
                                     @if ($policyApplication->signature_data)
-                                        <img src="{{ $policyApplication->signature_data }}" alt="Signature">
+                                        @php
+                                            // Check if signature is base64 or file path
+                                            $isBase64 = str_starts_with($policyApplication->signature_data, 'data:image');
+                                            if ($isBase64) {
+                                                $signatureUrl = $policyApplication->signature_data;
+                                            } else {
+                                                // Old data: serve from storage/app/ via a route
+                                                $signatureUrl = route('signature.show', ['path' => base64_encode($policyApplication->signature_data)]);
+                                            }
+                                        @endphp
+                                        <img src="{{ $signatureUrl }}" alt="Signature">
                                     @else
                                         <span class="text-muted">No signature available</span>
                                     @endif

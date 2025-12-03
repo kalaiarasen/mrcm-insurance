@@ -35,10 +35,13 @@ class TBLMemberMSTSeeder extends Seeder
                 // -------------------------
                 $memberId = trim($row[0] ?? '');
                 $name     = trim($row[2] ?? '');
+                $title    = trim($row[1] ?? '');
                 $email    = trim($row[9] ?? '');
                 $password = trim($row[10] ?? '');
+                $contact = trim($row[13] ?? '');
                 $gender   = trim($row[7] ?? '');
                 $status   = trim($row[70] ?? 1);
+                $signature   = trim($row[69] ?? NULL);
 
                 if (!$memberId || (!$name && !$email)) continue;
 
@@ -46,12 +49,15 @@ class TBLMemberMSTSeeder extends Seeder
                     ['email' => $email],
                     [
                         'name'               => $name,
+                        'title'              => $title ?: null,
                         'gender'             => $gender ?: null,
+                        'contact_no'         => $contact ?: null,
                         'password'           => $password ? Hash::make($password) : Hash::make('password123'),
                         'application_status' => $status,
                         'old_member_id'      => $memberId,
                         'created_at'         => now(),
                         'updated_at'         => now(),
+                        'signature' => (!is_null($signature) && $signature !== '' && strtoupper($signature) !== 'NULL') ? "app/{$signature}" : null,
                     ]
                 );
 

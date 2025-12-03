@@ -80,7 +80,7 @@
                                     {{ $dashboardSetting->welcome_description ?? 'Welcome to your dashboard!' }}</p>
                                 <div class="d-flex gap-3 flex-wrap">
                                     <a href="{{ route('new-policy') }}" class="btn btn-primary">
-                                        <i class="fa fa-plus me-2"></i>APPLY Professional Indemnity
+                                        <i class="fa fa-plus me-2"></i>Apply Professional Indemnity
                                     </a>
                                     <a href="{{ route('customer.products.index') }}" class="btn btn-info">
                                         <i class="fa fa-search me-2"></i>Check our other products
@@ -102,13 +102,13 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>            
         </div>
 
         <!-- Announcements and Action Buttons -->
         <div class="row mb-4">
             <!-- Announcements Section -->
-            <div class="col-lg-12">
+            <div class="col-lg-9">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>📢 Latest Announcements</h5>
@@ -133,9 +133,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Quick Actions Section -->
-            <div class="col-lg-12">
+            <div class="col-3">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>⚡ Quick Actions</h5>

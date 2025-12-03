@@ -137,10 +137,11 @@ class TBLPolicyMSTSeeder extends Seeder
                     'agree_declaration'     => true,
                     'remarks'               => trim($row[40] ?? '') ?: null,
                     'policy_schedule_path'  => trim($row[29] ?? '') ?: null,
-                    'payment_document'      => trim($row[30] ?? '') ?: null,
+                    'payment_document' => (!is_null($doc = trim($row[30] ?? '')) && $doc !== '' && strtoupper($doc) !== 'NULL') ? "app/" . ltrim($doc, '/') : null,
                     'submitted_at'          => $statusMapping['submitted_at'],
                     'approved_at'           => $statusMapping['approved_at'],
                     'payment_received_at'   => $statusMapping['payment_received_at'],
+                    'signature_data'        => $user->signature,
                     'created_at'            => $this->toDateTime($row[27] ?? null),
                     'updated_at'            => $this->toDateTime($row[28] ?? null),
                 ];
@@ -212,6 +213,7 @@ class TBLPolicyMSTSeeder extends Seeder
                         'user_id'                   => $user->id,
                         'policy_application_id'     => $policyApplicationId,
                         'liability_limit'      => $this->toNumeric($row[16] ?? 0),
+                        'base_premium'        => $this->toNumeric($row[17] ?? 0),
                         'gross_premium'        => $this->toNumeric($row[17] ?? 0),
                         'locum_addon'          => $this->toNumeric($row[24] ?? 0), // Amount (e.g., 500.00)
                         'policy_start_date'    => $this->toDate($row[19] ?? null),

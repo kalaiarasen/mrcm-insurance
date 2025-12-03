@@ -126,6 +126,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+    
+    // Serve signature files from storage
+    Route::get('signature/{path}', function($path) {
+        $decodedPath = base64_decode($path);
+        // Path in DB is already relative to storage/, e.g., "app/Document/PolicySignature/..."
+        $fullPath = storage_path($decodedPath);
+        
+        if (!file_exists($fullPath)) {
+            abort(404);
+        }
+        
+        return response()->file($fullPath);
+    })->name('signature.show');
 });
 
 require __DIR__.'/auth.php';
