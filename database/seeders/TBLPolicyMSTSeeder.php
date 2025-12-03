@@ -77,27 +77,7 @@ class TBLPolicyMSTSeeder extends Seeder
                 );
 
                 // -------------------------
-                // 3. INSERT/UPDATE policy_pricings
-                // -------------------------
-                DB::table('policy_pricings')->insert(
-                    [
-                        'user_id'                   => $user->id,
-                        'liability_limit'      => $this->toNumeric($row[16] ?? 0),
-                        'gross_premium'        => $this->toNumeric($row[17] ?? 0),
-                        'locum_addon'          => $this->toNumeric($row[24] ?? 0), // Amount (e.g., 500.00)
-                        'policy_start_date'    => $this->toDate($row[19] ?? null),
-                        'policy_expiry_date'   => $this->toDate($row[20] ?? null),
-                        'locum_extension'      => $this->toBool($row[21] ?? 0), // Boolean (0 or 1)
-                        'sst'                  => $this->toNumeric($row[22] ?? 0),
-                        'total_payable'        => $this->toNumeric($row[25] ?? 0),
-                        'is_used'              => 1,
-                        'created_at'           => $this->toDateTime($row[27] ?? null),
-                        'updated_at'           => $this->toDateTime($row[28] ?? null),
-                    ]
-                );
-
-                // -------------------------
-                // 4. INSERT/UPDATE policy_applications
+                // 3. INSERT/UPDATE policy_applications FIRST
                 // -------------------------
                 $oldPolicyId = trim($row[0] ?? '');
                 $oldPolicyUuid = trim($row[2] ?? '');
@@ -146,6 +126,8 @@ class TBLPolicyMSTSeeder extends Seeder
                 }
                 
                 $policyData = [
+                    'user_id'               => $user->id,
+                    'old_policy_id'         => $oldPolicyId,
                     'old_policy_uuid'       => $oldPolicyUuid ?: null,
                     'reference_number'      => $referenceNumber, // Always has a value (generated if empty)
                     'customer_status'       => $statusMapping['customer_status'],
@@ -207,9 +189,40 @@ class TBLPolicyMSTSeeder extends Seeder
                     }
                 }
                 
-                DB::table('policy_applications')->updateOrInsert(
-                    ['user_id' => $user->id, 'old_policy_id' => $oldPolicyId],
-                    $policyData
+                // Insert or update policy application and get the ID
+                $existingPolicy = DB::table('policy_applications')
+                    ->where('user_id', $user->id)
+                    ->where('old_policy_id', $oldPolicyId)
+                    ->first();
+                
+                if ($existingPolicy) {
+                    DB::table('policy_applications')
+                        ->where('id', $existingPolicy->id)
+                        ->update($policyData);
+                    $policyApplicationId = $existingPolicy->id;
+                } else {
+                    $policyApplicationId = DB::table('policy_applications')->insertGetId($policyData);
+                }
+
+                // -------------------------
+                // 4. INSERT/UPDATE policy_pricings with policy_application_id
+                // -------------------------
+                DB::table('policy_pricings')->insert(
+                    [
+                        'user_id'                   => $user->id,
+                        'policy_application_id'     => $policyApplicationId,
+                        'liability_limit'      => $this->toNumeric($row[16] ?? 0),
+                        'gross_premium'        => $this->toNumeric($row[17] ?? 0),
+                        'locum_addon'          => $this->toNumeric($row[24] ?? 0), // Amount (e.g., 500.00)
+                        'policy_start_date'    => $this->toDate($row[19] ?? null),
+                        'policy_expiry_date'   => $this->toDate($row[20] ?? null),
+                        'locum_extension'      => $this->toBool($row[21] ?? 0), // Boolean (0 or 1)
+                        'sst'                  => $this->toNumeric($row[22] ?? 0),
+                        'total_payable'        => $this->toNumeric($row[25] ?? 0),
+                        'is_used'              => 1,
+                        'created_at'           => $this->toDateTime($row[27] ?? null),
+                        'updated_at'           => $this->toDateTime($row[28] ?? null),
+                    ]
                 );
 
                 $count++;
