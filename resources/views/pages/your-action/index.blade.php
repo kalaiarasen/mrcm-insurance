@@ -128,6 +128,43 @@
         #exportExcelBtn i {
             font-size: 1.1em;
         }
+
+        /* Clickable Card Styles */
+        .clickable-card {
+            transition: all 0.3s ease;
+        }
+
+        .clickable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .clickable-card.active-filter {
+            border: 3px solid #3D9FD8;
+            box-shadow: 0 8px 20px rgba(61, 159, 216, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .clickable-card.active-filter .widget-content {
+            position: relative;
+        }
+
+        .clickable-card.active-filter::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #3D9FD8;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
     </style>
 @endsection
 
@@ -156,29 +193,10 @@
     </div>
     <div class="container-fluid default-dashboard">
         <div class="row widget-grid">
+            <!-- Card 1: Active Policies (Last 30 Days) -->
             <div class="col-md-3">
-                <div class="card widget-1">
-                    <div class="card-body">
-                        <div class="widget-content">
-                            <div class="widget-round secondary">
-                                <div class="bg-round"><svg>
-                                        <use href="{{ asset('assets/svg/icon-sprite.svg#c-revenue') }}"> </use>
-                                    </svg><svg class="half-circle svg-fill">
-                                        <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}"></use>
-                                    </svg></div>
-                            </div>
-                            <div>
-                                <h4><span class="counter" data-target="{{ $newPolicies }}">{{ $newPolicies }}</span></h4>
-                                <span class="f-light">New Policy</span>
-                            </div>
-                        </div>
-                        <div class="font-success f-w-500"><i class="bookmark-search me-1" data-feather="trending-up"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card widget-1">
+                <div class="card widget-1 clickable-card" data-card-filter="active_last_30" style="cursor: pointer;"
+                    title="Click to filter">
                     <div class="card-body">
                         <div class="widget-content">
                             <div class="widget-round success">
@@ -186,13 +204,13 @@
                                         <use href="{{ asset('assets/svg/icon-sprite.svg#c-customer') }}">
                                         </use>
                                     </svg><svg class="half-circle svg-fill">
-                                        <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}">
-                                        </use>
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}"></use>
                                     </svg></div>
                             </div>
                             <div>
-                                <h4><span class="counter" data-target="{{ $activePolicies }}">{{ $activePolicies }}</span>
-                                </h4><span class="f-light">Active Policies</span>
+                                <h4><span class="counter"
+                                        data-target="{{ $activeLast30Days }}">{{ $activeLast30Days }}</span>
+                                </h4><span class="f-light">Active (Last 30 Days)</span>
                             </div>
                         </div>
                         <div class="font-success f-w-500">
@@ -201,8 +219,11 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Card 2: Expiring Soon (Next 3 Months) -->
             <div class="col-md-3">
-                <div class="card widget-1">
+                <div class="card widget-1 clickable-card" data-card-filter="expiring_soon" style="cursor: pointer;"
+                    title="Click to filter">
                     <div class="card-body">
                         <div class="widget-content">
                             <div class="widget-round warning">
@@ -214,8 +235,8 @@
                             </div>
                             <div>
                                 <h4><span class="counter"
-                                        data-target="{{ $pendingPolicies }}">{{ $pendingPolicies }}</span></h4><span
-                                    class="f-light">Policy Pending</span>
+                                        data-target="{{ $expiringNext3Months }}">{{ $expiringNext3Months }}</span></h4>
+                                <span class="f-light">Expiring Soon (3 Months)</span>
                             </div>
                         </div>
                         <div class="font-warning f-w-500"><i class="bookmark-search me-1" data-feather="trending-down"></i>
@@ -223,8 +244,37 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Card 3: Pending Payment -->
             <div class="col-md-3">
-                <div class="card widget-1">
+                <div class="card widget-1 clickable-card" data-card-filter="pending_payment" style="cursor: pointer;"
+                    title="Click to filter">
+                    <div class="card-body">
+                        <div class="widget-content">
+                            <div class="widget-round secondary">
+                                <div class="bg-round"><svg>
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#c-revenue') }}"> </use>
+                                    </svg><svg class="half-circle svg-fill">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#halfcircle') }}"></use>
+                                    </svg></div>
+                            </div>
+                            <div>
+                                <h4><span class="counter" data-target="{{ $pendingPayment }}">{{ $pendingPayment }}</span>
+                                </h4>
+                                <span class="f-light">Pending Payment</span>
+                            </div>
+                        </div>
+                        <div class="font-success f-w-500">
+                            <i class="bookmark-search me-1" data-feather="trending-up"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Sent to Underwriting -->
+            <div class="col-md-3">
+                <div class="card widget-1 clickable-card" data-card-filter="sent_uw" style="cursor: pointer;"
+                    title="Click to filter">
                     <div class="card-body">
                         <div class="widget-content">
                             <div class="widget-round primary">
@@ -238,8 +288,8 @@
                             </div>
                             <div>
                                 <h4><span class="counter"
-                                        data-target="{{ $rejectedPolicies }}">{{ $rejectedPolicies }}</span></h4><span
-                                    class="f-light">Policy Rejected</span>
+                                        data-target="{{ $sentToUnderwriting }}">{{ $sentToUnderwriting }}</span></h4><span
+                                    class="f-light">Sent to Underwriting</span>
                             </div>
                         </div>
                         <div class="font-danger f-w-500"><i class="bookmark-search me-1" data-feather="trending-down"></i>
@@ -259,7 +309,8 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-md-3">
-                                <label for="policyTypeFilter" class="form-label"><i class="fa fa-briefcase-medical me-1"></i>Type of Professional Indemnity</label>
+                                <label for="policyTypeFilter" class="form-label"><i
+                                        class="fa fa-briefcase-medical me-1"></i>Type of Professional Indemnity</label>
                                 <select class="form-select" id="policyTypeFilter">
                                     <option value="">All Types</option>
                                     <option value="medical_practice">Medical Practice</option>
@@ -268,7 +319,8 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label for="statusFilter" class="form-label"><i class="fa fa-info-circle me-1"></i>Status</label>
+                                <label for="statusFilter" class="form-label"><i
+                                        class="fa fa-info-circle me-1"></i>Status</label>
                                 <select class="form-select" id="statusFilter">
                                     <option value="">All Status</option>
                                     <option value="new_case">New Case</option>
@@ -280,16 +332,18 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label for="agentFilter" class="form-label"><i class="fa fa-user-tie me-1"></i>Agent</label>
+                                <label for="agentFilter" class="form-label"><i
+                                        class="fa fa-user-tie me-1"></i>Agent</label>
                                 <select class="form-select" id="agentFilter">
                                     <option value="">All Agents</option>
-                                    @foreach(\App\Models\User::role('Agent')->where('approval_status', 'approved')->orderBy('name')->get() as $agentOption)
+                                    @foreach (\App\Models\User::role('Agent')->where('approval_status', 'approved')->orderBy('name')->get() as $agentOption)
                                         <option value="{{ $agentOption->id }}">{{ $agentOption->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label for="dateRangeSelect" class="form-label"><i class="fa fa-calendar me-1"></i>Date Range</label>
+                                <label for="dateRangeSelect" class="form-label"><i class="fa fa-calendar me-1"></i>Date
+                                    Range</label>
                                 <select class="form-select" id="dateRangeSelect">
                                     <option value="">All Time</option>
                                     <option value="today">Today</option>
@@ -413,6 +467,7 @@
     <script src="{{ asset('assets/js/datatable/datatables/dataTables.bootstrap5.js') }}"></script>
     <script>
         let dataTable;
+        let activeCardFilter = null; // Track active card filter
 
         $(document).ready(function() {
             // Initialize DataTable with server-side processing
@@ -427,6 +482,7 @@
                         d.policy_type = $('#policyTypeFilter').val();
                         d.status = $('#statusFilter').val();
                         d.agent_id = $('#agentFilter').val();
+                        d.card_filter = activeCardFilter; // Add card filter
                     }
                 },
                 columns: [{
@@ -494,6 +550,26 @@
                 ],
                 responsive: true,
                 autoWidth: false
+            });
+
+            // Handle clickable card clicks
+            $('.clickable-card').on('click', function() {
+                const cardFilter = $(this).data('card-filter');
+
+                // Toggle active state
+                if (activeCardFilter === cardFilter) {
+                    // Clicking same card again - clear filter
+                    activeCardFilter = null;
+                    $('.clickable-card').removeClass('active-filter');
+                } else {
+                    // Apply new filter
+                    activeCardFilter = cardFilter;
+                    $('.clickable-card').removeClass('active-filter');
+                    $(this).addClass('active-filter');
+                }
+
+                // Reload DataTable with new filter
+                dataTable.draw();
             });
 
             // Date range select change
@@ -569,11 +645,11 @@
                 const policyType = $('#policyTypeFilter').val();
                 const status = $('#statusFilter').val();
                 const agentId = $('#agentFilter').val();
-                
+
                 // Build URL with parameters
                 let url = "{{ route('for-your-action.export') }}";
                 const params = [];
-                
+
                 if (startDate) {
                     params.push('start_date=' + encodeURIComponent(startDate));
                 }
@@ -589,11 +665,14 @@
                 if (agentId) {
                     params.push('agent_id=' + encodeURIComponent(agentId));
                 }
-                
+                if (activeCardFilter) {
+                    params.push('card_filter=' + encodeURIComponent(activeCardFilter));
+                }
+
                 if (params.length > 0) {
                     url += '?' + params.join('&');
                 }
-                
+
                 // Open in new window to trigger download
                 window.location.href = url;
             });

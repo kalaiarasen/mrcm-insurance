@@ -17,14 +17,16 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
     protected $policyType;
     protected $status;
     protected $agentId;
+    protected $cardFilter;
 
-    public function __construct($startDate = null, $endDate = null, $policyType = null, $status = null, $agentId = null)
+    public function __construct($startDate = null, $endDate = null, $policyType = null, $status = null, $agentId = null, $cardFilter = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->policyType = $policyType;
         $this->status = $status;
         $this->agentId = $agentId;
+        $this->cardFilter = $cardFilter;
     }
 
     /**
@@ -36,7 +38,7 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
             'user.applicantProfile',
             'user.applicantContact',
             'user.healthcareService',
-            'user.policyPricing'
+            'policyPricing'
         ]);
 
         // Filter by agent if specified
@@ -64,6 +66,31 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
         // Apply status filter
         if ($this->status) {
             $query->where('admin_status', $this->status);
+        }
+
+        // Apply card filter (for clickable analytics cards)
+        if ($this->cardFilter) {
+            switch ($this->cardFilter) {
+                case 'active_last_30':
+                    $query->where('admin_status', 'active')
+                          ->where('activated_at', '>=', now()->subDays(30));
+                    break;
+                case 'expiring_soon':
+                    $query->where('admin_status', 'active')
+                          ->whereHas('policyPricing', function($q) {
+                        $q->whereBetween('policy_expiry_date', [
+                            now()->toDateString(),
+                            now()->addMonths(3)->toDateString()
+                        ]);
+                    });
+                    break;
+                case 'pending_payment':
+                    $query->where('admin_status', 'not_paid');
+                    break;
+                case 'sent_uw':
+                    $query->where('admin_status', 'sent_uw');
+                    break;
+            }
         }
 
         return $query->orderBy('updated_at', 'desc')->get();
@@ -119,16 +146,16 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
             $policy->updated_at ? $policy->updated_at->format('d-M-Y h:i A') : 'N/A',
             ucfirst($policy->status ?? 'N/A'),
             $displayStatus,
-            $policy->user?->policyPricing?->policy_expiry_date 
-                ? \Carbon\Carbon::parse($policy->user->policyPricing->policy_expiry_date)->format('d-M-Y') 
+            $policy->policyPricing?->policy_expiry_date 
+                ? \Carbon\Carbon::parse($policy->policyPricing->policy_expiry_date)->format('d-M-Y') 
                 : 'N/A',
             $policy->user?->name ?? 'Unknown',
             $policy->user?->email ?? 'N/A',
             $policy->user?->contact_no ?? $policy->user?->applicantContact?->contact_no ?? 'N/A',
             $this->formatProfessionalIndemnityType($policy->user?->healthcareService?->professional_indemnity_type),
-            is_numeric($policy->user?->policyPricing?->total_payable) 
-                ? number_format($policy->user->policyPricing->total_payable, 2) 
-                : ($policy->user?->policyPricing?->total_payable ?? 'N/A'),
+            is_numeric($policy->policyPricing?->total_payable) 
+                ? number_format($policy->policyPricing->total_payable, 2) 
+                : ($policy->policyPricing?->total_payable ?? 'N/A'),
             $agentName,
             $policy->submitted_at ? $policy->submitted_at->format('d-M-Y h:i A') : 'N/A',
         ];

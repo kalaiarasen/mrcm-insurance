@@ -27,13 +27,13 @@ class DashboardController extends Controller
             ->get();
 
             // Get all policies for the current user (for display table)
-            $policies = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'user.policyPricing'])
+            $policies = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'policyPricing'])
                 ->where('user_id', auth()->id())
                 ->orderBy('updated_at', 'DESC')
                 ->get();
 
             // Get active policies from this year for claims modal (only active, created in current year)
-            $activePoliciesForClaims = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'user.policyPricing'])
+            $activePoliciesForClaims = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'policyPricing'])
                 ->where('user_id', auth()->id())
                 ->where('customer_status', 'active')
                 ->whereYear('created_at', now()->year)
@@ -107,7 +107,7 @@ class DashboardController extends Controller
             'user.addresses',
             'user.applicantContact',
             'user.healthcareService',
-            'user.policyPricing',
+            'policyPricing',
             'user.riskManagement',
             'user.insuranceHistory',
             'user.claimsExperience',

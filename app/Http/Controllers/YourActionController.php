@@ -23,7 +23,7 @@ class YourActionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = PolicyApplication::with('user', 'user.applicantContact', 'user.healthcareService');
+            $query = PolicyApplication::with('user', 'user.applicantContact', 'user.healthcareService', 'policyPricing');
 
             // Filter by agent_id if user is an agent
             if (Auth::user()->hasRole('Agent')) {
@@ -57,6 +57,31 @@ class YourActionController extends Controller
                 $query->whereHas('user', function($q) use ($request) {
                     $q->where('agent_id', $request->agent_id);
                 });
+            }
+
+            // Apply card filter (for clickable analytics cards)
+            if ($request->filled('card_filter')) {
+                switch ($request->card_filter) {
+                    case 'active_last_30':
+                        $query->where('admin_status', 'active')
+                              ->where('activated_at', '>=', now()->subDays(30));
+                        break;
+                    case 'expiring_soon':
+                        $query->where('admin_status', 'active')
+                              ->whereHas('policyPricing', function($q) {
+                            $q->whereBetween('policy_expiry_date', [
+                                now()->toDateString(),
+                                now()->addMonths(3)->toDateString()
+                            ]);
+                        });
+                        break;
+                    case 'pending_payment':
+                        $query->where('admin_status', 'not_paid');
+                        break;
+                    case 'sent_uw':
+                        $query->where('admin_status', 'sent_uw');
+                        break;
+                }
             }
 
             return DataTables::of($query)
@@ -95,7 +120,7 @@ class YourActionController extends Controller
                     return '<span class="badge ' . $badgeClass . '">' . e($displayStatus) . '</span>';
                 })
                 ->addColumn('expiry_date', function ($policy) {
-                    $expiryDate = $policy->user?->policyPricing?->policy_expiry_date ?? 'N/A';
+                    $expiryDate = $policy->policyPricing?->policy_expiry_date ?? 'N/A';
                     return $expiryDate === 'N/A' ? 'N/A' : \Carbon\Carbon::parse($expiryDate)->format('d-M-Y');
                 })
                 ->addColumn('name', function ($policy) {
@@ -118,7 +143,7 @@ class YourActionController extends Controller
                     return e($typeMap[$type] ?? 'N/A');
                 })
                 ->addColumn('amount', function ($policy) {
-                    $amount = $policy->user?->policyPricing?->total_payable;
+                    $amount = $policy->policyPricing?->total_payable;
                     if (is_numeric($amount)) {
                         return 'RM' . number_format($amount, 2);
                     } elseif ($amount === null) {
@@ -199,7 +224,7 @@ class YourActionController extends Controller
                     });
                 })
                 ->filterColumn('expiry_date', function($query, $keyword) {
-                    $query->whereHas('user.policyPricing', function($q) use ($keyword) {
+                    $query->whereHas('policyPricing', function($q) use ($keyword) {
                         $q->where('policy_expiry_date', 'like', "%{$keyword}%");
                     });
                 })
@@ -209,7 +234,7 @@ class YourActionController extends Controller
                     });
                 })
                 ->filterColumn('amount', function($query, $keyword) {
-                    $query->whereHas('user.policyPricing', function($q) use ($keyword) {
+                    $query->whereHas('policyPricing', function($q) use ($keyword) {
                         $q->where('total_payable', 'like', "%{$keyword}%");
                     });
                 })
@@ -240,12 +265,36 @@ class YourActionController extends Controller
             });
         }
         
-        $newPolicies = (clone $baseQuery)->where('admin_status', 'new_case')->count();
-        $activePolicies = (clone $baseQuery)->where('admin_status', 'active')->count();
-        $pendingPolicies = (clone $baseQuery)->where('admin_status', 'not_paid')->count();
-        $rejectedPolicies = (clone $baseQuery)->where('status', 'rejected')->count();
+        // Calculate statistics for new clickable analytics cards
+        $activeLast30Days = (clone $baseQuery)
+            ->where('admin_status', 'active')
+            ->where('activated_at', '>=', now()->subDays(30))
+            ->count();
 
-        return view('pages.your-action.index', compact('newPolicies', 'activePolicies', 'pendingPolicies', 'rejectedPolicies'));
+        $expiringNext3Months = (clone $baseQuery)
+            ->where('admin_status', 'active')
+            ->whereHas('policyPricing', function($q) {
+                $q->whereBetween('policy_expiry_date', [
+                    now()->toDateString(),
+                    now()->addMonths(3)->toDateString()
+                ]);
+            })
+            ->count();
+
+        $pendingPayment = (clone $baseQuery)
+            ->where('admin_status', 'not_paid')
+            ->count();
+
+        $sentToUnderwriting = (clone $baseQuery)
+            ->where('admin_status', 'sent_uw')
+            ->count();
+
+        return view('pages.your-action.index', compact(
+            'activeLast30Days',
+            'expiringNext3Months',
+            'pendingPayment',
+            'sentToUnderwriting'
+        ));
     }
 
     /**
@@ -260,7 +309,7 @@ class YourActionController extends Controller
             'user.addresses',
             'user.applicantContact',
             'user.healthcareService',
-            'user.policyPricing',
+            'policyPricing',
             'user.riskManagement',
             'user.insuranceHistory',
             'user.claimsExperience',
@@ -431,7 +480,7 @@ class YourActionController extends Controller
             'user.addresses',
             'user.applicantContact',
             'user.healthcareService',
-            'user.policyPricing',
+            'policyPricing',
             'user.riskManagement',
             'user.insuranceHistory',
             'user.claimsExperience',
@@ -544,18 +593,19 @@ class YourActionController extends Controller
             }
 
             // Update Policy Pricing
-            if ($user->policyPricing) {
-                $user->policyPricing->update([
-                    'policy_start_date' => $data['policy_start_date'] ?? $user->policyPricing->policy_start_date,
-                    'policy_expiry_date' => $data['policy_expiry_date'] ?? $user->policyPricing->policy_expiry_date,
-                    'liability_limit' => $data['liability_limit'] ?? $user->policyPricing->liability_limit,
-                    'base_premium' => $data['displayBasePremium'] ?? $user->policyPricing->base_premium,
-                    'gross_premium' => $data['displayGrossPremium'] ?? $user->policyPricing->gross_premium,
-                    'locum_addon' => $data['displayLocumAddon'] ?? $user->policyPricing->locum_addon,
-                    'locum_extension' => $data['locum_extension'] ?? $user->policyPricing->locum_extension,
-                    'sst' => $data['displaySST'] ?? $user->policyPricing->sst,
-                    'stamp_duty' => $data['displayStampDuty'] ?? $user->policyPricing->stamp_duty,
-                    'total_payable' => $data['displayTotalPayable'] ?? $user->policyPricing->total_payable,
+            $pricing = $policyApplication->policyPricing;
+            if ($pricing) {
+                $pricing->update([
+                    'policy_start_date' => $data['policy_start_date'] ?? $pricing->policy_start_date,
+                    'policy_expiry_date' => $data['policy_expiry_date'] ?? $pricing->policy_expiry_date,
+                    'liability_limit' => $data['liability_limit'] ?? $pricing->liability_limit,
+                    'base_premium' => $data['displayBasePremium'] ?? $pricing->base_premium,
+                    'gross_premium' => $data['displayGrossPremium'] ?? $pricing->gross_premium,
+                    'locum_addon' => $data['displayLocumAddon'] ?? $pricing->locum_addon,
+                    'locum_extension' => $data['locum_extension'] ?? $pricing->locum_extension,
+                    'sst' => $data['displaySST'] ?? $pricing->sst,
+                    'stamp_duty' => $data['displayStampDuty'] ?? $pricing->stamp_duty,
+                    'total_payable' => $data['displayTotalPayable'] ?? $pricing->total_payable,
                 ]);
             }
 
@@ -684,7 +734,7 @@ class YourActionController extends Controller
             'user.addresses',
             'user.applicantContact',
             'user.healthcareService',
-            'user.policyPricing',
+            'policyPricing',
             'user.riskManagement',
             'user.insuranceHistory',
             'user.claimsExperience',
@@ -698,7 +748,7 @@ class YourActionController extends Controller
         $addresses = $policyApplication->user->addresses;
         $contact = $policyApplication->user->applicantContact;
         $healthcare = $policyApplication->user->healthcareService;
-        $pricing = $policyApplication->user->policyPricing;
+        $pricing = $policyApplication->policyPricing;
         $risk = $policyApplication->user->riskManagement;
         $insurance = $policyApplication->user->insuranceHistory;
         $claims = $policyApplication->user->claimsExperience;
@@ -809,6 +859,7 @@ class YourActionController extends Controller
         $policyType = $request->input('policy_type');
         $status = $request->input('status');
         $filterAgentId = $request->input('agent_id'); // Agent filter from dropdown
+        $cardFilter = $request->input('card_filter'); // Card filter from clickable analytics
         
         // Pass agent ID if user is an agent (their own ID) or filtered agent ID
         $agentId = Auth::user()->hasRole('Agent') ? Auth::id() : $filterAgentId;
@@ -817,7 +868,7 @@ class YourActionController extends Controller
 
         try {
             return Excel::download(
-                new PolicyApplicationsExport($startDate, $endDate, $policyType, $status, $agentId),
+                new PolicyApplicationsExport($startDate, $endDate, $policyType, $status, $agentId, $cardFilter),
                 $fileName
             );
         } catch (\Exception $e) {

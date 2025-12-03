@@ -370,7 +370,7 @@
                                             </p>
                                             <p class="mb-0"><strong>Total Amount Due:</strong> <span
                                                     class="text-success fs-5">RM
-                                                    {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span>
+                                                    {{ number_format($policyApplication->policyPricing->total_payable ?? 0, 2) }}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -390,7 +390,7 @@
 
                             <!-- Pricing Breakdown -->
                             @php
-                                $pricing = $policyApplication->user->policyPricing;
+                                $pricing = $policyApplication->policyPricing;
                             @endphp
                             @if ($pricing)
                                 <div class="row mb-4">
@@ -736,7 +736,7 @@
                                         </div>
                                         <div>
                                             <strong>Amount:</strong> <span class="text-success fs-6 ms-2">RM
-                                                {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span>
+                                                {{ number_format($policyApplication->policyPricing->total_payable ?? 0, 2) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -752,7 +752,7 @@
                 $addresses = $policyApplication->user->addresses;
                 $qualifications = $policyApplication->user->qualifications;
                 $healthcare = $policyApplication->user->healthcareService;
-                $pricing = $policyApplication->user->policyPricing;
+                $pricing = $policyApplication->policyPricing;
                 $risk = $policyApplication->user->riskManagement;
                 $insurance = $policyApplication->user->insuranceHistory;
                 $claims = $policyApplication->user->claimsExperience;
@@ -1472,7 +1472,7 @@
                                                 </p>
                                                 <p class="mb-0"><strong>Amount:</strong> <span
                                                         class="text-success fw-bold">RM
-                                                        {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span>
+                                                        {{ number_format($policyApplication->policyPricing->total_payable ?? 0, 2) }}</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -1494,7 +1494,7 @@
                                             <div class="col-md-6">
                                                 <p class="mb-0"><strong>Amount:</strong> <span
                                                         class="text-success fw-bold">RM
-                                                        {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span>
+                                                        {{ number_format($policyApplication->policyPricing->total_payable ?? 0, 2) }}</span>
                                                 </p>
                                             </div>
                                         </div>

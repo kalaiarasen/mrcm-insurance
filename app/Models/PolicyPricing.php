@@ -23,4 +23,12 @@ class PolicyPricing extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the policy application that owns this pricing.
+     */
+    public function policyApplication(): BelongsTo
+    {
+        return $this->belongsTo(PolicyApplication::class);
+    }
 }

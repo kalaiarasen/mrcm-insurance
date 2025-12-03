@@ -64,7 +64,7 @@ class User extends Authenticatable
      */
     public function applicantProfile(): HasOne
     {
-        return $this->hasOne(ApplicantProfile::class)->where('is_used', true);
+        return $this->hasOne(ApplicantProfile::class)->where('is_used', true);;
     }
 
     /**
@@ -72,7 +72,7 @@ class User extends Authenticatable
      */
     public function applicantContact(): HasOne
     {
-        return $this->hasOne(ApplicantContact::class)->where('is_used', true);
+        return $this->hasOne(ApplicantContact::class)->where('is_used', true);;
     }
 
     /**
@@ -102,9 +102,17 @@ class User extends Authenticatable
     /**
      * Get the user's policy pricing.
      */
-    public function policyPricing(): HasOne
+    public function policyPricing(): HasMany
     {
-        return $this->hasOne(PolicyPricing::class)->where('is_used', true);
+        return $this->hasMany(PolicyPricing::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get the user's latest policy pricing.
+     */
+    public function latestPolicyPricing(): HasOne
+    {
+        return $this->hasOne(PolicyPricing::class)->latestOfMany();
     }
 
     /**
@@ -112,7 +120,7 @@ class User extends Authenticatable
      */
     public function riskManagement(): HasOne
     {
-        return $this->hasOne(RiskManagement::class)->where('is_used', true);
+        return $this->hasOne(RiskManagement::class)->where('is_used', true);;
     }
 
     /**
@@ -120,7 +128,7 @@ class User extends Authenticatable
      */
     public function insuranceHistory(): HasOne
     {
-        return $this->hasOne(InsuranceHistory::class)->where('is_used', true);
+        return $this->hasOne(InsuranceHistory::class)->where('is_used', true);;
     }
 
     /**
@@ -128,7 +136,7 @@ class User extends Authenticatable
      */
     public function claimsExperience(): HasOne
     {
-        return $this->hasOne(ClaimsExperience::class)->where('is_used', true);
+        return $this->hasOne(ClaimsExperience::class)->where('is_used', true);;
     }
 
     /**
@@ -136,7 +144,7 @@ class User extends Authenticatable
      */
     public function policyApplication(): HasOne
     {
-        return $this->hasOne(PolicyApplication::class)->where('is_used', true);
+        return $this->hasOne(PolicyApplication::class)->where('is_used', true);;
     }
 
     /**

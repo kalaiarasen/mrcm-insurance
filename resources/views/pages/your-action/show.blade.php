@@ -370,7 +370,7 @@
                 $addresses = $policyApplication->user->addresses;
                 $qualifications = $policyApplication->user->qualifications;
                 $healthcare = $policyApplication->user->healthcareService;
-                $pricing = $policyApplication->user->policyPricing;
+                $pricing = $policyApplication->policyPricing;
                 $risk = $policyApplication->user->riskManagement;
                 $insurance = $policyApplication->user->insuranceHistory;
                 $claims = $policyApplication->user->claimsExperience;
@@ -1203,7 +1203,7 @@
                                                             <div class="info-label">Amount</div>
                                                             <div class="info-value">
                                                                 <span class="text-success fw-bold fs-5">RM
-                                                                    {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}</span>
+                                                                    {{ number_format($policyApplication->policyPricing->total_payable ?? 0, 2) }}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1231,7 +1231,7 @@
                                     <div class="info-value">
                                         <span class="text-success fw-bold fs-5">
                                             RM
-                                            {{ number_format($policyApplication->user->policyPricing->total_payable ?? 0, 2) }}
+                                            {{ number_format($policyApplication->policyPricing->total_payable ?? 0, 2) }}
                                         </span>
                                     </div>
                                 </div>

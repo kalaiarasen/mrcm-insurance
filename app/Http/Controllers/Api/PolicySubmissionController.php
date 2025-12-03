@@ -235,6 +235,9 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
+            // Link the pricing to the application
+            $policyPricing->update(['policy_application_id' => $policyApplication->id]);
+
             // Calculate and create agent commission if client was referred by an agent
             if ($currentUser->agent_id) {
                 $agent = User::find($currentUser->agent_id);

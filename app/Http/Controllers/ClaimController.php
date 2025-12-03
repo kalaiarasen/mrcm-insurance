@@ -29,7 +29,7 @@ class ClaimController extends Controller
     public function create()
     {
         // Get all active policies for the user
-        $policies = PolicyApplication::with(['user.healthcareService', 'user.policyPricing'])
+        $policies = PolicyApplication::with(['user.healthcareService', 'policyPricing'])
             ->where('user_id', auth()->id())
             ->where('customer_status', 'paid')
             ->where('is_used', true)

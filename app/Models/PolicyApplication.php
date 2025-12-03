@@ -52,7 +52,7 @@ class PolicyApplication extends Model
      */
     public function policyPricing(): HasOne
     {
-        return $this->hasOne(PolicyPricing::class, 'user_id', 'user_id')->where('is_used', true);
+        return $this->hasOne(PolicyPricing::class);
     }
 
     /**

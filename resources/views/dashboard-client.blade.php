@@ -199,10 +199,10 @@
                                                 <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->cover_type ?? 'N/A')) }}
                                                 </td>
                                                 <td>RM
-                                                    {{ number_format(($policy->user->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M
+                                                    {{ number_format(($policy->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M
                                                 </td>
                                                 <td>RM
-                                                    {{ number_format($policy->user->policyPricing->total_payable ?? 0, 2) }}
+                                                    {{ number_format($policy->policyPricing->total_payable ?? 0, 2) }}
                                                 </td>
                                                 <td>
                                                     @if ($policy->customer_status === 'pay_now')

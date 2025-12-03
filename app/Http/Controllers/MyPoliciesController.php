@@ -18,7 +18,7 @@ class MyPoliciesController extends Controller
 
         // Get Professional Indemnity policies
         $policyApplications = PolicyApplication::where('user_id', $user->id)
-            ->with(['user.policyPricing'])
+            ->with(['policyPricing'])
             ->orderBy('created_at', 'desc')
             ->get();
 
