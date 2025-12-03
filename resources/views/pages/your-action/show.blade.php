@@ -1036,8 +1036,12 @@
                                             if ($isBase64) {
                                                 $signatureUrl = $policyApplication->signature_data;
                                             } else {
-                                                // Old data: serve from storage/app/ via a route
-                                                $signatureUrl = route('signature.show', ['path' => base64_encode($policyApplication->signature_data)]);
+                                                // Old data: strip "app/" prefix if present
+                                                $signaturePath = $policyApplication->signature_data;
+                                                if (str_starts_with($signaturePath, 'app/')) {
+                                                    $signaturePath = substr($signaturePath, 4); // Remove "app/" prefix
+                                                }
+                                                $signatureUrl = Storage::url($signaturePath);
                                             }
                                         @endphp
                                         <img src="{{ $signatureUrl }}" alt="Signature">
@@ -1099,12 +1103,12 @@
 
                             @if ($policyApplication->payment_document)
                                 @php
-                                    // Check if payment document is old imported data (starts with app/Document)
-                                    if (str_starts_with($policyApplication->payment_document, 'app/Document')) {
-                                        $paymentDocUrl = route('signature.show', ['path' => base64_encode($policyApplication->payment_document)]);
-                                    } else {
-                                        $paymentDocUrl = Storage::url($policyApplication->payment_document);
+                                    // Check if payment document is old imported data (starts with app/)
+                                    $paymentDocPath = $policyApplication->payment_document;
+                                    if (str_starts_with($paymentDocPath, 'app/')) {
+                                        $paymentDocPath = substr($paymentDocPath, 4); // Remove "app/" prefix
                                     }
+                                    $paymentDocUrl = Storage::url($paymentDocPath);
                                 @endphp
                                 <div class="row mt-3">
                                     <div class="col-12">
