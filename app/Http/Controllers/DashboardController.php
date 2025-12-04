@@ -29,7 +29,7 @@ class DashboardController extends Controller
             // Get all policies for the current user (for display table)
             $policies = PolicyApplication::with(['user.applicantProfile', 'user.healthcareService', 'policyPricing'])
                 ->where('user_id', auth()->id())
-                ->orderBy('updated_at', 'DESC')
+                ->orderBy('created_at', 'DESC')
                 ->get();
 
             // Get active policies from this year for claims modal (only active, created in current year)
@@ -194,7 +194,7 @@ class DashboardController extends Controller
 
             DB::commit();
 
-            $message = $paymentType === 'proof' 
+            $message = $paymentType === 'proof'
                 ? 'Payment document uploaded successfully! Your policy status has been updated to Paid.'
                 : 'Credit card payment received successfully! Your policy status has been updated to Paid.';
 
@@ -204,7 +204,7 @@ class DashboardController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Failed to process payment', [
                 'policy_id' => $id,
                 'user_id' => auth()->id(),
