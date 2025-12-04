@@ -243,9 +243,9 @@ class TBLPolicyMSTSeeder extends Seeder
                     ]
                 );
 
-                $user->update([
-                    'nric_number' => $row[33] ?? null,
-                ]);
+                // $user->update([
+                //     'nric_number' => $row[33] ?? null,
+                // ]);
 
                 $count++;
                 if ($count % 100 == 0) {

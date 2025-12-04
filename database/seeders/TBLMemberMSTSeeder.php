@@ -35,6 +35,7 @@ class TBLMemberMSTSeeder extends Seeder
                 // -------------------------
                 $memberId = trim($row[0] ?? '');
                 $name     = trim($row[2] ?? '');
+                $nric     = trim($row[3] ?? '');
                 $title    = trim($row[1] ?? '');
                 $email    = trim($row[9] ?? '');
                 $password = trim($row[10] ?? '');
@@ -61,6 +62,7 @@ class TBLMemberMSTSeeder extends Seeder
                         'nationality_status' => trim($row[4] ?? NULL),
                         'registration_council' => strtolower(trim($row[43] ?? NULL)),
                         'registration_number' => trim($row[44] ?? NULL),
+                        'nric_number' => $nric
                     ]
                 );
 
