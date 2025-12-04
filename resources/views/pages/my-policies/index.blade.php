@@ -99,7 +99,7 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('for-your-action.show', $policy->id) }}"
+                                                    <a href="{{ route('client-policy.show', $policy->id) }}"
                                                         class="btn btn-sm btn-primary">
                                                         <i class="fa fa-eye"></i> View
                                                     </a>
