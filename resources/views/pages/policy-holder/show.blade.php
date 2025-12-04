@@ -260,7 +260,6 @@
                                         <tr>
                                             <th>Reference No</th>
                                             <th>Submission Date</th>
-                                            <th>Type</th>
                                             <th>Professional Type</th>
                                             <th>Liability Limit</th>
                                             <th>Total Payable</th>
@@ -278,13 +277,6 @@
                                                     {{ $application->created_at->format('d M Y') }}<br>
                                                     <small
                                                         class="text-muted">{{ $application->created_at->format('h:i A') }}</small>
-                                                </td>
-                                                <td>
-                                                    @if ($application->submission_version == 0)
-                                                        <span class="badge bg-primary">New</span>
-                                                    @else
-                                                        <span class="badge bg-warning">Renewal</span>
-                                                    @endif
                                                 </td>
                                                 <td>
                                                     @if ($application->healthcareService)
