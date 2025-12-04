@@ -102,7 +102,7 @@
                         </div>
                     </div>
                 </div>
-            </div>            
+            </div>
         </div>
 
         <!-- Announcements and Action Buttons -->
@@ -184,6 +184,7 @@
                                             <th>Liability Limit</th>
                                             <th>Total Amount</th>
                                             <th>Status</th>
+                                            <th>Validity</th>
                                             <th>Submitted Date</th>
                                             <th>Action</th>
                                         </tr>
@@ -229,6 +230,15 @@
                                                         </span>
                                                     @endif
                                                 </td>
+                                                <td>
+                                                    {{ $policy->policyPricing
+                                                        ? \Carbon\Carbon::parse($policy->policyPricing->policy_start_date)->format('d M Y')
+                                                            . ' - ' .
+                                                          \Carbon\Carbon::parse($policy->policyPricing->policy_expiry_date)->format('d M Y')
+                                                        : 'N/A'
+                                                    }}
+                                                </td>
+
                                                 <td>{{ $policy->created_at->format('d M Y') }}</td>
                                                 <td>
                                                     <a href="{{ route('client-policy.show', $policy->id) }}"
