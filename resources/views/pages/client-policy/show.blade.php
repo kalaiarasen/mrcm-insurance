@@ -849,7 +849,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="info-label">Contact Number</div>
-                                <div class="info-value">{{ $contact ? $contact->contact_no : 'N/A' }}</div>
+                                <div class="info-value">{{ $contact ? $contact->contact_no : ($policyApplication->user->contact_no ?? 'N/A') }}</div>
                             </div>
                         </div>
                     </div>
