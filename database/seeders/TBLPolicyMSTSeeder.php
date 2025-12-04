@@ -237,6 +237,7 @@ class TBLPolicyMSTSeeder extends Seeder
                         'registration_council' => $user->registration_council ?? null,
                         'registration_number' => $user->registration_number ?? null,
                         'is_used' => 1,
+                        'contact_no' => $user->contact_no,
                         'updated_at' => now(),
                         'created_at' => now(),
                     ]
