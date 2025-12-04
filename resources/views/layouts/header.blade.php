@@ -42,56 +42,56 @@
                         </svg>
                     </div>
                 </li>
-                <li class="onhover-dropdown">
-                    <div class="notification-box">
-                        <svg>
-                            <use href="{{ asset('assets/svg/icon-sprite.svg#notification') }}"></use>
-                        </svg>
-                        <span class="badge rounded-pill badge-success">4 </span>
-                    </div>
-                    <div class="onhover-show-div notification-dropdown">
-                        <h6 class="f-18 mb-0 dropdown-title">Notifications</h6>
-                        <ul>
-                            <li class="b-l-primary border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-                                <div class="d-flex justify-content-between">
-                                    <div class="toast-body">
-                                        <p>Delivery processing</p>
-                                    </div>
-                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
-                                </div>
-                            </li>
-                            <li class="b-l-success border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-                                <div class="d-flex justify-content-between">
-                                    <div class="toast-body">
-                                        <p>Order Complete</p>
-                                    </div>
-                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
-                                </div>
-                            </li>
-                            <li class="b-l-secondary border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-                                <div class="d-flex justify-content-between">
-                                    <div class="toast-body">
-                                        <p>Tickets Generated</p>
-                                    </div>
-                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
-                                </div>
-                            </li>
-                            <li class="b-l-warning border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-                                <div class="d-flex justify-content-between">
-                                    <div class="toast-body">
-                                        <p>Delivery Complete</p>
-                                    </div>
-                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+{{--                <li class="onhover-dropdown">--}}
+{{--                    <div class="notification-box">--}}
+{{--                        <svg>--}}
+{{--                            <use href="{{ asset('assets/svg/icon-sprite.svg#notification') }}"></use>--}}
+{{--                        </svg>--}}
+{{--                        <span class="badge rounded-pill badge-success">4 </span>--}}
+{{--                    </div>--}}
+{{--                    <div class="onhover-show-div notification-dropdown">--}}
+{{--                        <h6 class="f-18 mb-0 dropdown-title">Notifications</h6>--}}
+{{--                        <ul>--}}
+{{--                            <li class="b-l-primary border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">--}}
+{{--                                <div class="d-flex justify-content-between">--}}
+{{--                                    <div class="toast-body">--}}
+{{--                                        <p>Delivery processing</p>--}}
+{{--                                    </div>--}}
+{{--                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>--}}
+{{--                                </div>--}}
+{{--                            </li>--}}
+{{--                            <li class="b-l-success border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">--}}
+{{--                                <div class="d-flex justify-content-between">--}}
+{{--                                    <div class="toast-body">--}}
+{{--                                        <p>Order Complete</p>--}}
+{{--                                    </div>--}}
+{{--                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>--}}
+{{--                                </div>--}}
+{{--                            </li>--}}
+{{--                            <li class="b-l-secondary border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">--}}
+{{--                                <div class="d-flex justify-content-between">--}}
+{{--                                    <div class="toast-body">--}}
+{{--                                        <p>Tickets Generated</p>--}}
+{{--                                    </div>--}}
+{{--                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>--}}
+{{--                                </div>--}}
+{{--                            </li>--}}
+{{--                            <li class="b-l-warning border-4 toast default-show-toast align-items-center text-light border-0 fade show" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">--}}
+{{--                                <div class="d-flex justify-content-between">--}}
+{{--                                    <div class="toast-body">--}}
+{{--                                        <p>Delivery Complete</p>--}}
+{{--                                    </div>--}}
+{{--                                    <button class="btn-close btn-close-white me-2 m-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>--}}
+{{--                                </div>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                    </div>--}}
+{{--                </li>--}}
                 <li class="profile-nav onhover-dropdown pe-0 py-0">
                     <div class="d-flex profile-media">
-                        <img class="b-r-10" 
-                            src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/images/dashboard/profile.png') }}" 
-                            alt="Profile" 
+                        <img class="b-r-10"
+                            src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/images/dashboard/profile.png') }}"
+                            alt="Profile"
                             style="width: 40px; height: 40px; object-fit: cover;" />
                         <div class="flex-grow-1">
                             <span>{{ Auth::user()->name }}</span>

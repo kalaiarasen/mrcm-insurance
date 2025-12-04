@@ -40,7 +40,7 @@
                     </li> --}}
                     @role('Client')
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-house"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('dashboard') ? 'active' : '' }}"
                                 href="{{ route('dashboard') }}">
                                 <svg class="stroke-icon">
@@ -53,7 +53,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-book"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}"
                                 href="{{ route('new-policy') }}">
                                 <svg class="stroke-icon">
@@ -66,7 +66,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-archive"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('customer.products.*') ? 'active' : '' }}"
                                 href="{{ route('customer.products.index') }}">
                                 <svg class="stroke-icon">
@@ -79,7 +79,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-user"></i>
                             <a class="sidebar-link sidebar-title link-nav" href="{{ route('profile.edit') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
@@ -91,7 +91,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-book"></i>
                             <a class="sidebar-link sidebar-title link-nav" href="{{ route('my-policies.index') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
@@ -103,7 +103,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-sign-out"></i>
                             <a class="sidebar-link sidebar-title link-nav" href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <svg class="stroke-icon">
@@ -121,7 +121,7 @@
                     @endrole
                     @hasanyrole('Super Admin|Admin')
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-pencil"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('for-your-action') ? 'active' : '' }}"
                                 href="{{ route('for-your-action') }}">
                                 <svg class="stroke-icon">
@@ -134,7 +134,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-archive"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('policy-holder') ? 'active' : '' }}"
                                 href="{{ route('policy-holder') }}">
                                 <svg class="stroke-icon">
@@ -147,7 +147,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-list"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('claims.*') ? 'active' : '' }}"
                                 href="{{ route('claims.index') }}">
                                 <svg class="stroke-icon">
@@ -160,7 +160,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-bullhorn"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('announcements.*') ? 'active' : '' }}"
                                 href="{{ route('announcements.index') }}">
                                 <svg class="stroke-icon">
@@ -173,7 +173,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-tasks"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('products.*') ? 'active' : '' }}"
                                 href="{{ route('products.index') }}">
                                 <svg class="stroke-icon">
@@ -187,7 +187,7 @@
                         </li>
 
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-users"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('users.*') ? 'active' : '' }}"
                                 href="{{ route('users.index') }}">
                                 <svg class="stroke-icon">
@@ -202,7 +202,7 @@
                     @endhasanyrole
                     @role('Super Admin')
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-gears"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles.*') ? 'active' : '' }}"
                                 href="{{ route('roles.index') }}">
                                 <svg class="stroke-icon">
@@ -217,7 +217,7 @@
                     @endrole
                     @hasanyrole('Super Admin|Admin')
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-wallet"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('wallet.*') ? 'active' : '' }}"
                                 href="{{ route('wallet.index') }}">
                                 <svg class="stroke-icon">
@@ -230,7 +230,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-home"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('dashboard-settings.*') ? 'active' : '' }}"
                                 href="{{ route('dashboard-settings.edit') }}">
                                 <svg class="stroke-icon">
@@ -243,7 +243,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-user-secret"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agents.*') ? 'active' : '' }}"
                                 href="{{ route('agents.index') }}">
                                 <svg class="stroke-icon">
@@ -256,7 +256,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-percentage"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('discounts.*') ? 'active' : '' }}"
                                 href="{{ route('discounts.index') }}">
                                 <svg class="stroke-icon">
@@ -271,7 +271,7 @@
                     @endhasanyrole
                     @hasrole('Agent')
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-tasks"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('for-your-action') ? 'active' : '' }}"
                                 href="{{ route('for-your-action') }}">
                                 <svg class="stroke-icon">
@@ -284,7 +284,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-users"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('policy-holder') ? 'active' : '' }}"
                                 href="{{ route('policy-holder') }}">
                                 <svg class="stroke-icon">
@@ -297,7 +297,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-money-bill"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agent.commissions') ? 'active' : '' }}"
                                 href="{{ route('agent.commissions') }}">
                                 <svg class="stroke-icon">
@@ -310,7 +310,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-user"></i>
                             <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('agent.profile') ? 'active' : '' }}"
                                 href="{{ route('agent.profile') }}">
                                 <svg class="stroke-icon">
@@ -323,7 +323,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-solid fa-sign-out"></i>
                             <a class="sidebar-link sidebar-title link-nav" href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <svg class="stroke-icon">
