@@ -824,7 +824,7 @@
                             <div class="col-md-6">
                                 <div class="info-label">Nationality Status</div>
                                 <div class="info-value">
-                                    {{ $profile ? ucfirst(str_replace('_', ' ', $profile->nationality_status)) : 'N/A' }}
+                                    {{ $profile ? ucfirst(str_replace('_', ' ', $profile->nationality_status ?? $user->nationality_status)) : 'N/A' }}
                                 </div>
                             </div>
                             <div class="col-md-6">

@@ -102,11 +102,16 @@ class ExcelMedicalSeeder extends Seeder
                 DB::table('applicant_profiles')->updateOrInsert(
                     ['user_id' => $user->id],
                     [
-                        'title'           => $user->title,
-                        'nric_number'      => $nric ?: null,
-                        'passport_number'  => $passport_no ?: null,
-                        'updated_at'       => now(),
-                        'created_at'       => now(),
+                        'title' => $user->title,
+                        'nationality_status' => $user->nationality_status ?? null,
+                        'nric_number' => $user->nric_number ?? null,
+                        'passport_number' => $data['Passport Number'] ?? null,
+                        'gender' => $user->gender,
+                        'registration_council' => $user->registration_council ?? null,
+                        'registration_number' => $user->registration_number ?? null,
+                        'is_used' => 1,
+                        'updated_at' => now(),
+                        'created_at' => now(),
                     ]
                 );
 

@@ -58,10 +58,35 @@ class TBLMemberMSTSeeder extends Seeder
                         'created_at'         => now(),
                         'updated_at'         => now(),
                         'signature' => (!is_null($signature) && $signature !== '' && strtoupper($signature) !== 'NULL') ? "app/{$signature}" : null,
+                        'nationality_status' => trim($row[4] ?? NULL),
+                        'registration_council' => strtolower(trim($row[43] ?? NULL)),
+                        'registration_number' => trim($row[44] ?? NULL),
                     ]
                 );
 
                 $userId = $user->id;
+
+                $mailingAddress     = trim($row[14] ?? '');
+                $mailingPostcode = trim($row[15] ?? '');
+                $mailingState    = trim($row[16] ?? '');
+                $mailingCity     = trim($row[17] ?? '');
+                $mailingCountry  = trim($row[18] ?? '');
+
+                if ($mailingAddress) {
+                    DB::table('addresses')->updateOrInsert(
+                        ['user_id' => $userId, 'type' => 'mailing'],
+                        [
+                            'address'    => $mailingAddress,
+                            'postcode'   => $mailingPostcode,
+                            'state'      => $mailingState,
+                            'city'       => $mailingCity,
+                            'country'    => $mailingCountry,
+                            'is_used'    => 1,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]
+                    );
+                }
 
                 // -------------------------
                 // 2. PRIMARY ADDRESS
@@ -76,8 +101,9 @@ class TBLMemberMSTSeeder extends Seeder
 
                 if ($primaryAddress) {
                     DB::table('addresses')->updateOrInsert(
-                        ['user_id' => $userId, 'type' => $primaryType, 'clinic_name' => $primaryClinic],
+                        ['user_id' => $userId, 'type' => 'primary_clinic', 'clinic_name' => $primaryClinic],
                         [
+                            'clinic_type' => $primaryType,
                             'address'    => $primaryAddress,
                             'postcode'   => $primaryPostcode,
                             'state'      => $primaryState,
@@ -103,7 +129,7 @@ class TBLMemberMSTSeeder extends Seeder
 
                 if ($secondaryAddress) {
                     DB::table('addresses')->updateOrInsert(
-                        ['user_id' => $userId, 'type' => $secondaryType, 'clinic_name' => $secondaryClinic],
+                        ['user_id' => $userId, 'type' => 'secondary_clinic', 'clinic_name' => $secondaryClinic],
                         [
                             'address'    => $secondaryAddress,
                             'postcode'   => $secondaryPostcode,

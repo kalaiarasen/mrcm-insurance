@@ -227,6 +227,25 @@ class TBLPolicyMSTSeeder extends Seeder
                     ]
                 );
 
+                DB::table('applicant_profiles')->updateOrInsert(
+                    ['user_id' => $user->id],
+                    [
+                    'title' => $user->title,
+                        'nationality_status' => $user->nationality_status ?? null,
+                        'nric_number' => $user->nric_number ?: null,
+                        'gender' => $user->gender,
+                        'registration_council' => $user->registration_council ?? null,
+                        'registration_number' => $user->registration_number ?? null,
+                        'is_used' => 1,
+                        'updated_at' => now(),
+                        'created_at' => now(),
+                    ]
+                );
+
+                $user->update([
+                    'nric_number' => $row[33] ?? null,
+                ]);
+
                 $count++;
                 if ($count % 100 == 0) {
                     $this->command->info("Processed {$count} policies...");
