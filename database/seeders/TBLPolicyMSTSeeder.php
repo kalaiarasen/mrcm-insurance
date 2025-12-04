@@ -237,7 +237,19 @@ class TBLPolicyMSTSeeder extends Seeder
                         'registration_council' => $user->registration_council ?? null,
                         'registration_number' => $user->registration_number ?? null,
                         'is_used' => 1,
+                        'updated_at' => now(),
+                        'created_at' => now(),
+                    ]
+                );
+
+                DB::table('applicant_contacts')->updateOrInsert(
+                [
+                        'user_id' => $user->id,
                         'contact_no' => $user->contact_no,
+                    ],
+                    [
+                        'email_address' => $user->email,
+                        'is_used' => 1,
                         'updated_at' => now(),
                         'created_at' => now(),
                     ]
