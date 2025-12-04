@@ -582,6 +582,7 @@
                             // Check if signature is base64 or file path
                             $isBase64 = str_starts_with($policyApplication->signature_data, 'data:image');
                             if ($isBase64) {
+                                // Base64 images work directly in DomPDF
                                 $signatureUrl = $policyApplication->signature_data;
                             } else {
                                 // Old data: strip "app/" prefix if present
@@ -589,7 +590,9 @@
                                 if (str_starts_with($signaturePath, 'app/')) {
                                     $signaturePath = substr($signaturePath, 4); // Remove "app/" prefix
                                 }
-                                $signatureUrl = Storage::url($signaturePath);
+                                // DomPDF requires absolute file paths, not URLs
+                                // Convert storage path to absolute path
+                                $signatureUrl = storage_path('app/' . $signaturePath);
                             }
                         @endphp
                         <img src="{{ $signatureUrl }}" alt="Signature" style="max-height: 40px;">
