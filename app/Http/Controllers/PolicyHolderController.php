@@ -39,7 +39,8 @@ class PolicyHolderController extends Controller
                 })
                 ->addColumn('name', function ($holder) {
                     $title = $holder->applicantProfile?->title ?? '';
-                    return '<strong>' . e($title . ($title ? '. ' : '') . $holder->name) . '</strong>';
+                    $fullName = trim($title . ' ' . $holder->name);
+                    return '<strong>' . e($fullName) . '</strong>';
                 })
                 ->addColumn('gender', function ($holder) {
                     return ucwords($holder->applicantProfile?->gender ?? '-');
@@ -67,9 +68,9 @@ class PolicyHolderController extends Controller
                                 </a>
                             </li>';
                     }
-                    
+
                     return '
-                        <ul class="action">' . 
+                        <ul class="action">' .
                             $editButton . '
                             <li class="view">
                                 <a href="' . route('policy-holders.show', $holder->id) . '" title="View Details">
@@ -121,7 +122,7 @@ class PolicyHolderController extends Controller
         if (!$user->relationLoaded('applicantProfile')) {
             $user->load('applicantProfile');
         }
-        
+
         if (!$user->applicantProfile) {
             return response()->json([
                 'success' => false,
@@ -158,7 +159,7 @@ class PolicyHolderController extends Controller
         if (!$user->relationLoaded('applicantProfile')) {
             $user->load('applicantProfile');
         }
-        
+
         if (!$user->applicantProfile) {
             return response()->json([
                 'success' => false,
