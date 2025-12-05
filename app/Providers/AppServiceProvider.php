@@ -23,5 +23,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability) {
             return $user->hasRole('Super Admin') ? true : null;
         });
+
+        // Share Professional Indemnity policy status with sidebar
+        view()->composer('layouts.sidebar', \App\View\Composers\SidebarComposer::class);
     }
 }

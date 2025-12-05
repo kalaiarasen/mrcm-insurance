@@ -62,6 +62,25 @@ class DashboardController extends Controller
             $monthlyRevenue = 0;
             $walletAmount = auth()->user()->wallet_amount ?? 0;
 
+            // Check for active Professional Indemnity policy
+            $activeProfessionalIndemnityPolicy = PolicyApplication::with(['policyPricing'])
+                ->where('user_id', auth()->id())
+                ->whereIn('customer_status', ['active', 'paid', 'approved', 'processing'])
+                ->first();
+
+            $hasActiveProfessionalIndemnity = $activeProfessionalIndemnityPolicy !== null;
+            $renewalEligible = false;
+
+            // Calculate renewal eligibility (6 months before expiry)
+            if ($hasActiveProfessionalIndemnity && $activeProfessionalIndemnityPolicy->policyPricing) {
+                $expiryDate = \Carbon\Carbon::parse($activeProfessionalIndemnityPolicy->policyPricing->policy_expiry_date);
+                $sixMonthsBeforeExpiry = $expiryDate->copy()->subMonths(6);
+                $now = now();
+                
+                // Eligible for renewal if current date is within 6 months of expiry
+                $renewalEligible = $now->greaterThanOrEqualTo($sixMonthsBeforeExpiry);
+            }
+
             return view('dashboard-client', compact(
                 'announcements',
                 'policies',
@@ -73,7 +92,10 @@ class DashboardController extends Controller
                 'totalPolicies',
                 'totalClaims',
                 'monthlyRevenue',
-                'walletAmount'
+                'walletAmount',
+                'hasActiveProfessionalIndemnity',
+                'renewalEligible',
+                'activeProfessionalIndemnityPolicy'
             ));
         }
 

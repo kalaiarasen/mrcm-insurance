@@ -54,16 +54,44 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}"
-                                href="{{ route('new-policy') }}">
-                                <svg class="stroke-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
-                                </svg>
-                                <span>Professional Indemnity</span>
-                            </a>
+                            @if ($hasActiveProfessionalIndemnity && !$renewalEligible)
+                                {{-- Has active policy, not eligible for renewal - disabled state --}}
+                                <a class="sidebar-link sidebar-title link-nav" href="#"
+                                    style="opacity: 0.5; cursor: not-allowed; pointer-events: none;"
+                                    title="You already have an active Professional Indemnity policy">
+                                    <svg class="stroke-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
+                                    </svg>
+                                    <svg class="fill-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
+                                    </svg>
+                                    <span>Professional Indemnity</span>
+                                </a>
+                            @elseif ($hasActiveProfessionalIndemnity && $renewalEligible)
+                                {{-- Eligible for renewal - highlighted state --}}
+                                <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}"
+                                    href="{{ route('new-policy') }}" style="background-color: #ffc107; color: #000;">
+                                    <svg class="stroke-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
+                                    </svg>
+                                    <svg class="fill-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
+                                    </svg>
+                                    <span>Renew Professional Indemnity</span>
+                                </a>
+                            @else
+                                {{-- No active policy - normal state --}}
+                                <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('new-policy') ? 'active' : '' }}"
+                                    href="{{ route('new-policy') }}">
+                                    <svg class="stroke-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
+                                    </svg>
+                                    <svg class="fill-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
+                                    </svg>
+                                    <span>Professional Indemnity</span>
+                                </a>
+                            @endif
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
@@ -334,7 +362,8 @@
                                 </svg>
                                 <span>Logout</span>
                             </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                style="display: none;">
                                 @csrf
                             </form>
                         </li>

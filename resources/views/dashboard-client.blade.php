@@ -79,9 +79,23 @@
                                 <p class="text-muted mb-4" style="white-space: pre-line;">
                                     {{ $dashboardSetting->welcome_description ?? 'Welcome to your dashboard!' }}</p>
                                 <div class="d-flex gap-3 flex-wrap">
-                                    <a href="{{ route('new-policy') }}" class="btn btn-primary">
-                                        <i class="fa fa-plus me-2"></i>Apply Professional Indemnity
-                                    </a>
+                                    @if ($hasActiveProfessionalIndemnity && !$renewalEligible)
+                                        {{-- Has active policy, not eligible for renewal --}}
+                                        <button class="btn btn-secondary" disabled
+                                            title="You already have an active Professional Indemnity policy">
+                                            <i class="fa fa-check-circle me-2"></i>Active Professional Indemnity
+                                        </button>
+                                    @elseif ($hasActiveProfessionalIndemnity && $renewalEligible)
+                                        {{-- Eligible for renewal --}}
+                                        <a href="{{ route('new-policy') }}" class="btn btn-warning text-dark">
+                                            <i class="fa fa-sync me-2"></i>Renew Professional Indemnity
+                                        </a>
+                                    @else
+                                        {{-- No active policy --}}
+                                        <a href="{{ route('new-policy') }}" class="btn btn-primary">
+                                            <i class="fa fa-plus me-2"></i>Apply Professional Indemnity
+                                        </a>
+                                    @endif
                                     <a href="{{ route('customer.products.index') }}" class="btn btn-info">
                                         <i class="fa fa-search me-2"></i>Check our other products
                                     </a>
@@ -140,9 +154,23 @@
                     </div>
                     <div class="card-body quick-actions">
                         <div class="d-grid gap-2">
-                            <a href="{{ route('new-policy') }}" class="btn btn-primary">
-                                <i class="fa fa-plus me-2"></i>New Policy Application
-                            </a>
+                            @if ($hasActiveProfessionalIndemnity && !$renewalEligible)
+                                {{-- Has active policy, not eligible for renewal --}}
+                                <button class="btn btn-secondary" disabled
+                                    title="You already have an active Professional Indemnity policy">
+                                    <i class="fa fa-check-circle me-2"></i>Active Policy
+                                </button>
+                            @elseif ($hasActiveProfessionalIndemnity && $renewalEligible)
+                                {{-- Eligible for renewal --}}
+                                <a href="{{ route('new-policy') }}" class="btn btn-warning text-dark">
+                                    <i class="fa fa-sync me-2"></i>Renew Policy
+                                </a>
+                            @else
+                                {{-- No active policy --}}
+                                <a href="{{ route('new-policy') }}" class="btn btn-primary">
+                                    <i class="fa fa-plus me-2"></i>New Policy Application
+                                </a>
+                            @endif
                             <a href="{{ route('my-policies.index') }}" class="btn btn-outline-success">
                                 <i class="fa fa-file-text me-2"></i>View My Policies
                             </a>
@@ -232,11 +260,10 @@
                                                 </td>
                                                 <td>
                                                     {{ $policy->policyPricing
-                                                        ? \Carbon\Carbon::parse($policy->policyPricing->policy_start_date)->format('d M Y')
-                                                            . ' - ' .
-                                                          \Carbon\Carbon::parse($policy->policyPricing->policy_expiry_date)->format('d M Y')
-                                                        : 'N/A'
-                                                    }}
+                                                        ? \Carbon\Carbon::parse($policy->policyPricing->policy_start_date)->format('d M Y') .
+                                                            ' - ' .
+                                                            \Carbon\Carbon::parse($policy->policyPricing->policy_expiry_date)->format('d M Y')
+                                                        : 'N/A' }}
                                                 </td>
 
                                                 <td>{{ $policy->created_at->format('d M Y') }}</td>
@@ -271,7 +298,8 @@
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle me-2"></i>
                                 You have not submitted any quotation requests yet.
-                                <a href="{{ route('customer.products.index') }}" class="alert-link text-dark">Browse products</a>
+                                <a href="{{ route('customer.products.index') }}" class="alert-link text-dark">Browse
+                                    products</a>
                                 to
                                 request a quote.
                             </div>
