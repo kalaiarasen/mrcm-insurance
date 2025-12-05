@@ -184,6 +184,27 @@
                                     </div>
                                 @endif
 
+                                <!-- Bank Payment Details -->
+                                <div class="card bg-light border-primary mb-3">
+                                    <div class="card-body">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="fa fa-university"></i> Payment Details
+                                        </h6>
+                                        <div class="mb-2">
+                                            <small class="text-muted">Bank Name:</small>
+                                            <div class="text-dark"><strong>Public Bank</strong></div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <small class="text-muted">Account Number:</small>
+                                            <div class="text-dark"><strong>3231145024</strong></div>
+                                        </div>
+                                        <div class="mb-0">
+                                            <small class="text-muted">Account Name:</small>
+                                            <div class="text-dark"><strong>MRCM Services (M) Sdn Bhd</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="mb-3">
                                     <label for="payment_document" class="form-label">Payment Proof <span
                                             class="text-danger">*</span></label>
