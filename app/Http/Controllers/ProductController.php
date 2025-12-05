@@ -43,7 +43,7 @@ class ProductController extends Controller
         
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'type' => 'required|in:car_insurance,rahmah_insurance,hiking_insurance,other',
+            'type' => 'required',
             'coverage_benefits' => 'nullable|string',
             'brochure' => 'nullable|image|mimes:jpg,jpeg|max:2048',
             'pdf' => 'nullable|mimes:pdf|max:10240',
@@ -113,7 +113,7 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'type' => 'required|in:car_insurance,rahmah_insurance,hiking_insurance,other',
+            'type' => 'required',
             'coverage_benefits' => 'nullable|string',
             'brochure' => 'nullable|image|mimes:jpg,jpeg|max:2048',
             'pdf' => 'nullable|mimes:pdf|max:10240',

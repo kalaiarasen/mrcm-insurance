@@ -57,22 +57,18 @@
 
                             <!-- Type -->
                             <div class="mb-3">
-                                <label class="form-label" for="type">Product Type <span
-                                        class="text-danger">*</span></label>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label mb-0" for="type">Product Type <span
+                                            class="text-danger">*</span></label>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target="#manageTypesModal">
+                                        <i class="fa fa-cog"></i> Manage Types
+                                    </button>
+                                </div>
                                 <select class="form-select @error('type') is-invalid @enderror" id="type"
                                     name="type" required>
                                     <option value="">Select Type</option>
-                                    <option value="car_insurance"
-                                        {{ old('type', $product->type) == 'car_insurance' ? 'selected' : '' }}>Car Insurance
-                                    </option>
-                                    <option value="rahmah_insurance"
-                                        {{ old('type', $product->type) == 'rahmah_insurance' ? 'selected' : '' }}>Rahmah
-                                        Insurance</option>
-                                    <option value="hiking_insurance"
-                                        {{ old('type', $product->type) == 'hiking_insurance' ? 'selected' : '' }}>Hiking
-                                        Insurance</option>
-                                    <option value="other" {{ old('type', $product->type) == 'other' ? 'selected' : '' }}>
-                                        Other</option>
+                                    <!-- Options will be loaded dynamically via JavaScript -->
                                 </select>
                                 @error('type')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -222,12 +218,99 @@
             </div>
         </div>
     </div>
+
+    <!-- Manage Product Types Modal -->
+    <div class="modal fade" id="manageTypesModal" tabindex="-1" aria-labelledby="manageTypesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="manageTypesModalLabel">
+                        <i class="fa fa-cog me-2"></i>Manage Product Types
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add New Type Form -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fa fa-plus-circle me-1"></i>Add New Type</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="addTypeForm">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" id="newTypeDisplayName"
+                                            placeholder="Enter type name (e.g., Travel Insurance)" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fa fa-plus"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- List of Types -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fa fa-list me-1"></i>Existing Types</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="typesListContainer">
+                                <!-- Types will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
     <script>
         $(document).ready(function() {
             console.log('=== PRODUCT EDIT PAGE LOADED ===');
+
+            // Load product types on page load
+            loadProductTypes();
+
+            // Add type form submission
+            $('#addTypeForm').on('submit', function(e) {
+                e.preventDefault();
+                const displayName = $('#newTypeDisplayName').val().trim();
+
+                if (!displayName) return;
+
+                $.ajax({
+                    url: '{{ route('product-types.store') }}',
+                    method: 'POST',
+                    data: {
+                        display_name: displayName,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#newTypeDisplayName').val('');
+                            loadProductTypes();
+                            loadTypesList();
+                            toastr.success(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        const message = xhr.responseJSON?.message || 'Failed to add type';
+                        toastr.error(message);
+                    }
+                });
+            });
+
+            // Load types list when modal opens
+            $('#manageTypesModal').on('shown.bs.modal', function() {
+                loadTypesList();
+            });
 
             // Initialize CKEditor
             let editor;
@@ -406,5 +489,93 @@
                 console.error('Form not found!');
             }
         });
+
+        // Function to load product types for dropdown
+        function loadProductTypes() {
+            $.ajax({
+                url: '{{ route('product-types.index') }}',
+                method: 'GET',
+                success: function(types) {
+                    const $select = $('#type');
+                    const currentValue = $select.val() || '{{ old('type', $product->type) }}';
+
+                    $select.find('option:not(:first)').remove();
+
+                    types.forEach(function(type) {
+                        const selected = type.name === currentValue ? 'selected' : '';
+                        $select.append(
+                            `<option value="${type.name}" ${selected}>${type.display_name}</option>`
+                            );
+                    });
+                },
+                error: function() {
+                    toastr.error('Failed to load product types');
+                }
+            });
+        }
+
+        // Function to load types list for modal
+        function loadTypesList() {
+            $.ajax({
+                url: '{{ route('product-types.index') }}',
+                method: 'GET',
+                success: function(types) {
+                    const $container = $('#typesListContainer');
+
+                    if (types.length === 0) {
+                        $container.html('<div class="p-3 text-muted text-center">No types found</div>');
+                        return;
+                    }
+
+                    let html = '<div class="list-group list-group-flush">';
+                    types.forEach(function(type) {
+                        html += `
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${type.display_name}</strong>
+                                    <br>
+                                    <small class="text-muted">ID: ${type.name}</small>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteType(${type.id}, '${type.display_name}')">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+
+                    $container.html(html);
+                },
+                error: function() {
+                    toastr.error('Failed to load types list');
+                }
+            });
+        }
+
+        // Function to delete type
+        function deleteType(id, displayName) {
+            if (!confirm(`Are you sure you want to delete "${displayName}"?`)) {
+                return;
+            }
+
+            $.ajax({
+                url: `{{ url('product-types') }}/${id}`,
+                method: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        loadProductTypes();
+                        loadTypesList();
+                        toastr.success(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    const message = xhr.responseJSON?.message || 'Failed to delete type';
+                    toastr.error(message);
+                }
+            });
+        }
     </script>
 @endsection

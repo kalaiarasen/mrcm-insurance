@@ -165,6 +165,25 @@
             font-size: 14px;
             font-weight: bold;
         }
+
+        /* Total Sales Display Styling */
+        .total-sales-display {
+            background-color: #f8f9fa;
+            border-left: 4px solid #198754;
+            padding: 0.75rem 1rem;
+        }
+
+        .total-sales-display .total-sales-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+
+        .total-sales-display .total-sales-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #198754;
+        }
     </style>
 @endsection
 
@@ -388,6 +407,17 @@
                     </div>
                 </div>
             </div>
+            <!-- Total Sales Display -->
+            <div class="col-md-12">
+                <div class="total-sales-display d-flex justify-content-between align-items-center">
+                    <div class="total-sales-label">
+                        Total Sales (Filtered):
+                    </div>
+                    <div class="total-sales-amount" id="totalSalesAmount">
+                        RM 0.00
+                    </div>
+                </div>
+            </div>
             <!-- Results Card -->
             <div class="col-md-12">
                 <div class="card">
@@ -549,7 +579,14 @@
                     [10, 25, 50, 100, 'All']
                 ],
                 responsive: true,
-                autoWidth: false
+                autoWidth: false,
+                drawCallback: function(settings) {
+                    // Update total sales when table is redrawn
+                    const json = settings.json;
+                    if (json && json.totalSales !== undefined) {
+                        updateTotalSales(json.totalSales);
+                    }
+                }
             });
 
             // Handle clickable card clicks
@@ -781,6 +818,16 @@
                         </div>
                     `;
                 });
+        }
+
+        // Helper function to update total sales display
+        function updateTotalSales(amount) {
+            const formattedAmount = 'RM ' + parseFloat(amount || 0).toLocaleString('en-MY', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            $('#totalSalesAmount').text(formattedAmount);
         }
     </script>
 @endsection

@@ -12,6 +12,7 @@ use App\Http\Controllers\MyPoliciesController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyHolderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuotationRequestController;
 use App\Http\Controllers\YourActionController;
@@ -102,6 +103,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('dashboard-settings', [DashboardSettingController::class, 'update'])->name('dashboard-settings.update');
 
     // Product Management (Admin)
+
+    // Product Types Management (AJAX)
+    Route::get('product-types', [ProductTypeController::class, 'index'])->name('product-types.index');
+    Route::post('product-types', [ProductTypeController::class, 'store'])->name('product-types.store');
+    Route::delete('product-types/{id}', [ProductTypeController::class, 'destroy'])->name('product-types.destroy');
+    
+    // Products
     Route::resource('products', ProductController::class);
     
     // Customer Products

@@ -84,7 +84,15 @@ class YourActionController extends Controller
                 }
             }
 
+            // Calculate total sales for filtered data
+            $totalSales = (clone $query)->whereHas('policyPricing', function($q) {
+                $q->whereNotNull('total_payable');
+            })->with('policyPricing')->get()->sum(function($policy) {
+                return $policy->policyPricing?->total_payable ?? 0;
+            });
+
             return DataTables::of($query)
+                ->with('totalSales', $totalSales)
                 ->addColumn('policy_id', function ($policy) {
                     return '<small>' . e($policy->reference_number ?? '') . '</small>';
                 })
