@@ -8,7 +8,7 @@
         .info-card {
             border-left: 3px solid #dee2e6;
             transition: all 0.3s ease;
-            background-color: var(--card-color);
+            background-color: #ffffff;
         }
 
         .info-card:hover {
@@ -467,7 +467,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="info-label">Contact Number</div>
-                                <div class="info-value">{{ $contact ? $contact->contact_no : ($policyApplication->user->contact_no ?? 'N/A') }}</div>
+                                <div class="info-value">
+                                    {{ $contact ? $contact->contact_no : $policyApplication->user->contact_no ?? 'N/A' }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1032,7 +1034,10 @@
                                     @if ($policyApplication->signature_data)
                                         @php
                                             // Check if signature is base64 or file path
-                                            $isBase64 = str_starts_with($policyApplication->signature_data, 'data:image');
+                                            $isBase64 = str_starts_with(
+                                                $policyApplication->signature_data,
+                                                'data:image',
+                                            );
                                             if ($isBase64) {
                                                 $signatureUrl = $policyApplication->signature_data;
                                             } else {
@@ -1125,12 +1130,12 @@
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <a href="{{ $paymentDocUrl }}"
-                                                        target="_blank" class="btn btn-primary btn-sm">
+                                                    <a href="{{ $paymentDocUrl }}" target="_blank"
+                                                        class="btn btn-primary btn-sm">
                                                         <i class="fa fa-eye me-1"></i>View Document
                                                     </a>
-                                                    <a href="{{ $paymentDocUrl }}"
-                                                        download class="btn btn-success btn-sm">
+                                                    <a href="{{ $paymentDocUrl }}" download
+                                                        class="btn btn-success btn-sm">
                                                         <i class="fa fa-download me-1"></i>Download
                                                     </a>
                                                 </div>
