@@ -72,7 +72,7 @@
                 <div class="card" style="background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);">
                     <div class="card-body p-4">
                         <div class="row align-items-center">
-                            <div class="col-lg-8">
+                            <div class="col-lg-8 order-2 order-lg-1">
                                 <h3 class="text-primary mb-3">
                                     {{ $dashboardSetting->welcome_title ?? 'Welcome to MRCM Services!' }}
                                 </h3>
@@ -101,7 +101,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-4 order-1 order-lg-2">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <h6 class="text-primary mb-2">WALLET BALANCE</h6>
@@ -147,7 +147,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-md-3 col-sm-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>⚡ Quick Actions</h5>
@@ -206,13 +206,9 @@
                                 <table class="display table-striped border datatable">
                                     <thead>
                                         <tr>
-                                            <th>Reference Number</th>
-                                            <th>Professional Type</th>
-                                            <th>Coverage Type</th>
-                                            <th>Liability Limit</th>
+                                            <th style="min-width: 250px">Policy Info</th>
                                             <th>Total Amount</th>
                                             <th>Status</th>
-                                            <th>Validity</th>
                                             <th>Submitted Date</th>
                                             <th>Action</th>
                                         </tr>
@@ -220,18 +216,37 @@
                                     <tbody>
                                         @foreach ($policies as $policy)
                                             <tr>
-                                                <td><strong>{{ $policy->reference_number ?? '-' }}</strong></td>
-                                                <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <span class="mb-1"><strong>Ref:</strong>
+                                                            {{ $policy->reference_number ?? '-' }}</span>
+
+                                                        <span class="text-muted small mb-1">
+                                                            <i class="fa fa-briefcase me-1"></i>
+                                                            Type:
+                                                            {{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
+                                                        </span>
+
+                                                        @if ($policy->policyPricing)
+                                                            <span class="text-muted small mb-1">
+                                                                <i class="fa fa-calendar me-1"></i>
+                                                                {{ \Carbon\Carbon::parse($policy->policyPricing->policy_start_date)->format('d M Y') }}
+                                                                -
+                                                                {{ \Carbon\Carbon::parse($policy->policyPricing->policy_expiry_date)->format('d M Y') }}
+                                                            </span>
+                                                            <span class="text-muted small">
+                                                                <i class="fa fa-shield-alt me-1"></i>Limit: RM
+                                                                {{ number_format($policy->policyPricing->liability_limit ?? 0) }}
+                                                            </span>
+                                                        @else
+                                                            <span class="text-muted small">Pricing Pending</span>
+                                                        @endif
+                                                    </div>
                                                 </td>
-                                                <td>{{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->cover_type ?? 'N/A')) }}
-                                                </td>
-                                                <td>RM
-                                                    {{ number_format(($policy->policyPricing->liability_limit ?? 0) / 1000000, 1) }}M
-                                                </td>
-                                                <td>RM
+                                                <td class="align-middle">RM
                                                     {{ number_format($policy->policyPricing->total_payable ?? 0, 2) }}
                                                 </td>
-                                                <td>
+                                                <td class="align-middle">
                                                     @if ($policy->customer_status === 'pay_now')
                                                         <span class="badge bg-warning text-dark">
                                                             <i class="fa fa-clock me-1"></i>Payment Required
@@ -258,23 +273,23 @@
                                                         </span>
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    {{ $policy->policyPricing
-                                                        ? \Carbon\Carbon::parse($policy->policyPricing->policy_start_date)->format('d M Y') .
-                                                            ' - ' .
-                                                            \Carbon\Carbon::parse($policy->policyPricing->policy_expiry_date)->format('d M Y')
-                                                        : 'N/A' }}
-                                                </td>
-
-                                                <td>{{ $policy->created_at->format('d M Y') }}</td>
-                                                <td>
-                                                    <a href="{{ route('client-policy.show', $policy->id) }}"
-                                                        class="btn btn-primary btn-sm">
-                                                        <i class="fa fa-eye me-1"></i>View
-                                                        @if ($policy->customer_status === 'pay_now')
-                                                            & Pay
-                                                        @endif
-                                                    </a>
+                                                <td class="align-middle">{{ $policy->created_at->format('d M Y') }}</td>
+                                                <td class="align-middle">
+                                                    <div class="btn-group">
+                                                        <a href="{{ route('client-policy.show', $policy->id) }}"
+                                                            class="btn btn-primary btn-sm">
+                                                            <i class="fa fa-eye me-1"></i>View
+                                                            @if ($policy->customer_status === 'pay_now')
+                                                                & Pay
+                                                            @endif
+                                                        </a>
+                                                        <a href="{{ route('for-your-action.export-pdf', $policy->id) }}"
+                                                            class="btn btn-sm btn-outline-danger" target="_blank"
+                                                            title="Download Policy">
+                                                            <i class="fa fa-file-pdf"></i>
+                                                            PDF
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
