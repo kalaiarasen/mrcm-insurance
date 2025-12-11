@@ -78,7 +78,7 @@
                                 </h3>
                                 <p class="text-muted mb-4" style="white-space: pre-line;">
                                     {{ $dashboardSetting->welcome_description ?? 'Welcome to your dashboard!' }}</p>
-                                <div class="d-flex gap-3 flex-wrap">
+                                <div class="d-flex gap-3 flex-wrap justify-content-center justify-content-lg-start">
                                     @if ($hasActiveProfessionalIndemnity && !$renewalEligible)
                                         {{-- Has active policy, not eligible for renewal --}}
                                         <button class="btn btn-secondary" disabled
