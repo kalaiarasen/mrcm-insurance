@@ -364,6 +364,10 @@
                             <h5>Claims Notification</h5>
                             <p class="f-m-light mt-1">Claims and Notifications History</p>
                         </div>
+                        <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#fileClaimModal">
+                            <i class="fa fa-exclamation-triangle me-2"></i>File a Claim
+                        </a>
                     </div>
                     <div class="card-body">
                         @if ($claims->count() > 0)
