@@ -361,6 +361,16 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
+                                <label for="expiryYearFilter" class="form-label"><i
+                                        class="fa fa-calendar-check me-1"></i>Expiry Year</label>
+                                <select class="form-select" id="expiryYearFilter">
+                                    <option value="">All Years</option>
+                                    @for ($year = date('Y'); $year <= date('Y') + 5; $year++)
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-md-3 mt-2">
                                 <label for="dateRangeSelect" class="form-label"><i class="fa fa-calendar me-1"></i>Date
                                     Range</label>
                                 <select class="form-select" id="dateRangeSelect">
@@ -512,6 +522,7 @@
                         d.policy_type = $('#policyTypeFilter').val();
                         d.status = $('#statusFilter').val();
                         d.agent_id = $('#agentFilter').val();
+                        d.expiry_year = $('#expiryYearFilter').val();
                         d.card_filter = activeCardFilter; // Add card filter
                     }
                 },
@@ -667,6 +678,7 @@
                 $('#policyTypeFilter').val('');
                 $('#statusFilter').val('');
                 $('#agentFilter').val('');
+                $('#expiryYearFilter').val('');
                 $('#dateRangeSelect').val('');
                 $('#startDate').val('');
                 $('#endDate').val('');
@@ -682,6 +694,7 @@
                 const policyType = $('#policyTypeFilter').val();
                 const status = $('#statusFilter').val();
                 const agentId = $('#agentFilter').val();
+                const expiryYear = $('#expiryYearFilter').val();
 
                 // Build URL with parameters
                 let url = "{{ route('for-your-action.export') }}";
@@ -701,6 +714,9 @@
                 }
                 if (agentId) {
                     params.push('agent_id=' + encodeURIComponent(agentId));
+                }
+                if (expiryYear) {
+                    params.push('expiry_year=' + encodeURIComponent(expiryYear));
                 }
                 if (activeCardFilter) {
                     params.push('card_filter=' + encodeURIComponent(activeCardFilter));

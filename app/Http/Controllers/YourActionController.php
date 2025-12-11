@@ -59,6 +59,13 @@ class YourActionController extends Controller
                 });
             }
 
+            // Apply expiry year filter
+            if ($request->filled('expiry_year')) {
+                $query->whereHas('policyPricing', function($q) use ($request) {
+                    $q->whereYear('policy_expiry_date', $request->expiry_year);
+                });
+            }
+
             // Apply card filter (for clickable analytics cards)
             if ($request->filled('card_filter')) {
                 switch ($request->card_filter) {
@@ -868,6 +875,7 @@ class YourActionController extends Controller
         $status = $request->input('status');
         $filterAgentId = $request->input('agent_id'); // Agent filter from dropdown
         $cardFilter = $request->input('card_filter'); // Card filter from clickable analytics
+        $expiryYear = $request->input('expiry_year'); // Expiry year filter
         
         // Pass agent ID if user is an agent (their own ID) or filtered agent ID
         $agentId = Auth::user()->hasRole('Agent') ? Auth::id() : $filterAgentId;
@@ -876,7 +884,7 @@ class YourActionController extends Controller
 
         try {
             return Excel::download(
-                new PolicyApplicationsExport($startDate, $endDate, $policyType, $status, $agentId, $cardFilter),
+                new PolicyApplicationsExport($startDate, $endDate, $policyType, $status, $agentId, $cardFilter, $expiryYear),
                 $fileName
             );
         } catch (\Exception $e) {

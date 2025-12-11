@@ -18,8 +18,9 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
     protected $status;
     protected $agentId;
     protected $cardFilter;
+    protected $expiryYear;
 
-    public function __construct($startDate = null, $endDate = null, $policyType = null, $status = null, $agentId = null, $cardFilter = null)
+    public function __construct($startDate = null, $endDate = null, $policyType = null, $status = null, $agentId = null, $cardFilter = null, $expiryYear = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -27,6 +28,7 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
         $this->status = $status;
         $this->agentId = $agentId;
         $this->cardFilter = $cardFilter;
+        $this->expiryYear = $expiryYear;
     }
 
     /**
@@ -60,6 +62,13 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
         if ($this->policyType) {
             $query->whereHas('user.healthcareService', function($q) {
                 $q->where('professional_indemnity_type', $this->policyType);
+            });
+        }
+
+        // Apply expiry year filter
+        if ($this->expiryYear) {
+            $query->whereHas('policyPricing', function($q) {
+                $q->whereYear('policy_expiry_date', $this->expiryYear);
             });
         }
 
