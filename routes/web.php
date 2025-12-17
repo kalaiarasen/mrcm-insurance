@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('for-your-action/{id}/edit', [YourActionController::class, 'edit'])->name('for-your-action.edit');
     Route::put('for-your-action/{id}/update-status', [YourActionController::class, 'updateStatus'])->name('for-your-action.update-status');
     Route::post('for-your-action/{id}/upload-documents', [YourActionController::class, 'uploadDocuments'])->name('for-your-action.upload-documents');
+    Route::post('for-your-action/{id}/upload-payment', [YourActionController::class, 'uploadPayment'])->name('for-your-action.upload-payment');
     Route::put('for-your-action/{id}/update', [YourActionController::class, 'update'])->name('for-your-action.update');
     Route::delete('for-your-action/{id}', [YourActionController::class, 'destroy'])->name('for-your-action.destroy');
 

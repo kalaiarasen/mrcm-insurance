@@ -865,6 +865,103 @@ class YourActionController extends Controller
     }
 
     /**
+     * Upload payment document and update status to paid (Admin version)
+     */
+    public function uploadPayment(Request $request, $id)
+    {
+        $policyApplication = PolicyApplication::where('id', $id)
+            ->firstOrFail();
+
+        // Validate based on payment type
+        $paymentType = $request->input('payment_type', 'proof');
+
+        if ($paymentType === 'proof') {
+            // Validate the payment document
+            $request->validate([
+                'payment_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
+                'payment_type' => 'required|in:proof,credit_card',
+            ]);
+        } else {
+            // Validate credit card details
+            $request->validate([
+                'name_on_card' => 'nullable|string|max:100',
+                'nric_no' => 'nullable|string|max:50',
+                'card_no' => 'nullable|string|max:50',
+                'card_issuing_bank' => 'nullable|string|max:100',
+                'card_type' => 'nullable|array',
+                'expiry_month' => 'nullable|string',
+                'expiry_year' => 'nullable|string',
+                'relationship' => 'nullable|array',
+                'authorize_payment' => 'required|accepted',
+                'payment_type' => 'required|in:proof,credit_card',
+            ], [
+                'authorize_payment.required' => 'You must authorize the payment.',
+                'authorize_payment.accepted' => 'You must agree to the authorization terms.',
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            if ($paymentType === 'proof' && $request->hasFile('payment_document')) {
+                // Store the payment document
+                $file = $request->file('payment_document');
+                $filename = 'payment_' . $policyApplication->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('payment-documents', $filename, 'public');
+
+                // Delete old payment document if exists
+                if ($policyApplication->payment_document) {
+                    Storage::disk('public')->delete($policyApplication->payment_document);
+                }
+
+                $policyApplication->payment_document = $path;
+            } elseif ($paymentType === 'credit_card') {
+                // Store credit card info
+                $policyApplication->payment_method = 'credit_card';
+                $policyApplication->name_on_card = $request->input('name_on_card');
+                $policyApplication->nric_no = $request->input('nric_no');
+                $policyApplication->card_no = $request->input('card_no');
+                $policyApplication->card_issuing_bank = $request->input('card_issuing_bank');
+                $policyApplication->card_type = $request->input('card_type');
+                $policyApplication->expiry_month = $request->input('expiry_month');
+                $policyApplication->expiry_year = $request->input('expiry_year');
+                $policyApplication->relationship = $request->input('relationship');
+                $policyApplication->authorize_payment = $request->input('authorize_payment') ? true : false;
+                // Note: Card details will be submitted to Great Eastern for processing
+            }
+
+            // Update policy application with payment status
+            $policyApplication->customer_status = 'paid';
+            $policyApplication->admin_status = 'paid';
+            $policyApplication->payment_received_at = now();
+            $policyApplication->save();
+
+            DB::commit();
+
+            $message = $paymentType === 'proof'
+                ? 'Payment document uploaded successfully! Policy status has been updated to Paid.'
+                : 'Credit card payment information saved successfully! Policy status has been updated to Paid.';
+
+            return redirect()
+                ->route('for-your-action.show', $id)
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Failed to process payment (Admin)', [
+                'policy_id' => $id,
+                'payment_type' => $paymentType,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to process payment. Please try again.');
+        }
+    }
+
+    /**
      * Export policy applications to Excel
      */
     public function exportExcel(Request $request)

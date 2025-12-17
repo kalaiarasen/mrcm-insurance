@@ -364,6 +364,387 @@
                 </div>
             </div>
 
+            <!-- Payment Upload Section - Show if pay_now status or payment data exists -->
+            @if ($policyApplication->customer_status === 'pay_now')
+                <div class="col-12">
+                    <div class="card border-info mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fa fa-credit-card me-2"></i>Payment Management (Admin)</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Policy Status Display -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card border">
+                                        <div class="card-body">
+                                            <h6 class="mb-3"><i class="fa fa-info-circle me-2"></i>Policy Status</h6>
+                                            <p class="mb-2"><strong>Reference Number:</strong>
+                                                {{ $policyApplication->reference_number ?? 'N/A' }}</p>
+                                            <p class="mb-2">
+                                                <strong>Current Status:</strong>
+                                                @php
+                                                    $customerStatusBadges = [
+                                                        'submitted' => ['bg-secondary', 'Submitted'],
+                                                        'pay_now' => ['bg-warning text-dark', 'Payment Required'],
+                                                        'paid' => ['bg-info', 'Payment Received'],
+                                                        'processing' => ['bg-primary', 'Processing'],
+                                                        'active' => ['bg-success', 'Active'],
+                                                    ];
+                                                    $cs = $customerStatusBadges[
+                                                        $policyApplication->customer_status
+                                                    ] ?? ['bg-secondary', ucfirst($policyApplication->customer_status)];
+                                                @endphp
+                                                <span class="badge {{ $cs[0] }}">{{ $cs[1] }}</span>
+                                            </p>
+                                            <p class="mb-0"><strong>Total Amount Due:</strong> <span
+                                                    class="text-success fs-5">RM
+                                                    {{ number_format($policyApplication->policyPricing->total_payable ?? 0, 2) }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border">
+                                        <div class="card-body">
+                                            <h6 class="mb-3"><i class="fa fa-file-invoice me-2"></i>Admin Instructions
+                                            </h6>
+                                            <p class="mb-2">1. Upload payment proof on behalf of client</p>
+                                            <p class="mb-2">2. Or enter credit card payment information</p>
+                                            <p class="mb-0">3. Payment status will be updated to 'Paid' automatically</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pricing Breakdown -->
+                            @php
+                                $pricing = $policyApplication->policyPricing;
+                            @endphp
+                            @if ($pricing)
+                                <div class="row mb-4">
+                                    <div class="col-md-8 offset-md-2">
+                                        <div class="card bg-light border-primary">
+                                            <div class="card-body">
+                                                <h6 class="text-center mb-3"><i
+                                                        class="fa fa-dollar-sign me-2"></i><strong>Pricing
+                                                        Breakdown</strong></h6>
+
+                                                <div class="pricing-row d-flex justify-content-between info-label">
+                                                    <span>Premium Per Annum</span>
+                                                    <span>RM {{ number_format($pricing->base_premium ?? 0, 2) }}</span>
+                                                </div>
+
+                                                @if (($pricing->loading_amount ?? 0) > 0)
+                                                    <div class="pricing-row d-flex justify-content-between info-label">
+                                                        <span>Loading
+                                                            ({{ number_format($pricing->loading_percentage ?? 0, 2) }}%)</span>
+                                                        <span>RM {{ number_format($pricing->loading_amount, 2) }}</span>
+                                                    </div>
+                                                @endif
+
+                                                <div class="pricing-row d-flex justify-content-between info-label">
+                                                    <span>Gross Premium</span>
+                                                    <span>RM {{ number_format($pricing->gross_premium ?? 0, 2) }}</span>
+                                                </div>
+
+                                                @if ($pricing->locum_addon > 0)
+                                                    <div class="pricing-row d-flex justify-content-between info-label">
+                                                        <span>Locum Extension</span>
+                                                        <span>RM {{ number_format($pricing->locum_addon, 2) }}</span>
+                                                    </div>
+                                                @endif
+
+                                                <div class="pricing-row d-flex justify-content-between info-label">
+                                                    <span>8% SST</span>
+                                                    <span>RM {{ number_format($pricing->sst ?? 0, 2) }}</span>
+                                                </div>
+
+                                                <div class="pricing-row d-flex justify-content-between info-label">
+                                                    <span>Stamp Duty</span>
+                                                    <span>RM {{ number_format($pricing->stamp_duty ?? 10, 2) }}</span>
+                                                </div>
+
+                                                @if (($pricing->wallet_used ?? 0) > 0)
+                                                    <div
+                                                        class="pricing-row d-flex justify-content-between info-label text-success">
+                                                        <span>Wallet Amount Used</span>
+                                                        <span>- RM {{ number_format($pricing->wallet_used, 2) }}</span>
+                                                    </div>
+                                                @endif
+
+                                                <div class="pricing-row d-flex justify-content-between info-label">
+                                                    <span><strong>Total Payable</strong></span>
+                                                    <span class="text-success"><strong>RM
+                                                            {{ number_format($pricing->total_payable ?? 0, 2) }}</strong></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Payment Method Selection -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <h6 class="mb-3"><i class="fa fa-coins me-2"></i>Select Payment Method</h6>
+                                    <div class="btn-group w-100" role="group">
+                                        <input type="radio" class="btn-check" name="payment_method_admin"
+                                            id="payment_proof_method_admin" value="proof" checked>
+                                        <label class="btn btn-outline-primary" for="payment_proof_method_admin">
+                                            <i class="fa fa-file-upload me-2"></i>Upload Payment Proof
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="payment_method_admin"
+                                            id="credit_card_method_admin" value="credit_card">
+                                        <label class="btn btn-outline-primary" for="credit_card_method_admin">
+                                            <i class="fa fa-credit-card me-2"></i>Credit Card Payment
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Upload Form -->
+                            <form action="{{ route('for-your-action.upload-payment', $policyApplication->id) }}"
+                                method="POST" enctype="multipart/form-data" id="paymentUploadFormAdmin">
+                                @csrf
+                                <input type="hidden" name="payment_type" id="payment_type_admin" value="proof">
+
+                                <!-- Payment Proof Upload Section -->
+                                <div id="proofPaymentSectionAdmin" class="payment-section">
+                                    <!-- Bank Account Details -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-info">
+                                                <h6 class="mb-2"><i class="fa fa-university me-2"></i>Bank Account
+                                                    Details for Payment:</h6>
+                                                <p class="mb-1"><strong>Great Eastern General Insurance (Malaysia)
+                                                        BHD</strong></p>
+                                                <p class="mb-1"><strong>Branch:</strong> OCBC bank Malaysia</p>
+                                                <p class="mb-0"><strong>A/C No:</strong> 7041102530</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <label for="payment_document_admin" class="form-label fw-bold">
+                                                <i class="fa fa-upload me-2"></i>Upload payment proof: <span
+                                                    class="text-danger">*</span>
+                                            </label>
+                                            <input type="file" class="form-control" id="payment_document_admin"
+                                                name="payment_document" accept=".pdf,.jpg,.jpeg,.png" required>
+                                            <small class="text-muted">Accepted formats: PDF, JPG, JPEG, PNG (Max:
+                                                5MB)</small>
+                                            @if ($policyApplication->payment_document)
+                                                <div class="mt-2">
+                                                    <small class="text-success">
+                                                        <i class="fa fa-check-circle me-1"></i>Current payment document:
+                                                        <a href="{{ asset('storage/' . $policyApplication->payment_document) }}"
+                                                            target="_blank">View Document</a>
+                                                    </small>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 text-end">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fa fa-check me-2"></i>Submit Payment Proof
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Credit Card Payment Section -->
+                                <div id="creditCardSectionAdmin" class="payment-section d-none">
+                                    <!-- Notice -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-danger">
+                                                <p class="mb-0"><strong>Payment will be charged by Great Eastern after
+                                                        receiving this form.</strong></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Credit Card Fields -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="name_on_card_admin" class="form-label">Name On Card</label>
+                                            <input type="text" class="form-control" id="name_on_card_admin"
+                                                name="name_on_card" placeholder="Name On Card"
+                                                value="{{ $policyApplication->name_on_card ?? '' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="nric_no_admin" class="form-label">NRIC NO</label>
+                                            <input type="text" class="form-control" id="nric_no_admin" name="nric_no"
+                                                placeholder="NRIC NO" value="{{ $policyApplication->nric_no ?? '' }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="card_no_admin" class="form-label">Card No</label>
+                                            <input type="text" class="form-control" id="card_no_admin" name="card_no"
+                                                placeholder="Card No" value="{{ $policyApplication->card_no ?? '' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="card_issuing_bank_admin" class="form-label">Card Issuing
+                                                Bank</label>
+                                            <input type="text" class="form-control" id="card_issuing_bank_admin"
+                                                name="card_issuing_bank" placeholder="Card Issuing Bank"
+                                                value="{{ $policyApplication->card_issuing_bank ?? '' }}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Card Type -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="visa_card_admin"
+                                                    name="card_type[]" value="visa"
+                                                    {{ is_array($policyApplication->card_type) && in_array('visa', $policyApplication->card_type) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="visa_card_admin">Visa Card</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="master_card_admin"
+                                                    name="card_type[]" value="master"
+                                                    {{ is_array($policyApplication->card_type) && in_array('master', $policyApplication->card_type) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="master_card_admin">Master
+                                                    card</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Expiry Date -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="expiry_month_admin" class="form-label">Month</label>
+                                            <select class="form-select" id="expiry_month_admin" name="expiry_month">
+                                                <option value="">Month</option>
+                                                <option value="01"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '01' ? 'selected' : '' }}>
+                                                    01 - January</option>
+                                                <option value="02"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '02' ? 'selected' : '' }}>
+                                                    02 - February</option>
+                                                <option value="03"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '03' ? 'selected' : '' }}>
+                                                    03 - March</option>
+                                                <option value="04"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '04' ? 'selected' : '' }}>
+                                                    04 - April</option>
+                                                <option value="05"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '05' ? 'selected' : '' }}>
+                                                    05 - May</option>
+                                                <option value="06"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '06' ? 'selected' : '' }}>
+                                                    06 - June</option>
+                                                <option value="07"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '07' ? 'selected' : '' }}>
+                                                    07 - July</option>
+                                                <option value="08"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '08' ? 'selected' : '' }}>
+                                                    08 - August</option>
+                                                <option value="09"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '09' ? 'selected' : '' }}>
+                                                    09 - September</option>
+                                                <option value="10"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '10' ? 'selected' : '' }}>
+                                                    10 - October</option>
+                                                <option value="11"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '11' ? 'selected' : '' }}>
+                                                    11 - November</option>
+                                                <option value="12"
+                                                    {{ ($policyApplication->expiry_month ?? '') == '12' ? 'selected' : '' }}>
+                                                    12 - December</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="expiry_year_admin" class="form-label">Year</label>
+                                            <select class="form-select" id="expiry_year_admin" name="expiry_year">
+                                                <option value="">Year</option>
+                                                @for ($year = date('Y'); $year <= date('Y') + 20; $year++)
+                                                    <option value="{{ $year }}"
+                                                        {{ ($policyApplication->expiry_year ?? '') == $year ? 'selected' : '' }}>
+                                                        {{ $year }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Expiry</label>
+                                            <input type="text" class="form-control" readonly placeholder="Expiry"
+                                                id="expiry_display_admin"
+                                                value="{{ $policyApplication->expiry_month && $policyApplication->expiry_year ? $policyApplication->expiry_month . '/' . $policyApplication->expiry_year : '' }}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Relationship to Policy Holders -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Relationship To policy holders</label>
+                                            <div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="self_admin"
+                                                        name="relationship[]" value="self"
+                                                        {{ is_array($policyApplication->relationship) && in_array('self', $policyApplication->relationship) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="self_admin">Self(01)</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="others_admin"
+                                                        name="relationship[]" value="others"
+                                                        {{ is_array($policyApplication->relationship) && in_array('others', $policyApplication->relationship) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="others_admin">Others(11)</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="family_members_admin" name="relationship[]"
+                                                        value="family_members"
+                                                        {{ is_array($policyApplication->relationship) && in_array('family_members', $policyApplication->relationship) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="family_members_admin">Family
+                                                        Members(10)</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Authorization Checkbox -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="authorize_payment_admin" name="authorize_payment"
+                                                    {{ $policyApplication->authorize_payment ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="authorize_payment_admin">
+                                                    I hereby authorise Great Eastern General Insurance (Malaysia) Berhad
+                                                    (GEGM) to charge one-off payment to premium for the above insurance
+                                                    policy to my card as stated above.
+                                                    I undertake that all information stated above is true and complete in
+                                                    all respects. I have read and understood the terms & conditions
+                                                    contained in this form and I hereby agreed that the Company may process
+                                                    the instruction in the manner as stated in GEGM's Easi-pay Service Form
+                                                    (A copy can be obtained upon request).
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 text-end">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fa fa-paper-plane me-2"></i>SAVE PAYMENT INFO
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            @endif
+
             @php
                 $profile = $policyApplication->user->applicantProfile;
                 $contact = $policyApplication->user->applicantContact;
@@ -485,7 +866,8 @@
                     <div class="col-md-6">
                         <div class="card info-card mb-3">
                             <div class="card-body">
-                                <h6 class="text-primary mb-3"><i class="fa fa-map-marker-alt me-2"></i>{{ $label }}
+                                <h6 class="text-primary mb-3"><i
+                                        class="fa fa-map-marker-alt me-2"></i>{{ $label }}
                                 </h6>
 
                                 <div class="row">
@@ -1068,9 +1450,17 @@
                 <div class="col-12">
                     <div class="card info-card mb-3">
                         <div class="card-body">
-                            <h5 class="section-title">
-                                <i class="fa fa-credit-card me-2"></i>Payment Information
-                            </h5>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="section-title mb-0">
+                                    <i class="fa fa-credit-card me-2"></i>Payment Information
+                                </h5>
+                                @if ($policyApplication->payment_document || $policyApplication->payment_method)
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#editPaymentModal">
+                                        <i class="fa fa-edit me-1"></i>Edit Payment
+                                    </button>
+                                @endif
+                            </div>
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -1307,7 +1697,7 @@
                 </div>
             @endif
 
-            <!-- Admin Action Section -->
+
             <div class="col-12">
                 <div class="card info-card mb-3">
                     <div class="card-body">
@@ -1327,7 +1717,6 @@
                                             class="text-danger">*</span>
                                     </label>
                                     <select class="form-select" id="status" name="status" required>
-                                        <option value="">Select Status</option>
                                         <option value="new"
                                             {{ $policyApplication->status === 'new' ? 'selected' : '' }}>New</option>
                                         <option value="approved"
@@ -1337,10 +1726,11 @@
                                             {{ $policyApplication->status === 'send_uw' ? 'selected' : '' }}>Send UW
                                         </option>
                                         <option value="active"
-                                            {{ $policyApplication->status === 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="processing"
-                                            {{ $policyApplication->status === 'processing' ? 'selected' : '' }}>Processing
+                                            {{ $policyApplication->status === 'active' ? 'selected' : '' }}>Active
                                         </option>
+                                        {{-- <option value="processing"
+                                            {{ $policyApplication->status === 'processing' ? 'selected' : '' }}>Processing
+                                        </option> --}}
                                         <option value="rejected"
                                             {{ $policyApplication->status === 'rejected' ? 'selected' : '' }}>Rejected
                                         </option>
@@ -1679,6 +2069,277 @@
         </div>
     </div>
 
+    <!-- Payment Edit Modal -->
+    <div class="modal fade" id="editPaymentModal" tabindex="-1" aria-labelledby="editPaymentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editPaymentModalLabel">
+                        <i class="fa fa-edit me-2"></i>Edit Payment Information
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Payment Method Selection -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h6 class="mb-3"><i class="fa fa-coins me-2"></i>Select Payment Method</h6>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="payment_method_modal"
+                                    id="payment_proof_method_modal" value="proof"
+                                    {{ !$policyApplication->payment_method || $policyApplication->payment_document ? 'checked' : '' }}>
+                                <label class="btn btn-outline-primary" for="payment_proof_method_modal">
+                                    <i class="fa fa-file-upload me-2"></i>Upload Payment Proof
+                                </label>
+
+                                <input type="radio" class="btn-check" name="payment_method_modal"
+                                    id="credit_card_method_modal" value="credit_card"
+                                    {{ $policyApplication->payment_method === 'credit_card' ? 'checked' : '' }}>
+                                <label class="btn btn-outline-primary" for="credit_card_method_modal">
+                                    <i class="fa fa-credit-card me-2"></i>Credit Card Payment
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Upload Form -->
+                    <form action="{{ route('for-your-action.upload-payment', $policyApplication->id) }}" method="POST"
+                        enctype="multipart/form-data" id="paymentEditForm">
+                        @csrf
+                        <input type="hidden" name="payment_type" id="payment_type_modal"
+                            value="{{ $policyApplication->payment_document ? 'proof' : ($policyApplication->payment_method === 'credit_card' ? 'credit_card' : 'proof') }}">
+
+                        <!-- Payment Proof Upload Section -->
+                        <div id="proofPaymentSectionModal"
+                            class="payment-section {{ $policyApplication->payment_method === 'credit_card' && !$policyApplication->payment_document ? 'd-none' : '' }}">
+                            <!-- Bank Account Details -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="alert alert-info">
+                                        <h6 class="mb-2"><i class="fa fa-university me-2"></i>Bank Account Details for
+                                            Payment:</h6>
+                                        <p class="mb-1"><strong>Great Eastern General Insurance (Malaysia) BHD</strong>
+                                        </p>
+                                        <p class="mb-1"><strong>Branch:</strong> OCBC bank Malaysia</p>
+                                        <p class="mb-0"><strong>A/C No:</strong> 7041102530</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="payment_document_modal" class="form-label fw-bold">
+                                        <i class="fa fa-upload me-2"></i>Upload payment proof: <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="file" class="form-control" id="payment_document_modal"
+                                        name="payment_document" accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="text-muted">Accepted formats: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
+                                    @if ($policyApplication->payment_document)
+                                        <div class="mt-2">
+                                            <small class="text-success">
+                                                <i class="fa fa-check-circle me-1"></i>Current payment document:
+                                                <a href="{{ asset('storage/' . $policyApplication->payment_document) }}"
+                                                    target="_blank">View Document</a>
+                                            </small>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card Payment Section -->
+                        <div id="creditCardSectionModal"
+                            class="payment-section {{ $policyApplication->payment_method !== 'credit_card' || $policyApplication->payment_document ? 'd-none' : '' }}">
+                            <!-- Notice -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="alert alert-danger">
+                                        <p class="mb-0"><strong>Payment will be charged by Great Eastern after receiving
+                                                this form.</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Credit Card Fields -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name_on_card_modal" class="form-label">Name On Card</label>
+                                    <input type="text" class="form-control" id="name_on_card_modal"
+                                        name="name_on_card" placeholder="Name On Card"
+                                        value="{{ $policyApplication->name_on_card ?? '' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="nric_no_modal" class="form-label">NRIC NO</label>
+                                    <input type="text" class="form-control" id="nric_no_modal" name="nric_no"
+                                        placeholder="NRIC NO" value="{{ $policyApplication->nric_no ?? '' }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="card_no_modal" class="form-label">Card No</label>
+                                    <input type="text" class="form-control" id="card_no_modal" name="card_no"
+                                        placeholder="Card No" value="{{ $policyApplication->card_no ?? '' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="card_issuing_bank_modal" class="form-label">Card Issuing Bank</label>
+                                    <input type="text" class="form-control" id="card_issuing_bank_modal"
+                                        name="card_issuing_bank" placeholder="Card Issuing Bank"
+                                        value="{{ $policyApplication->card_issuing_bank ?? '' }}">
+                                </div>
+                            </div>
+
+                            <!-- Card Type -->
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Card Type</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="visa_card_modal"
+                                                name="card_type[]" value="visa"
+                                                {{ is_array($policyApplication->card_type) && in_array('visa', $policyApplication->card_type) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="visa_card_modal">Visa Card</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="master_card_modal"
+                                                name="card_type[]" value="master"
+                                                {{ is_array($policyApplication->card_type) && in_array('master', $policyApplication->card_type) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="master_card_modal">Master card</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Expiry Date -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="expiry_month_modal" class="form-label">Month</label>
+                                    <select class="form-select" id="expiry_month_modal" name="expiry_month">
+                                        <option value="">Month</option>
+                                        <option value="01"
+                                            {{ ($policyApplication->expiry_month ?? '') == '01' ? 'selected' : '' }}>01 -
+                                            January</option>
+                                        <option value="02"
+                                            {{ ($policyApplication->expiry_month ?? '') == '02' ? 'selected' : '' }}>02 -
+                                            February</option>
+                                        <option value="03"
+                                            {{ ($policyApplication->expiry_month ?? '') == '03' ? 'selected' : '' }}>03 -
+                                            March</option>
+                                        <option value="04"
+                                            {{ ($policyApplication->expiry_month ?? '') == '04' ? 'selected' : '' }}>04 -
+                                            April</option>
+                                        <option value="05"
+                                            {{ ($policyApplication->expiry_month ?? '') == '05' ? 'selected' : '' }}>05 -
+                                            May</option>
+                                        <option value="06"
+                                            {{ ($policyApplication->expiry_month ?? '') == '06' ? 'selected' : '' }}>06 -
+                                            June</option>
+                                        <option value="07"
+                                            {{ ($policyApplication->expiry_month ?? '') == '07' ? 'selected' : '' }}>07 -
+                                            July</option>
+                                        <option value="08"
+                                            {{ ($policyApplication->expiry_month ?? '') == '08' ? 'selected' : '' }}>08 -
+                                            August</option>
+                                        <option value="09"
+                                            {{ ($policyApplication->expiry_month ?? '') == '09' ? 'selected' : '' }}>09 -
+                                            September</option>
+                                        <option value="10"
+                                            {{ ($policyApplication->expiry_month ?? '') == '10' ? 'selected' : '' }}>10 -
+                                            October</option>
+                                        <option value="11"
+                                            {{ ($policyApplication->expiry_month ?? '') == '11' ? 'selected' : '' }}>11 -
+                                            November</option>
+                                        <option value="12"
+                                            {{ ($policyApplication->expiry_month ?? '') == '12' ? 'selected' : '' }}>12 -
+                                            December</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="expiry_year_modal" class="form-label">Year</label>
+                                    <select class="form-select" id="expiry_year_modal" name="expiry_year">
+                                        <option value="">Year</option>
+                                        @for ($year = date('Y'); $year <= date('Y') + 20; $year++)
+                                            <option value="{{ $year }}"
+                                                {{ ($policyApplication->expiry_year ?? '') == $year ? 'selected' : '' }}>
+                                                {{ $year }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Expiry</label>
+                                    <input type="text" class="form-control" readonly placeholder="Expiry"
+                                        id="expiry_display_modal"
+                                        value="{{ $policyApplication->expiry_month && $policyApplication->expiry_year ? $policyApplication->expiry_month . '/' . $policyApplication->expiry_year : '' }}">
+                                </div>
+                            </div>
+
+                            <!-- Relationship to Policy Holders -->
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Relationship To policy holders</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="self_modal"
+                                                name="relationship[]" value="self"
+                                                {{ is_array($policyApplication->relationship) && in_array('self', $policyApplication->relationship) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="self_modal">Self(01)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="others_modal"
+                                                name="relationship[]" value="others"
+                                                {{ is_array($policyApplication->relationship) && in_array('others', $policyApplication->relationship) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="others_modal">Others(11)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="family_members_modal"
+                                                name="relationship[]" value="family_members"
+                                                {{ is_array($policyApplication->relationship) && in_array('family_members', $policyApplication->relationship) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="family_members_modal">Family
+                                                Members(10)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Authorization Checkbox -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="authorize_payment_modal"
+                                            name="authorize_payment"
+                                            {{ $policyApplication->authorize_payment ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="authorize_payment_modal">
+                                            I hereby authorise Great Eastern General Insurance (Malaysia) Berhad
+                                            (GEGM) to charge one-off payment to premium for the above insurance
+                                            policy to my card as stated above.
+                                            I undertake that all information stated above is true and complete in
+                                            all respects. I have read and understood the terms & conditions
+                                            contained in this form and I hereby agreed that the Company may process
+                                            the instruction in the manner as stated in GEGM's Easi-pay Service Form
+                                            (A copy can be obtained upon request).
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fa fa-times me-1"></i>Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save me-1"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
@@ -1817,12 +2478,114 @@
             });
         }
 
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        // Admin Payment Method Toggle
+        const paymentProofMethodAdmin = document.getElementById('payment_proof_method_admin');
+        const creditCardMethodAdmin = document.getElementById('credit_card_method_admin');
+        const proofSectionAdmin = document.getElementById('proofPaymentSectionAdmin');
+        const creditCardSectionAdmin = document.getElementById('creditCardSectionAdmin');
+        const paymentTypeInputAdmin = document.getElementById('payment_type_admin');
+        const paymentDocumentAdmin = document.getElementById('payment_document_admin');
+        const authorizePaymentAdmin = document.getElementById('authorize_payment_admin');
+
+        if (paymentProofMethodAdmin && creditCardMethodAdmin) {
+            paymentProofMethodAdmin.addEventListener('change', function() {
+                if (this.checked) {
+                    proofSectionAdmin.classList.remove('d-none');
+                    creditCardSectionAdmin.classList.add('d-none');
+                    if (paymentTypeInputAdmin) paymentTypeInputAdmin.value = 'proof';
+                    if (paymentDocumentAdmin) paymentDocumentAdmin.setAttribute('required', 'required');
+                    if (authorizePaymentAdmin) authorizePaymentAdmin.removeAttribute('required');
+                }
+            });
+
+            creditCardMethodAdmin.addEventListener('change', function() {
+                if (this.checked) {
+                    creditCardSectionAdmin.classList.remove('d-none');
+                    proofSectionAdmin.classList.add('d-none');
+                    if (paymentTypeInputAdmin) paymentTypeInputAdmin.value = 'credit_card';
+                    if (paymentDocumentAdmin) paymentDocumentAdmin.removeAttribute('required');
+                    if (authorizePaymentAdmin) authorizePaymentAdmin.setAttribute('required', 'required');
+                }
+            });
+        }
+
+        // Update expiry display for admin form
+        const expiryMonthAdmin = document.getElementById('expiry_month_admin');
+        const expiryYearAdmin = document.getElementById('expiry_year_admin');
+        const expiryDisplayAdmin = document.getElementById('expiry_display_admin');
+
+        function updateExpiryDisplayAdmin() {
+            if (expiryMonthAdmin && expiryYearAdmin && expiryDisplayAdmin) {
+                const month = expiryMonthAdmin.value;
+                const year = expiryYearAdmin.value;
+                if (month && year) {
+                    expiryDisplayAdmin.value = month + '/' + year;
+                } else {
+                    expiryDisplayAdmin.value = '';
+                }
+            }
+        }
+
+        if (expiryMonthAdmin) {
+            expiryMonthAdmin.addEventListener('change', updateExpiryDisplayAdmin);
+        }
+        if (expiryYearAdmin) {
+            expiryYearAdmin.addEventListener('change', updateExpiryDisplayAdmin);
+        }
+
+        // Modal Payment Method Toggle
+        const paymentProofMethodModal = document.getElementById('payment_proof_method_modal');
+        const creditCardMethodModal = document.getElementById('credit_card_method_modal');
+        const proofSectionModal = document.getElementById('proofPaymentSectionModal');
+        const creditCardSectionModal = document.getElementById('creditCardSectionModal');
+        const paymentTypeInputModal = document.getElementById('payment_type_modal');
+        const paymentDocumentModal = document.getElementById('payment_document_modal');
+        const authorizePaymentModal = document.getElementById('authorize_payment_modal');
+
+        if (paymentProofMethodModal && creditCardMethodModal) {
+            paymentProofMethodModal.addEventListener('change', function() {
+                if (this.checked) {
+                    proofSectionModal.classList.remove('d-none');
+                    creditCardSectionModal.classList.add('d-none');
+                    if (paymentTypeInputModal) paymentTypeInputModal.value = 'proof';
+                    if (paymentDocumentModal) paymentDocumentModal.setAttribute('required', 'required');
+                    if (authorizePaymentModal) authorizePaymentModal.removeAttribute('required');
+                }
+            });
+
+            creditCardMethodModal.addEventListener('change', function() {
+                if (this.checked) {
+                    creditCardSectionModal.classList.remove('d-none');
+                    proofSectionModal.classList.add('d-none');
+                    if (paymentTypeInputModal) paymentTypeInputModal.value = 'credit_card';
+                    if (paymentDocumentModal) paymentDocumentModal.removeAttribute('required');
+                    if (authorizePaymentModal) authorizePaymentModal.setAttribute('required', 'required');
+                }
+            });
+        }
+
+        // Update expiry display for modal form
+        const expiryMonthModal = document.getElementById('expiry_month_modal');
+        const expiryYearModal = document.getElementById('expiry_year_modal');
+        const expiryDisplayModal = document.getElementById('expiry_display_modal');
+
+        function updateExpiryDisplayModal() {
+            if (expiryMonthModal && expiryYearModal && expiryDisplayModal) {
+                const month = expiryMonthModal.value;
+                const year = expiryYearModal.value;
+                if (month && year) {
+                    expiryDisplayModal.value = month + '/' + year;
+                } else {
+                    expiryDisplayModal.value = '';
+                }
+            }
+        }
+
+        if (expiryMonthModal) {
+            expiryMonthModal.addEventListener('change', updateExpiryDisplayModal);
+        }
+        if (expiryYearModal) {
+            expiryYearModal.addEventListener('change', updateExpiryDisplayModal);
         }
     </script>
 @endsection
