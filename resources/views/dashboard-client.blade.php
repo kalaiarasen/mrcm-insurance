@@ -196,6 +196,34 @@
                         <p class="f-m-light mt-1">View all your insurance policies</p>
                     </div>
                     <div class="card-body">
+                        @php
+                            $rejectedPolicies = $policies->filter(function ($policy) {
+                                return $policy->status === 'rejected' && !empty($policy->remarks);
+                            });
+                        @endphp
+
+                        @if ($rejectedPolicies->count() > 0)
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <h6 class="alert-heading"><i class="fa fa-exclamation-triangle me-2"></i>Policy Rejection
+                                    Notice</h6>
+                                @foreach ($rejectedPolicies as $rejectedPolicy)
+                                    <div class="mb-2">
+                                        <strong>{{ $rejectedPolicy->reference_number ?? 'Policy #' . $rejectedPolicy->id }}:</strong>
+                                        <p class="mb-0">{{ $rejectedPolicy->remarks }}</p>
+                                        <a href="{{ route('new-policy', ['edit' => $rejectedPolicy->id]) }}"
+                                            class="btn btn-sm btn-warning mt-2">
+                                            <i class="fa fa-edit me-1"></i>Edit & Resubmit This Policy
+                                        </a>
+                                    </div>
+                                    @if (!$loop->last)
+                                        <hr>
+                                    @endif
+                                @endforeach
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
                         @if ($policies->isEmpty())
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle me-2"></i>
@@ -267,6 +295,10 @@
                                                         <span class="badge bg-info">
                                                             <i class="fa fa-spinner me-1"></i>Processing
                                                         </span>
+                                                    @elseif($policy->status === 'rejected')
+                                                        <span class="badge bg-danger">
+                                                            <i class="fa fa-times-circle me-1"></i>Rejected
+                                                        </span>
                                                     @else
                                                         <span class="badge bg-secondary">
                                                             {{ ucfirst(str_replace('_', ' ', $policy->customer_status)) }}
@@ -276,13 +308,20 @@
                                                 <td class="align-middle">{{ $policy->created_at->format('d M Y') }}</td>
                                                 <td class="align-middle">
                                                     <div class="btn-group">
-                                                        <a href="{{ route('client-policy.show', $policy->id) }}"
-                                                            class="btn btn-primary btn-sm">
-                                                            <i class="fa fa-eye me-1"></i>View
-                                                            @if ($policy->customer_status === 'pay_now')
-                                                                & Pay
-                                                            @endif
-                                                        </a>
+                                                        @if ($policy->status === 'rejected')
+                                                            <a href="{{ route('new-policy', ['edit' => $policy->id]) }}"
+                                                                class="btn btn-warning btn-sm">
+                                                                <i class="fa fa-edit me-1"></i>Edit & Resubmit
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ route('client-policy.show', $policy->id) }}"
+                                                                class="btn btn-primary btn-sm">
+                                                                <i class="fa fa-eye me-1"></i>View
+                                                                @if ($policy->customer_status === 'pay_now')
+                                                                    & Pay
+                                                                @endif
+                                                            </a>
+                                                        @endif
                                                         <a href="{{ route('for-your-action.export-pdf', $policy->id) }}"
                                                             class="btn btn-sm btn-outline-danger" target="_blank"
                                                             title="Download Policy">

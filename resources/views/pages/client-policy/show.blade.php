@@ -713,6 +713,22 @@
                             </div>
                         </div>
 
+                        {{-- Rejection Reason Alert --}}
+                        @if ($policyApplication->status === 'rejected' && !empty($policyApplication->remarks))
+                            <div class="alert alert-danger mt-3" role="alert">
+                                <h6 class="alert-heading"><i class="fa fa-exclamation-triangle me-2"></i>Policy Rejected
+                                </h6>
+                                <p class="mb-3"><strong>Reason:</strong> {{ $policyApplication->remarks }}</p>
+                                <hr>
+                                <p class="mb-0">
+                                    <a href="{{ route('new-policy', ['edit' => $policyApplication->id]) }}"
+                                        class="btn btn-warning">
+                                        <i class="fa fa-edit me-2"></i>Edit & Resubmit Application
+                                    </a>
+                                </p>
+                            </div>
+                        @endif
+
                         @if ($policyApplication->customer_status !== 'pay_now')
                             <div class="row mt-3">
                                 <div class="col-12">

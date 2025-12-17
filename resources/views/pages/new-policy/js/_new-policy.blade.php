@@ -1724,7 +1724,7 @@
 
         // Initialize Bootstrap tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
@@ -2395,6 +2395,14 @@
         const submissionData = {
             application_data: formData
         };
+
+        // Check if we're editing a rejected policy (from URL parameter)
+        const urlParams = new URLSearchParams(window.location.search);
+        const rejectedPolicyId = urlParams.get('edit');
+        if (rejectedPolicyId) {
+            submissionData.rejected_policy_id = parseInt(rejectedPolicyId);
+            console.log('[Submit] Editing rejected policy ID:', rejectedPolicyId);
+        }
 
         console.log('[Submit] Submitting form data:', submissionData);
 

@@ -448,6 +448,31 @@ class YourActionController extends Controller
                     // Admin Status → rejected
                     $policyApplication->customer_status = 'rejected';
                     $policyApplication->admin_status = 'rejected';
+                    
+                    // Clear payment data
+                    // Delete payment document file if exists
+                    if ($policyApplication->payment_document) {
+                        Storage::disk('public')->delete($policyApplication->payment_document);
+                    }
+                    
+                    // Clear all payment-related fields
+                    $policyApplication->payment_document = null;
+                    $policyApplication->payment_method = null;
+                    $policyApplication->name_on_card = null;
+                    $policyApplication->nric_no = null;
+                    $policyApplication->card_no = null;
+                    $policyApplication->card_issuing_bank = null;
+                    $policyApplication->card_type = null;
+                    $policyApplication->expiry_month = null;
+                    $policyApplication->expiry_year = null;
+                    $policyApplication->relationship = null;
+                    $policyApplication->authorize_payment = null;
+                    $policyApplication->payment_received_at = null;
+                    
+                    Log::info('Payment data cleared for rejected policy', [
+                        'policy_id' => $id,
+                        'reference' => $policyApplication->reference_number,
+                    ]);
                     break;
             }
 

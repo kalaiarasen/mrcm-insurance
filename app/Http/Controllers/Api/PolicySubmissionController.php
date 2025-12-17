@@ -31,6 +31,7 @@ class PolicySubmissionController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'application_data' => 'required|array',
+                'rejected_policy_id' => 'nullable|integer|exists:policy_applications,id',
             ]);
 
             if ($validator->fails()) {
@@ -42,6 +43,7 @@ class PolicySubmissionController extends Controller
             }
 
             $applicationData = $request->input('application_data');
+            $rejectedPolicyId = $request->input('rejected_policy_id');
 
             $applicantTitle = $applicationData['title'] ?? null;
             $applicantFullName = $applicationData['full_name'] ?? null;
@@ -58,6 +60,26 @@ class PolicySubmissionController extends Controller
                     'success' => false,
                     'message' => 'User must be logged in to submit an application',
                 ], 401);
+            }
+
+            // Check if editing a rejected policy
+            $isEditingRejectedPolicy = false;
+            $existingPolicyApplication = null;
+            
+            if ($rejectedPolicyId) {
+                $existingPolicyApplication = PolicyApplication::where('id', $rejectedPolicyId)
+                    ->where('user_id', $currentUser->id)
+                    ->where('status', 'rejected')
+                    ->first();
+                    
+                if (!$existingPolicyApplication) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Rejected policy not found or cannot be edited',
+                    ], 404);
+                }
+                
+                $isEditingRejectedPolicy = true;
             }
 
             // Update the user's information
@@ -222,18 +244,41 @@ class PolicySubmissionController extends Controller
                 'is_used' => true,
             ]);
 
-            // PolicyApplication::where('user_id', $currentUser->id)->update(['is_used' => false]);
-            $policyApplication = PolicyApplication::create([
-                'user_id' => $currentUser->id,
-                'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',
-                'agree_declaration' => $applicationData['agree_declaration_final'] === 'yes',
-                'signature_data' => $applicationData['signature'] ?? null,
-                'status' => 'submitted',
-                'customer_status' => 'submitted',  // C.S: submitted
-                'admin_status' => 'new_case',      // A.S: New case (or new_renewal for renewals)
-                'submitted_at' => now(),
-                'is_used' => true,
-            ]);
+            // Update existing rejected policy or create new one
+            if ($isEditingRejectedPolicy) {
+                // Update existing rejected policy
+                $existingPolicyApplication->update([
+                    'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',
+                    'agree_declaration' => $applicationData['agree_declaration_final'] === 'yes',
+                    'signature_data' => $applicationData['signature'] ?? null,
+                    'status' => 'submitted',
+                    'customer_status' => 'submitted',  // C.S: submitted
+                    'admin_status' => 'new_case',      // A.S: New case
+                    'submitted_at' => now(),
+                    'remarks' => null,  // Clear rejection reason
+                ]);
+                
+                $policyApplication = $existingPolicyApplication;
+                
+                Log::info('Rejected policy resubmitted', [
+                    'policy_id' => $policyApplication->id,
+                    'user_id' => $currentUser->id,
+                ]);
+            } else {
+                // Create new policy application
+                // PolicyApplication::where('user_id', $currentUser->id)->update(['is_used' => false]);
+                $policyApplication = PolicyApplication::create([
+                    'user_id' => $currentUser->id,
+                    'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',
+                    'agree_declaration' => $applicationData['agree_declaration_final'] === 'yes',
+                    'signature_data' => $applicationData['signature'] ?? null,
+                    'status' => 'submitted',
+                    'customer_status' => 'submitted',  // C.S: submitted
+                    'admin_status' => 'new_case',      // A.S: New case (or new_renewal for renewals)
+                    'submitted_at' => now(),
+                    'is_used' => true,
+                ]);
+            }
 
             // Link the pricing to the application
             $policyPricing->update(['policy_application_id' => $policyApplication->id]);

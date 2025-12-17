@@ -5,13 +5,22 @@
 @section('main_content')
     @php
         $hasExistingData = isset($existingData) && !empty(array_filter($existingData ?? []));
+        $isRejectedPolicy = isset($rejectedPolicy) && $rejectedPolicy;
     @endphp
 
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3>{{ $hasExistingData ? 'Renew Policy' : 'New Policy' }}</h3>
+                    <h3>
+                        @if ($isRejectedPolicy)
+                            Resubmit Policy Application
+                        @elseif ($hasExistingData)
+                            Renew Policy
+                        @else
+                            New Policy
+                        @endif
+                    </h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb">
@@ -23,13 +32,42 @@
                             </a>
                         </li>
                         <li class="breadcrumb-item">Dashboard</li>
-                        <li class="breadcrumb-item active">{{ $hasExistingData ? 'Renew Policy' : 'New Policy' }}</li>
+                        <li class="breadcrumb-item active">
+                            @if ($isRejectedPolicy)
+                                Resubmit Policy
+                            @elseif ($hasExistingData)
+                                Renew Policy
+                            @else
+                                New Policy
+                            @endif
+                        </li>
                     </ol>
                 </div>
             </div>
         </div>
 
-        @if ($hasExistingData)
+        {{-- Rejection Reason Alert --}}
+        @if ($isRejectedPolicy && !empty($rejectedPolicy->remarks))
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <h6 class="alert-heading"><i class="fa fa-exclamation-triangle me-2"></i><strong>Policy Rejected -
+                                Action Required</strong></h6>
+                        <p class="mb-2"><strong>Rejection Reason:</strong></p>
+                        <p class="mb-3">{{ $rejectedPolicy->remarks }}</p>
+                        <hr>
+                        <p class="mb-0">
+                            <i class="fa fa-info-circle me-2"></i>
+                            Please review the rejection reason above, make the necessary corrections to your application,
+                            and resubmit.
+                        </p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if ($hasExistingData && !$isRejectedPolicy)
             <div class="row">
                 <div class="col-md-12">
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
