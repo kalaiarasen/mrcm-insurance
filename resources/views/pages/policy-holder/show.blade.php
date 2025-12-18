@@ -74,16 +74,18 @@
                                 <i class="fa fa-user me-2"></i>Personal Information
                             </h5>
                             @hasanyrole('Super Admin|Admin')
-                            <button class="btn btn-primary btn-sm" onclick="editPolicyHolder({{ $user->id }})">
-                                <i class="fa fa-edit me-1"></i>Edit
-                            </button>
+                                <button class="btn btn-primary btn-sm" onclick="editPolicyHolder({{ $user->id }})">
+                                    <i class="fa fa-edit me-1"></i>Edit
+                                </button>
                             @endhasanyrole
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="info-label">Full Name</div>
-                                <div class="info-value">{{ $user->applicantProfile?->title ? $user->applicantProfile->title . '. ' : '' }}{{ $user->name }}</div>
+                                <div class="info-value">
+                                    {{ $user->applicantProfile?->title ? $user->applicantProfile->title . '. ' : '' }}{{ $user->name }}
+                                </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -260,6 +262,7 @@
                                         <tr>
                                             <th>Reference No</th>
                                             <th>Submission Date</th>
+                                            <th>Policy Expiry Date</th>
                                             <th>Professional Type</th>
                                             <th>Liability Limit</th>
                                             <th>Total Payable</th>
@@ -277,6 +280,13 @@
                                                     {{ $application->created_at->format('d M Y') }}<br>
                                                     <small
                                                         class="text-muted">{{ $application->created_at->format('h:i A') }}</small>
+                                                </td>
+                                                <td>
+                                                    @if ($application->policyPricing && $application->policyPricing->policy_expiry_date)
+                                                        <strong>{{ \Carbon\Carbon::parse($application->policyPricing->policy_expiry_date)->format('d M Y') }}</strong>
+                                                    @else
+                                                        <span class="text-muted">-</span>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     @if ($application->healthcareService)
@@ -328,12 +338,12 @@
                                                 </td>
                                                 <td>
                                                     @hasanyrole('Super Admin|Admin')
-                                                    <a href="{{ route('policy-holders.application.show', ['user' => $user->id, 'application' => $application->id]) }}"
-                                                        class="btn btn-sm btn-primary" title="View Details">
-                                                        <i class="fa fa-eye me-1"></i>View
-                                                    </a>
+                                                        <a href="{{ route('policy-holders.application.show', ['user' => $user->id, 'application' => $application->id]) }}"
+                                                            class="btn btn-sm btn-primary" title="View Details">
+                                                            <i class="fa fa-eye me-1"></i>View
+                                                        </a>
                                                     @else
-                                                    <span class="text-muted small">View only</span>
+                                                        <span class="text-muted small">View only</span>
                                                     @endhasanyrole
                                                 </td>
                                             </tr>

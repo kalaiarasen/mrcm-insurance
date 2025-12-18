@@ -322,12 +322,36 @@
                                                                 @endif
                                                             </a>
                                                         @endif
-                                                        <a href="{{ route('for-your-action.export-pdf', $policy->id) }}"
-                                                            class="btn btn-sm btn-outline-danger" target="_blank"
-                                                            title="Download Policy">
-                                                            <i class="fa fa-file-pdf"></i>
-                                                            PDF
-                                                        </a>
+
+                                                        {{-- Download CI Document --}}
+                                                        @if ($policy->certificate_document)
+                                                            <a href="{{ Storage::url($policy->certificate_document) }}"
+                                                                class="btn btn-sm btn-outline-success" target="_blank"
+                                                                title="Download CI">
+                                                                <i class="fa fa-download"></i>
+                                                                CI
+                                                            </a>
+                                                        @endif
+
+                                                        {{-- Download Tax Receipt --}}
+                                                        @if ($policy->tax_receipt_path)
+                                                            <a href="{{ Storage::url($policy->tax_receipt_path) }}"
+                                                                class="btn btn-sm btn-outline-info" target="_blank"
+                                                                title="Download Tax Receipt">
+                                                                <i class="fa fa-download"></i>
+                                                                Tax
+                                                            </a>
+                                                        @endif
+
+                                                        {{-- Download Policy Schedule --}}
+                                                        @if ($policy->policy_schedule_path)
+                                                            <a href="{{ Storage::url($policy->policy_schedule_path) }}"
+                                                                class="btn btn-sm btn-outline-primary" target="_blank"
+                                                                title="Download Policy Schedule">
+                                                                <i class="fa fa-download"></i>
+                                                                Schedule
+                                                            </a>
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
