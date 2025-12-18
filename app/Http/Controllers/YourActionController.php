@@ -1036,4 +1036,113 @@ class YourActionController extends Controller
         
         return 'MRCM#' . $policyYear . '-' . str_pad($userId, 4, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * Reupload Certificate of Insurance (CI) document
+     */
+    public function reuploadCI(Request $request, $id)
+    {
+        $policyApplication = PolicyApplication::findOrFail($id);
+
+        // Validate the uploaded file
+        $request->validate([
+            'certificate_document' => 'required|file|mimes:pdf|max:10240', // 10MB max
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Delete old certificate document if exists
+            if ($policyApplication->certificate_document) {
+                Storage::disk('public')->delete($policyApplication->certificate_document);
+                Log::info('Old CI document deleted', [
+                    'policy_id' => $id,
+                    'old_file' => $policyApplication->certificate_document,
+                ]);
+            }
+
+            // Upload new certificate document
+            $file = $request->file('certificate_document');
+            $sanitizedRef = str_replace('#', '_', $policyApplication->reference_number ?? 'TEMP');
+            $filename = 'CI_' . $sanitizedRef . '_' . time() . '.pdf';
+            $path = $file->storeAs('certificates', $filename, 'public');
+
+            // Update policy application
+            $policyApplication->certificate_document = $path;
+            $policyApplication->save();
+
+            DB::commit();
+
+            Log::info('CI document reuploaded successfully', [
+                'policy_id' => $id,
+                'new_file' => $path,
+                'uploaded_by' => Auth::id(),
+            ]);
+
+            return redirect()
+                ->route('for-your-action.show', $id)
+                ->with('success', 'Certificate of Insurance document has been reuploaded successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Failed to reupload CI document', [
+                'policy_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->route('for-your-action.show', $id)
+                ->with('error', 'Failed to reupload CI document. Please try again.');
+        }
+    }
+
+    /**
+     * Remove Certificate of Insurance (CI) document
+     */
+    public function removeCI($id)
+    {
+        $policyApplication = PolicyApplication::findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+            // Delete certificate document file if exists
+            if ($policyApplication->certificate_document) {
+                Storage::disk('public')->delete($policyApplication->certificate_document);
+                
+                Log::info('CI document file deleted', [
+                    'policy_id' => $id,
+                    'file' => $policyApplication->certificate_document,
+                ]);
+            }
+
+            // Clear certificate_document field
+            $policyApplication->certificate_document = null;
+            $policyApplication->save();
+
+            DB::commit();
+
+            Log::info('CI document removed successfully', [
+                'policy_id' => $id,
+                'removed_by' => Auth::id(),
+            ]);
+
+            return redirect()
+                ->route('for-your-action.show', $id)
+                ->with('success', 'Certificate of Insurance document has been removed successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Failed to remove CI document', [
+                'policy_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->route('for-your-action.show', $id)
+                ->with('error', 'Failed to remove CI document. Please try again.');
+        }
+    }
 }

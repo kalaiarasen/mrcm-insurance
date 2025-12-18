@@ -1967,15 +1967,23 @@
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <div class="alert alert-success">
-                                        <i class="fa fa-check-circle me-2"></i>
-                                        <strong>Certificate Document Available</strong>
-                                        <p class="mb-2 mt-2">The Certificate of Insurance has been uploaded and is
-                                            available for download.</p>
+                                    <i class="fa fa-check-circle me-2"></i>
+                                    <strong>Certificate Document Available</strong>
+                                    <p class="mb-2 mt-2">The Certificate of Insurance has been uploaded and is
+                                        available for download.</p>
+                                    <div class="d-flex gap-2 flex-wrap">
                                         <a href="{{ Storage::url($policyApplication->certificate_document) }}"
                                             target="_blank" class="btn btn-success btn-sm">
                                             <i class="fa fa-download me-2"></i>Download CI Document
                                         </a>
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#reuploadCIModal">
+                                            <i class="fa fa-upload me-2"></i>Reupload CI
+                                        </button>
+                                        {{-- <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#removeCIModal">
+                                            <i class="fa fa-trash me-2"></i>Remove CI
+                                        </button> --}}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -1984,7 +1992,10 @@
                                         <small>
                                             <strong>Uploaded:</strong>
                                             {{ $policyApplication->activated_at ? $policyApplication->activated_at->format('d M Y, h:i A') : 'N/A' }}<br>
-                                            <strong>Policy Status:</strong> <span class="badge bg-success">Active</span>
+                                            <strong>Policy Status:</strong> <span
+                                                class="badge bg-success">Active</span><br>
+                                            <strong>File:</strong>
+                                            {{ basename($policyApplication->certificate_document) }}
                                         </small>
                                     </div>
                                 </div>
@@ -2061,7 +2072,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fa fa-times me-2"></i>Cancel
                     </button>
-                    <button type="button" class="btn btn-primary" id="confirmUploadBtn" disabled>
+                    <button type="button" class="btn btn-primary" id="confirmUploadBtn">
                         <i class="fa fa-check me-2"></i>Confirm & Activate Policy
                     </button>
                 </div>
@@ -2364,6 +2375,15 @@
             initializeCIUpload();
         });
 
+        // Helper function to format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
         function initializeCIUpload() {
             const form = document.getElementById('adminActionForm');
             const statusSelect = document.getElementById('status');
@@ -2405,11 +2425,19 @@
                     return;
                 }
 
-                // Validate file type
-                if (file.type !== 'application/pdf') {
+                console.log('File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
+
+                // Validate file type - check both MIME type and extension
+                const isPDF = file.type === 'application/pdf' ||
+                    file.type === 'application/x-pdf' ||
+                    file.name.toLowerCase().endsWith('.pdf');
+
+                if (!isPDF) {
                     fileError.style.display = 'block';
-                    errorMessage.textContent = 'Please select a PDF file only.';
+                    errorMessage.textContent = 'Please select a PDF file only. Selected file type: ' + (file.type ||
+                        'unknown');
                     ciFileInput.value = '';
+                    console.error('Invalid file type:', file.type);
                     return;
                 }
 
@@ -2419,6 +2447,7 @@
                     fileError.style.display = 'block';
                     errorMessage.textContent = 'File size exceeds 10MB. Please select a smaller file.';
                     ciFileInput.value = '';
+                    console.error('File too large:', file.size);
                     return;
                 }
 
@@ -2430,15 +2459,23 @@
                 fileSize.textContent = formatFileSize(file.size);
                 filePreview.style.display = 'block';
                 confirmBtn.disabled = false;
+
+                console.log('File validated successfully, button enabled');
             });
 
             // Handle confirm button click
             confirmBtn.addEventListener('click', function() {
+                console.log('Confirm button clicked!');
+                console.log('Selected file:', selectedFile);
+
                 if (!selectedFile) {
                     fileError.style.display = 'block';
                     errorMessage.textContent = 'Please select a file before confirming.';
+                    console.error('No file selected');
                     return;
                 }
+
+                console.log('Creating file input in form...');
 
                 // Create or get the file input in the form
                 let formFileInput = form.querySelector('input[name="certificate_document"]');
@@ -2448,21 +2485,36 @@
                     formFileInput.name = 'certificate_document';
                     formFileInput.style.display = 'none';
                     form.appendChild(formFileInput);
+                    console.log('Created new file input in form');
+                } else {
+                    console.log('Using existing file input in form');
                 }
 
                 // Transfer the file to the form's file input
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(selectedFile);
-                formFileInput.files = dataTransfer.files;
+                try {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(selectedFile);
+                    formFileInput.files = dataTransfer.files;
+                    console.log('File transferred to form input:', formFileInput.files[0].name);
+                } catch (error) {
+                    console.error('Error transferring file:', error);
+                    fileError.style.display = 'block';
+                    errorMessage.textContent = 'Error preparing file for upload. Please try again.';
+                    return;
+                }
 
                 // Set flag to allow form submission
                 isSubmittingWithCI = true;
+                console.log('Set isSubmittingWithCI to true');
 
                 // Hide modal
                 ciModal.hide();
+                console.log('Modal hidden');
 
                 // Submit the form
+                console.log('Submitting form...');
                 form.submit();
+                console.log('Form submitted');
             });
 
             // Reset flag when modal is closed without confirming
@@ -2588,4 +2640,92 @@
             expiryYearModal.addEventListener('change', updateExpiryDisplayModal);
         }
     </script>
+
+    <!-- Reupload CI Modal -->
+    <div class="modal fade" id="reuploadCIModal" tabindex="-1" aria-labelledby="reuploadCIModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('for-your-action.reupload-ci', $policyApplication->id) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header bg-warning text-white">
+                        <h5 class="modal-title" id="reuploadCIModalLabel">
+                            <i class="fa fa-upload me-2"></i>Reupload Certificate of Insurance
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            <strong>Warning:</strong> This will replace the existing CI document with a new one.
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Current File:</label>
+                            <p class="text-muted">{{ basename($policyApplication->certificate_document) }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new_certificate_document" class="form-label fw-bold">
+                                New Certificate Document <span class="text-danger">*</span>
+                            </label>
+                            <input type="file" class="form-control" id="new_certificate_document"
+                                name="certificate_document" accept=".pdf" required>
+                            <small class="text-muted">PDF format only, max 10MB</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fa fa-upload me-2"></i>Reupload Document
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove CI Modal -->
+    <div class="modal fade" id="removeCIModal" tabindex="-1" aria-labelledby="removeCIModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('for-your-action.remove-ci', $policyApplication->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="removeCIModalLabel">
+                            <i class="fa fa-trash me-2"></i>Remove Certificate of Insurance
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-circle me-2"></i>
+                            <strong>Danger:</strong> This action cannot be undone!
+                        </div>
+
+                        <p>Are you sure you want to remove the Certificate of Insurance document?</p>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">File to be removed:</label>
+                            <p class="text-muted">{{ basename($policyApplication->certificate_document) }}</p>
+                        </div>
+
+                        <p class="text-danger"><strong>Note:</strong> The file will be permanently deleted from the
+                            server.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash me-2"></i>Remove Document
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
