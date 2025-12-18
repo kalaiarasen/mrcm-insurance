@@ -67,8 +67,23 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
 
         // Apply expiry year filter
         if ($this->expiryYear) {
-            $query->whereHas('policyPricing', function($q) {
-                $q->whereYear('policy_expiry_date', $this->expiryYear);
+            $selectedYear = $this->expiryYear;
+            $query->whereHas('policyPricing', function($q) use ($selectedYear) {
+                $q->whereYear('policy_expiry_date', $selectedYear);
+            })
+            // Exclude users who have a policy expiring in the year after the selected year
+            ->whereNotExists(function($subQuery) use ($selectedYear) {
+                $subQuery->select(\DB::raw(1))
+                    ->from('policy_applications as pa2')
+                    ->whereColumn('pa2.user_id', 'policy_applications.user_id')
+                    ->whereColumn('pa2.id', '!=', 'policy_applications.id')
+                    ->whereIn('pa2.admin_status', ['active', 'new_case', 'new_renewal', 'not_paid', 'paid', 'sent_uw'])
+                    ->whereExists(function($pricingSubQuery) use ($selectedYear) {
+                        $pricingSubQuery->select(\DB::raw(1))
+                            ->from('policy_pricings')
+                            ->whereColumn('policy_pricings.policy_application_id', 'pa2.id')
+                            ->whereYear('policy_pricings.policy_expiry_date', $selectedYear + 1);
+                    });
             });
         }
 
@@ -85,13 +100,29 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
                           ->where('activated_at', '>=', now()->subDays(30));
                     break;
                 case 'expiring_soon':
+                    // Only show policies expiring in next 3 months
+                    // EXCLUDE users who already have a policy (active OR submitted) for next year
                     $query->where('admin_status', 'active')
                           ->whereHas('policyPricing', function($q) {
-                        $q->whereBetween('policy_expiry_date', [
-                            now()->toDateString(),
-                            now()->addMonths(3)->toDateString()
-                        ]);
-                    });
+                              $q->whereBetween('policy_expiry_date', [
+                                  now()->toDateString(),
+                                  now()->addMonths(3)->toDateString()
+                              ]);
+                          })
+                          // Exclude users who have another policy expiring next year
+                          ->whereNotExists(function($subQuery) {
+                              $subQuery->select(\DB::raw(1))
+                                  ->from('policy_applications as pa2')
+                                  ->whereColumn('pa2.user_id', 'policy_applications.user_id')
+                                  ->whereColumn('pa2.id', '!=', 'policy_applications.id')
+                                  ->whereIn('pa2.admin_status', ['active', 'new_case', 'new_renewal', 'not_paid', 'paid', 'sent_uw'])
+                                  ->whereExists(function($pricingSubQuery) {
+                                      $pricingSubQuery->select(\DB::raw(1))
+                                          ->from('policy_pricings')
+                                          ->whereColumn('policy_pricings.policy_application_id', 'pa2.id')
+                                          ->whereYear('policy_pricings.policy_expiry_date', now()->addYear()->year);
+                                  });
+                          });
                     break;
                 case 'pending_payment':
                     $query->where('admin_status', 'not_paid');
