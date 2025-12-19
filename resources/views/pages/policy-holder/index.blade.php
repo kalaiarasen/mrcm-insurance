@@ -253,7 +253,7 @@
 
                         <div class="mb-3">
                             <label for="editCurrentPassword" class="form-label fw-bold">Current Password</label>
-                            <input type="text" class="form-control" id="editCurrentPassword" disabled
+                            <input type="text" class="form-control" id="editCurrentPassword" readonly
                                 name="current_password">
                             <div class="invalid-feedback d-block" id="currentPasswordError"></div>
                             <small class="text-muted">Leave blank if you don't want to change password</small>
