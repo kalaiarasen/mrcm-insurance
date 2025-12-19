@@ -455,7 +455,7 @@
                                         <th>Status</th>
                                         <th>Expiry Date</th>
                                         <th>Name / Email / Phone</th>
-                                        <th>Type of Professional Indemnity</th>
+                                        <th width="10%">Class</th>
                                         <th>Amount</th>
                                         <th>Agent</th>
                                         <th>Action</th>

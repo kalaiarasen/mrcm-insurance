@@ -251,8 +251,15 @@
 
                                                         <span class="text-muted small mb-1">
                                                             <i class="fa fa-briefcase me-1"></i>
-                                                            Type:
-                                                            {{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
+                                                            Class:
+                                                            @php
+                                                                $healthcareService = $policy->user->healthcareService;
+                                                                $classValue =
+                                                                    $healthcareService->practice_area ??
+                                                                    ($healthcareService->service_type ??
+                                                                        ($healthcareService->cover_type ?? null));
+                                                            @endphp
+                                                            {{ $classValue ? ucfirst(str_replace('_', ' ', $classValue)) : 'N/A' }}
                                                         </span>
 
                                                         @if ($policy->policyPricing)
@@ -544,7 +551,14 @@
                                     @foreach ($activePoliciesForClaims as $policy)
                                         <option value="{{ $policy->id }}">
                                             {{ $policy->reference_number }} -
-                                            {{ ucfirst(str_replace('_', ' ', $policy->user->healthcareService->professional_indemnity_type ?? 'N/A')) }}
+                                            @php
+                                                $healthcareService = $policy->user->healthcareService;
+                                                $classValue =
+                                                    $healthcareService->practice_area ??
+                                                    ($healthcareService->service_type ??
+                                                        ($healthcareService->cover_type ?? null));
+                                            @endphp
+                                            {{ $classValue ? ucfirst(str_replace('_', ' ', $classValue)) : 'N/A' }}
                                         </option>
                                     @endforeach
                                 </select>

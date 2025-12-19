@@ -180,13 +180,38 @@ class YourActionController extends Controller
                     return $name . $email . $phoneDisplay;
                 })
                 ->addColumn('class', function ($policy) {
-                    $type = $policy->user?->healthcareService?->professional_indemnity_type;
-                    $typeMap = [
-                        'medical_practice' => 'Medical Practice',
-                        'dental_practice' => 'Dental Practice',
-                        'pharmacist' => 'Pharmacist',
+                    $healthcareService = $policy->user?->healthcareService;
+                    
+                    // Try practice_area first, fallback to service_type, then cover_type
+                    $classValue = $healthcareService?->practice_area 
+                               ?? $healthcareService?->service_type 
+                               ?? $healthcareService?->cover_type;
+                    
+                    // Comprehensive mapping for practice_area, service_type, and cover_type values
+                    $classMap = [
+                        // Practice Area values
+                        'general_practice' => 'General Practice',
+                        'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+                        'core_services' => 'Core Services',
+                        'core_services_with_procedures' => 'Core Services with Procedures',
+                        'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
+                        'cosmetic_aesthetic_non_invasive' => 'Cosmetic & Aesthetic – Non-Invasive',
+                        'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic & Aesthetic – Non-Surgical Invasive',
+                        'office_clinical_orthopaedics' => 'Office / Clinical Orthopaedics',
+                        'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A.)',
+                        'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic (Surgical, Invasive)',
+                        'general_dental_practice' => 'General Dental Practice',
+                        'general_dental_practitioners_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
+                        // Service Type values (fallback)
+                        'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
+                        'general_practitioner_private_hospital_emergency' => 'General Practitioner in Private Hospital – Emergency Department',
+                        // Cover Type values (third fallback)
+                        'basic_coverage' => 'Basic Coverage',
+                        'comprehensive_coverage' => 'Comprehensive Coverage',
+                        'premium_coverage' => 'Premium Coverage',
                     ];
-                    return e($typeMap[$type] ?? 'N/A');
+                    
+                    return e($classMap[$classValue] ?? 'N/A');
                 })
                 ->addColumn('amount', function ($policy) {
                     $amount = $policy->policyPricing?->total_payable;
@@ -276,7 +301,9 @@ class YourActionController extends Controller
                 })
                 ->filterColumn('class', function($query, $keyword) {
                     $query->whereHas('user.healthcareService', function($q) use ($keyword) {
-                        $q->where('professional_indemnity_type', 'like', "%{$keyword}%");
+                        $q->where('practice_area', 'like', "%{$keyword}%")
+                          ->orWhere('service_type', 'like', "%{$keyword}%")
+                          ->orWhere('cover_type', 'like', "%{$keyword}%");
                     });
                 })
                 ->filterColumn('amount', function($query, $keyword) {

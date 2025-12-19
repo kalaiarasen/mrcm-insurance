@@ -25,6 +25,7 @@ class MyPoliciesController extends Controller
         // Get Other Policies (Quotation Requests)
         $quotationRequests = QuotationRequest::where('user_id', $user->id)
             ->with('product')
+            ->has('product')
             ->orderBy('created_at', 'desc')
             ->get();
 
