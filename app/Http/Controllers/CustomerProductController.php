@@ -77,12 +77,31 @@ class CustomerProductController extends Controller
      */
     public function showQuotation($id)
     {
-        $quotation = QuotationRequestModel::with(['product', 'user'])
+        $quotation = QuotationRequestModel::with(['product', 'user', 'options', 'selectedOption'])
             ->where('id', $id)
             ->where('user_id', auth()->id()) // Ensure user can only view their own quotations
             ->firstOrFail();
 
         return view('pages.customer-products.quotation-show', compact('quotation'));
+    }
+
+    /**
+     * Select a quotation option
+     */
+    public function selectOption($quotationId, $optionId)
+    {
+        $quotation = QuotationRequestModel::where('id', $quotationId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        // Verify the option belongs to this quotation
+        $option = $quotation->options()->findOrFail($optionId);
+
+        // Update selected option
+        $quotation->update(['selected_option_id' => $option->id]);
+
+        return redirect()->route('customer.quotations.show', $quotation->id)
+            ->with('success', 'Quotation option selected successfully. You can now proceed with payment.');
     }
 
     /**
@@ -94,14 +113,31 @@ class CustomerProductController extends Controller
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        // Validate that quotation is in quote status and has a quoted price
-        if ($quotation->customer_status !== 'quote' || !$quotation->quoted_price) {
+        // Validate that quotation is in quote status and has a quoted price or selected option
+        $hasPrice = false;
+        if ($quotation->options()->count() > 0) {
+            // Using new options system - must have selected option
+            if (!$quotation->selected_option_id || !$quotation->selectedOption) {
+                return redirect()->back()->with('error', 'Please select a quotation option before uploading payment.');
+            }
+            $hasPrice = true;
+            $paymentPrice = $quotation->selectedOption->price;
+        } else {
+            // Using old system - must have quoted_price
+            if (!$quotation->quoted_price) {
+                return redirect()->back()->with('error', 'Payment upload is not available for this quotation.');
+            }
+            $hasPrice = true;
+            $paymentPrice = $quotation->quoted_price;
+        }
+
+        if ($quotation->customer_status !== 'quote' || !$hasPrice) {
             return redirect()->back()->with('error', 'Payment upload is not available for this quotation.');
         }
 
         $request->validate([
             'payment_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
-            'wallet_amount' => 'nullable|numeric|min:0|max:' . min(auth()->user()->wallet_amount, $quotation->quoted_price),
+            'wallet_amount' => 'nullable|numeric|min:0|max:' . min(auth()->user()->wallet_amount, $paymentPrice),
         ]);
 
         // Store the payment document
@@ -109,8 +145,7 @@ class CustomerProductController extends Controller
 
         // Calculate wallet amount and final price
         $walletAmount = floatval($request->input('wallet_amount', 0));
-        $quotedPrice = floatval($quotation->quoted_price);
-        $finalPrice = max(0, $quotedPrice - $walletAmount);
+        $finalPrice = max(0, $paymentPrice - $walletAmount);
 
         // Deduct wallet amount from user's balance
         if ($walletAmount > 0) {

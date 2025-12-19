@@ -94,8 +94,58 @@
                             <p class="text-muted">No form data available.</p>
                         @endif
 
-                        <!-- Quotation Details (if approved) -->
-                        @if ($quotation->quoted_price || $quotation->quotation_details)
+                        <!-- Quotation Options (if available) -->
+                        @if ($quotation->options->count() > 0)
+                            <hr>
+                            <h6 class="mb-3 text-primary"><i class="fa fa-list"></i> Available Quotation Options</h6>
+                            <p class="text-muted">Please select one of the following options to proceed with payment:</p>
+
+                            <div class="row">
+                                @foreach ($quotation->options as $option)
+                                    <div class="col-md-12 mb-3">
+                                        <div
+                                            class="card {{ $quotation->selected_option_id == $option->id ? 'border-success' : 'border' }}">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <h5 class="card-title">
+                                                            {{ $option->option_name }}
+                                                            @if ($quotation->selected_option_id == $option->id)
+                                                                <span class="badge bg-success ms-2">Selected</span>
+                                                            @endif
+                                                        </h5>
+                                                        <h6 class="text-primary mb-3">RM
+                                                            {{ number_format($option->price, 2) }}</h6>
+                                                        <p class="card-text text-muted">{{ $option->details }}</p>
+
+                                                        @if ($option->pdf_document)
+                                                            <a href="{{ $option->pdf_document_url }}" target="_blank"
+                                                                class="btn btn-sm btn-outline-primary me-2">
+                                                                <i class="fa fa-file-pdf"></i> View Details PDF
+                                                            </a>
+                                                        @endif
+
+                                                        @if ($quotation->selected_option_id != $option->id && !$quotation->payment_document)
+                                                            <form
+                                                                action="{{ route('customer.quotations.select-option', [$quotation->id, $option->id]) }}"
+                                                                method="POST" class="d-inline">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-sm btn-success">
+                                                                    <i class="fa fa-check"></i> Select This Option
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        <!-- Old system: Single quotation (backward compatibility) -->
+                        @if ($quotation->options->count() == 0 && ($quotation->quoted_price || $quotation->quotation_details))
                             <hr>
                             <h6 class="mb-3 text-success"><i class="fa fa-check-circle"></i> Quotation Provided</h6>
 
@@ -137,10 +187,19 @@
                         <div class="card-body">
                             <p class="text-muted">Please upload your payment proof to proceed.</p>
 
-                            @if ($quotation->quoted_price)
+                            @php
+                                $paymentPrice = $quotation->payment_price;
+                            @endphp
+
+                            @if ($paymentPrice)
                                 <div class="alert alert-info mb-3">
-                                    <strong>Quoted Price:</strong><br>
-                                    RM <span id="quotedPrice">{{ number_format($quotation->quoted_price, 2) }}</span>
+                                    <strong>
+                                        @if ($quotation->selectedOption)
+                                            Selected Option: {{ $quotation->selectedOption->option_name }}<br>
+                                        @endif
+                                        Price:
+                                    </strong><br>
+                                    RM <span id="quotedPrice">{{ number_format($paymentPrice, 2) }}</span>
                                 </div>
 
                                 <!-- Wallet Balance Info -->
@@ -160,15 +219,16 @@
                                 @csrf
 
                                 <!-- Wallet Amount Input -->
-                                @if ($quotation->quoted_price && auth()->user()->wallet_amount > 0)
+                                @if ($paymentPrice && auth()->user()->wallet_amount > 0)
                                     <div class="mb-3">
                                         <label for="wallet_amount" class="form-label">Apply Wallet Balance</label>
                                         <div class="input-group">
                                             <span class="input-group-text">RM</span>
                                             <input type="number" step="0.01" min="0"
-                                                max="{{ min(auth()->user()->wallet_amount, $quotation->quoted_price) }}"
+                                                max="{{ min(auth()->user()->wallet_amount, $paymentPrice) }}"
                                                 class="form-control @error('wallet_amount') is-invalid @enderror"
-                                                id="wallet_amount" name="wallet_amount" value="0" placeholder="0.00">
+                                                id="wallet_amount" name="wallet_amount" value="0"
+                                                placeholder="0.00">
                                         </div>
                                         <small class="text-muted">Maximum: RM
                                             {{ number_format(min(auth()->user()->wallet_amount, $quotation->quoted_price), 2) }}</small>
@@ -180,7 +240,7 @@
                                     <!-- Final Amount Display -->
                                     <div class="alert alert-success mb-3">
                                         <strong>Final Amount to Pay:</strong><br>
-                                        RM <span id="finalAmount">{{ number_format($quotation->quoted_price, 2) }}</span>
+                                        RM <span id="finalAmount">{{ number_format($paymentPrice, 2) }}</span>
                                     </div>
                                 @endif
 
@@ -244,8 +304,25 @@
                     </div>
                 @endif
 
+                <!-- Policy Document (if uploaded by admin) -->
+                @if ($quotation->policy_document)
+                    <div class="card mt-3">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fa fa-file-contract"></i> Your Policy Document</h5>
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ asset('storage/' . $quotation->policy_document) }}" target="_blank"
+                                class="btn btn-primary w-100" download>
+                                <i class="fa fa-download"></i> Download Policy Document
+                            </a>
+                            <p class="text-muted mt-3 mb-0"><small>Please download and keep this policy document for your
+                                    records.</small></p>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Actions Card -->
-                <div class="card mt-3">
+                {{-- <div class="card mt-3">
                     <div class="card-header">
                         <h5>Actions</h5>
                     </div>
@@ -258,7 +335,7 @@
                             <i class="fa fa-list"></i> Browse All Products
                         </a>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Help Card -->
                 <div class="card mt-3">

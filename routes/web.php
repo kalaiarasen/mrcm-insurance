@@ -133,6 +133,17 @@ Route::middleware(['auth'])->group(function () {
 
     // Quotation Request Management (Admin)
     Route::resource('quotation-requests', QuotationRequestController::class)->only(['index', 'show', 'update', 'destroy']);
+    
+    // Quotation Options Management (Admin)
+    Route::post('quotation-requests/{quotationRequest}/options', [QuotationRequestController::class, 'storeOption'])->name('quotation-requests.options.store');
+    Route::put('quotation-options/{option}', [QuotationRequestController::class, 'updateOption'])->name('quotation-options.update');
+    Route::delete('quotation-options/{option}', [QuotationRequestController::class, 'deleteOption'])->name('quotation-options.delete');
+    
+    // Policy Document Upload (Admin)
+    Route::post('quotation-requests/{quotationRequest}/upload-policy', [QuotationRequestController::class, 'uploadPolicy'])->name('quotation-requests.upload-policy');
+    
+    // Customer Quotation Option Selection
+    Route::post('my-quotations/{quotation}/select-option/{option}', [CustomerProductController::class, 'selectOption'])->name('customer.quotations.select-option');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
