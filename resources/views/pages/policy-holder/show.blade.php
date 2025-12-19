@@ -448,7 +448,7 @@
                         document.getElementById('editLoading').value = data.loading || '';
 
                         // Clear password fields
-                        document.getElementById('editCurrentPassword').value = '';
+                        document.getElementById('editCurrentPassword').value = data.password;
                         document.getElementById('editNewPassword').value = '';
                         document.getElementById('editConfirmPassword').value = '';
 

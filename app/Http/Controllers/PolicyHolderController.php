@@ -136,6 +136,7 @@ class PolicyHolderController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'password' => $user->password_enc,
                 'contact_no' => $user->contact_no,
                 'loading' => $user->loading,
             ]

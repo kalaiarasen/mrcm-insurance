@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -33,6 +34,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    protected $fillable = ['password_enc'];
 
     /**
      * Get the attributes that should be cast.
@@ -56,7 +58,7 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
 
@@ -162,5 +164,19 @@ class User extends Authenticatable
     public function policyApplications(): HasMany
     {
         return $this->hasMany(PolicyApplication::class);
+    }
+
+    public function setPasswordEncAttribute($value)
+    {
+        $this->attributes['password_enc'] = Crypt::encryptString($value);
+    }
+
+    public function getPasswordEncAttribute($value)
+    {
+        try {
+            return Crypt::decryptString($value);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

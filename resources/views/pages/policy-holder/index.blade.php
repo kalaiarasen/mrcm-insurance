@@ -303,7 +303,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="clientCode" class="form-label fw-bold">Client Code</label>
-                        <input type="text" class="form-control" id="clientCode" name="client_code" 
+                        <input type="text" class="form-control" id="clientCode" name="client_code"
                             placeholder="Enter client code" required>
                         <div class="invalid-feedback d-block" id="clientCodeError"></div>
                         <small class="text-muted">Enter the client code to assign them as your referral</small>
@@ -634,7 +634,7 @@
                         document.getElementById('editLoading').value = data.loading || '';
 
                         // Clear password fields
-                        document.getElementById('editCurrentPassword').value = '';
+                        document.getElementById('editCurrentPassword').value = data.password;
                         document.getElementById('editNewPassword').value = '';
                         document.getElementById('editConfirmPassword').value = '';
 
