@@ -287,6 +287,70 @@
                 print-color-adjust: exact;
             }
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 767px) {
+            .info-card .card-body h4 {
+                font-size: 1.1rem;
+            }
+
+            .info-card .card-body p {
+                font-size: 0.85rem;
+                margin-bottom: 0.5rem !important;
+            }
+
+            .info-card .card-body .fa {
+                font-size: 0.85rem;
+            }
+
+            .status-badge {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+                display: inline-block;
+                margin-top: 0.5rem;
+            }
+
+            .info-card .row.align-items-center {
+                text-align: center !important;
+            }
+
+            .info-card .col-md-4.text-end {
+                text-align: center !important;
+                margin-top: 1rem;
+            }
+
+            .info-card .d-flex.align-items-center {
+                flex-direction: column !important;
+                text-align: center !important;
+                gap: 0.5rem;
+            }
+
+            .info-card .d-flex.align-items-center>div {
+                width: 100%;
+            }
+
+            /* Certificate of Insurance Section */
+            .info-card.border-success .alert-success {
+                margin-bottom: 1rem;
+            }
+
+            .info-card.border-success .col-md-4 {
+                margin-top: 1rem;
+            }
+
+            .info-card.border-success .section-title {
+                font-size: 1rem;
+            }
+
+            .info-card.border-success .alert-success p {
+                font-size: 0.9rem;
+            }
+
+            .info-card.border-success .btn {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
     </style>
 @endsection
 
@@ -305,9 +369,6 @@
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                                 </svg>
                             </a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('for-your-action') }}">For Your Action</a>
                         </li>
                         <li class="breadcrumb-item active">Application Details</li>
                     </ol>
@@ -1614,18 +1675,17 @@
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <div class="alert alert-success">
-                                        <i class="fa fa-check-circle me-2"></i>
-                                        <strong>Your Certificate of Insurance is Ready!</strong>
-                                        <p class="mb-2 mt-2">Your policy is now active. Download your Certificate of
-                                            Insurance below.</p>
-                                        <a href="{{ Storage::url($policyApplication->certificate_document) }}"
-                                            target="_blank" class="btn btn-success btn-sm">
-                                            <i class="fa fa-download me-2"></i>Download Certificate of Insurance
-                                        </a>
-                                    </div>
+                                    <i class="fa fa-check-circle me-2"></i>
+                                    <strong>Your Certificate of Insurance is Ready!</strong>
+                                    <p class="mb-2 mt-2">Your policy is now active. Download your Certificate of
+                                        Insurance below.</p>
+                                        <br>
+                                    <a href="{{ Storage::url($policyApplication->certificate_document) }}"
+                                        target="_blank" class="btn btn-success btn-sm">
+                                        <i class="fa fa-download me-2"></i>Download Certificate of Insurance
+                                    </a>
                                 </div>
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="info-label">Certificate Information</div>
                                     <div class="info-value">
                                         <small>
@@ -1637,7 +1697,7 @@
                                             {{ $policyApplication->activated_at ? $policyApplication->activated_at->format('d M Y') : 'N/A' }}
                                         </small>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>

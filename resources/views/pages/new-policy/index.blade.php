@@ -91,7 +91,7 @@
                                 Step 1 of 8
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-none d-md-flex justify-content-between">
                             <small class="text-muted">Step 1: Applicant Details</small>
                             <small class="text-muted">Step 2: Healthcare Services</small>
                             <small class="text-muted">Step 3: Pricing Details</small>
@@ -1190,23 +1190,21 @@
                                         <p style="margin-bottom: 15px;">
                                             <strong>Have any claims ever been made, or lawsuits been brought against
                                                 you?</strong>
-                                            <span class="form-check" style="display: inline-block; margin-left: 20px;">
-                                                <input class="form-check-input" type="radio" name="claims_made"
-                                                    id="claimsMadeYes" value="yes">
-                                                <label class="form-check-label" for="claimsMadeYes"
-                                                    style="display: inline;">
-                                                    Yes
-                                                </label>
-                                            </span>
-                                            <span class="form-check" style="display: inline-block; margin-left: 20px;">
-                                                <input class="form-check-input" type="radio" name="claims_made"
-                                                    id="claimsMadeNo" value="no">
-                                                <label class="form-check-label" for="claimsMadeNo"
-                                                    style="display: inline;">
-                                                    No
-                                                </label>
-                                            </span>
                                         </p>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="claims_made"
+                                                id="claimsMadeYes" value="yes">
+                                            <label class="form-check-label" for="claimsMadeYes">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="claims_made"
+                                                id="claimsMadeNo" value="no">
+                                            <label class="form-check-label" for="claimsMadeNo">
+                                                No
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1218,23 +1216,21 @@
                                         <p style="margin-bottom: 15px;">
                                             <strong>Are you aware of any errors, omissions, offences, circumstances or
                                                 allegations which might result in a claim being made against you?</strong>
-                                            <span class="form-check" style="display: inline-block; margin-left: 20px;">
-                                                <input class="form-check-input" type="radio" name="aware_of_errors"
-                                                    id="awareOfErrorsYes" value="yes">
-                                                <label class="form-check-label" for="awareOfErrorsYes"
-                                                    style="display: inline;">
-                                                    Yes
-                                                </label>
-                                            </span>
-                                            <span class="form-check" style="display: inline-block; margin-left: 20px;">
-                                                <input class="form-check-input" type="radio" name="aware_of_errors"
-                                                    id="awareOfErrorsNo" value="no">
-                                                <label class="form-check-label" for="awareOfErrorsNo"
-                                                    style="display: inline;">
-                                                    No
-                                                </label>
-                                            </span>
                                         </p>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="aware_of_errors"
+                                                id="awareOfErrorsYes" value="yes">
+                                            <label class="form-check-label" for="awareOfErrorsYes">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="aware_of_errors"
+                                                id="awareOfErrorsNo" value="no">
+                                            <label class="form-check-label" for="awareOfErrorsNo">
+                                                No
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1246,25 +1242,21 @@
                                         <p style="margin-bottom: 15px;">
                                             <strong>Have you ever been the subject of disciplinary action or investigation
                                                 by any authority or regulator or professional body?</strong>
-                                            <span class="form-check" style="display: inline-block; margin-left: 20px;">
-                                                <input class="form-check-input" type="radio"
-                                                    name="disciplinary_action" id="disciplinaryActionYes"
-                                                    value="yes">
-                                                <label class="form-check-label" for="disciplinaryActionYes"
-                                                    style="display: inline;">
-                                                    Yes
-                                                </label>
-                                            </span>
-                                            <span class="form-check" style="display: inline-block; margin-left: 20px;">
-                                                <input class="form-check-input" type="radio"
-                                                    name="disciplinary_action" id="disciplinaryActionNo"
-                                                    value="no">
-                                                <label class="form-check-label" for="disciplinaryActionNo"
-                                                    style="display: inline;">
-                                                    No
-                                                </label>
-                                            </span>
                                         </p>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="disciplinary_action"
+                                                id="disciplinaryActionYes" value="yes">
+                                            <label class="form-check-label" for="disciplinaryActionYes">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="disciplinary_action"
+                                                id="disciplinaryActionNo" value="no">
+                                            <label class="form-check-label" for="disciplinaryActionNo">
+                                                No
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
