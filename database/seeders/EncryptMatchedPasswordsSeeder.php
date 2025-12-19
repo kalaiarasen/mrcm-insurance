@@ -42,7 +42,7 @@ class EncryptMatchedPasswordsSeeder extends Seeder
                     continue;
                 }
 
-                $user = User::where('member_id', $memberId)
+                $user = User::where('old_member_id', $memberId)
                     ->orWhere('email', $email)
                     ->first();
 
