@@ -199,10 +199,10 @@
 
                             <div class="mb-3">
                                 <label for="editCurrentPassword" class="form-label fw-bold">Current Password</label>
-                                <input type="text" class="form-control" id="editCurrentPassword" readonly
-                                    name="current_password">
+                                <input type="hidden" name="current_password" id="currentPasswordHidden">
+                                <input type="text" class="form-control" id="editCurrentPassword" disabled>
                                 <div class="invalid-feedback d-block" id="currentPasswordError"></div>
-                                <small class="text-muted">Leave blank if you don't want to change password</small>
+{{--                                <small class="text-muted">Leave blank if you don't want to change password</small>--}}
                             </div>
 
                             <div class="mb-3">
@@ -449,6 +449,7 @@
 
                         // Clear password fields
                         document.getElementById('editCurrentPassword').value = data.password;
+                        document.getElementById('currentPasswordHidden').value = data.password;
                         document.getElementById('editNewPassword').value = '';
                         document.getElementById('editConfirmPassword').value = '';
 
