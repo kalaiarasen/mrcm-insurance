@@ -128,8 +128,8 @@
             </div>
 
             <div class="col-md-4">
-                <!-- Payment Upload (if status is pay_now) -->
-                @if ($quotation->customer_status === 'pay_now' && !$quotation->payment_document)
+                <!-- Payment Upload (if status is quote and has quoted price) -->
+                @if ($quotation->should_show_payment_upload)
                     <div class="card">
                         <div class="card-header bg-warning text-dark">
                             <h5 class="mb-0"><i class="fa fa-upload"></i> Upload Payment</h5>

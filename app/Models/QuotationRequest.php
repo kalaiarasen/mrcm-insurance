@@ -54,11 +54,9 @@ class QuotationRequest extends Model
     public function getStatusBadgeAttribute()
     {
         return match($this->customer_status) {
-            'submitted' => 'bg-secondary',
-            'pay_now' => 'bg-warning text-dark',
-            'paid' => 'bg-info',
-            'processing' => 'bg-primary',
-            'completed' => 'bg-success',
+            'new' => 'bg-secondary',
+            'quote' => 'bg-warning text-dark',
+            'active' => 'bg-success',
             default => 'bg-secondary',
         };
     }
@@ -69,9 +67,21 @@ class QuotationRequest extends Model
     public function getStatusNameAttribute()
     {
         return match($this->customer_status) {
-            'pay_now' => 'Pay Now',
+            'new' => 'New',
+            'quote' => 'Quote',
+            'active' => 'Active',
             default => ucfirst($this->customer_status),
         };
+    }
+
+    /**
+     * Check if payment upload should be shown
+     */
+    public function getShouldShowPaymentUploadAttribute()
+    {
+        return $this->customer_status === 'quote' 
+            && $this->quoted_price > 0 
+            && !$this->payment_document;
     }
 
     /**

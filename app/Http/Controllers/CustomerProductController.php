@@ -59,7 +59,7 @@ class CustomerProductController extends Controller
             'product_id' => $product->id,
             'user_id' => auth()->id(),
             'form_data' => $validated,
-            'customer_status' => 'submitted',
+            'customer_status' => 'new',
             'admin_status' => 'new',
         ]);
 
@@ -94,8 +94,8 @@ class CustomerProductController extends Controller
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        // Validate that quotation is in pay_now status
-        if ($quotation->customer_status !== 'pay_now') {
+        // Validate that quotation is in quote status and has a quoted price
+        if ($quotation->customer_status !== 'quote' || !$quotation->quoted_price) {
             return redirect()->back()->with('error', 'Payment upload is not available for this quotation.');
         }
 
@@ -119,14 +119,12 @@ class CustomerProductController extends Controller
             $user->save();
         }
 
-        // Update quotation request
+        // Update quotation request - keep status as 'quote' until admin activates
         $quotation->update([
             'payment_document' => $path,
             'payment_uploaded_at' => now(),
             'wallet_amount_applied' => $walletAmount,
             'final_price' => $finalPrice,
-            'customer_status' => 'paid',
-            'admin_status' => 'processing',
         ]);
 
         $message = 'Payment proof uploaded successfully.';

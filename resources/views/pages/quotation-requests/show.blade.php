@@ -60,18 +60,14 @@
                                 <p><strong>Admin Status:</strong>
                                     @php
                                         $adminBadges = [
-                                            'new_case' => 'bg-light text-dark',
-                                            'reviewed' => 'bg-info',
-                                            'approved' => 'bg-success',
-                                            'rejected' => 'bg-danger',
-                                            'not_paid' => 'bg-warning text-dark',
-                                            'paid' => 'bg-primary',
-                                            'completed' => 'bg-success',
+                                            'new' => 'bg-secondary',
+                                            'quote' => 'bg-warning text-dark',
+                                            'active' => 'bg-success',
                                         ];
                                         $badge = $adminBadges[$quotationRequest->admin_status] ?? 'bg-secondary';
                                     @endphp
                                     <span
-                                        class="badge {{ $badge }}">{{ ucfirst(str_replace('_', ' ', $quotationRequest->admin_status)) }}</span>
+                                        class="badge {{ $badge }}">{{ ucfirst($quotationRequest->admin_status) }}</span>
                                 </p>
                             </div>
                         </div>
@@ -186,23 +182,11 @@
                                     name="admin_status" required>
                                     <option value="new"
                                         {{ $quotationRequest->admin_status == 'new' ? 'selected' : '' }}>New</option>
-                                    <option value="approved"
-                                        {{ $quotationRequest->admin_status == 'approved' ? 'selected' : '' }}>Approved
-                                    </option>
-                                    <option value="send_uw"
-                                        {{ $quotationRequest->admin_status == 'send_uw' ? 'selected' : '' }}>Send UW
+                                    <option value="quote"
+                                        {{ $quotationRequest->admin_status == 'quote' ? 'selected' : '' }}>Quote
                                     </option>
                                     <option value="active"
                                         {{ $quotationRequest->admin_status == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="processing"
-                                        {{ $quotationRequest->admin_status == 'processing' ? 'selected' : '' }}>Processing
-                                    </option>
-                                    <option value="rejected"
-                                        {{ $quotationRequest->admin_status == 'rejected' ? 'selected' : '' }}>Rejected
-                                    </option>
-                                    <option value="cancelled"
-                                        {{ $quotationRequest->admin_status == 'cancelled' ? 'selected' : '' }}>Cancelled
-                                    </option>
                                 </select>
                                 @error('admin_status')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -252,7 +236,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title" id="approvalModalLabel">
-                        <i class="fa fa-check-circle"></i> Approve Quotation Request
+                        <i class="fa fa-check-circle"></i> Provide Quotation
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -317,8 +301,8 @@
 
                 const selectedStatus = statusSelect.value;
 
-                // If status is "approved", show modal
-                if (selectedStatus === 'approved') {
+                // If status is "quote", show modal
+                if (selectedStatus === 'quote') {
                     // Pre-fill modal with existing values if any
                     document.getElementById('modal_quoted_price').value = document.getElementById(
                         'hidden_quoted_price').value || '';
