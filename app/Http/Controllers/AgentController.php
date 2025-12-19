@@ -39,6 +39,7 @@ class AgentController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'password_enc'=>$request->password,
             'commission_percentage' => $request->commission_percentage ?? 0,
             'date_of_birth' => $request->date_of_birth,
             'location' => $request->location,
@@ -101,6 +102,7 @@ class AgentController extends Controller
 
         if ($request->filled('password')) {
             $updateData['password'] = Hash::make($request->password);
+            $updateData['password_enc'] = $request->password;
         }
 
         $user->assignRole('Agent');
@@ -127,11 +129,11 @@ class AgentController extends Controller
     public function approve(Request $request, $user): JsonResponse
     {
         $user = User::findOrFail($user);
-        
+
         $request->validate([
             'commission_percentage' => 'required|numeric|min:0|max:100',
         ]);
-        
+
         $user->update([
             'approval_status' => 'approved',
             'approved_at' => now(),
@@ -148,7 +150,7 @@ class AgentController extends Controller
     public function reject($user): JsonResponse
     {
         $user = User::findOrFail($user);
-        
+
         $user->update([
             'approval_status' => 'rejected',
             'approved_at' => now(),

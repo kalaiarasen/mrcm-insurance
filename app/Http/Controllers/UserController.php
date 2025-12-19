@@ -41,6 +41,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'password_enc'=>$request->password,
         ]);
 
         // Assign Admin role to users created by Super Admin (not Super Admin role itself)
@@ -91,6 +92,7 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $updateData['password'] = Hash::make($request->password);
+            $updateData['password_enc'] = $request->password;
         }
 
         $user->assignRole('Super Admin');

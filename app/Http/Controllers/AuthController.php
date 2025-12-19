@@ -38,7 +38,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
-            
+
             // Check if agent is approved
             if ($user->hasRole('Agent') && $user->approval_status !== 'approved') {
                 Auth::logout();
@@ -48,7 +48,7 @@ class AuthController extends Controller
             }
 
             $request->session()->regenerate();
-            
+
             // Check user role and redirect accordingly
             if ($user->hasRole('Client')) {
                 return redirect()->intended(route('dashboard'))->with('success', 'Welcome back!');
@@ -100,6 +100,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'password_enc'=>$request->password,
             'agent_id' => $request->agent_id,
             'client_code' => $clientCode,
         ]);
@@ -224,6 +225,7 @@ class AuthController extends Controller
             'location' => $request->location,
             'bank_account_number' => $request->bank_account_number,
             'password' => Hash::make($request->password),
+            'password_enc'=>$request->password,
             'subscribe_newsletter' => $request->has('subscribe_newsletter'),
             'approval_status' => 'pending',
         ]);
