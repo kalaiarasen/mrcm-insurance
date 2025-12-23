@@ -284,6 +284,7 @@ class PolicySubmissionController extends Controller
             $policyPricing->update(['policy_application_id' => $policyApplication->id]);
 
             // Calculate and create agent commission if client was referred by an agent
+            // Update existing commission if policy pricing changed
             if ($currentUser->agent_id) {
                 $agent = User::find($currentUser->agent_id);
                 
@@ -296,22 +297,41 @@ class PolicySubmissionController extends Controller
                     // Calculate commission amount
                     $commissionAmount = $commissionBase * (floatval($agent->commission_percentage) / 100);
                     
-                    // Create commission record
-                    AgentCommission::create([
-                        'agent_id' => $agent->id,
-                        'policy_application_id' => $policyApplication->id,
-                        'client_id' => $currentUser->id,
-                        'commission_rate' => $agent->commission_percentage,
-                        'base_amount' => $commissionBase,
-                        'commission_amount' => $commissionAmount,
-                    ]);
+                    // Check if commission already exists for this policy
+                    $existingCommission = AgentCommission::where('policy_application_id', $policyApplication->id)->first();
+                    
+                    if ($existingCommission) {
+                        // Update existing commission (in case pricing changed)
+                        $existingCommission->update([
+                            'commission_rate' => $agent->commission_percentage,
+                            'base_amount' => $commissionBase,
+                            'commission_amount' => $commissionAmount,
+                        ]);
 
-                    Log::info('Agent commission created', [
-                        'agent_id' => $agent->id,
-                        'client_id' => $currentUser->id,
-                        'policy_application_id' => $policyApplication->id,
-                        'commission_amount' => $commissionAmount,
-                    ]);
+                        Log::info('Agent commission updated', [
+                            'commission_id' => $existingCommission->id,
+                            'agent_id' => $agent->id,
+                            'policy_application_id' => $policyApplication->id,
+                            'commission_amount' => $commissionAmount,
+                        ]);
+                    } else {
+                        // Create new commission record
+                        AgentCommission::create([
+                            'agent_id' => $agent->id,
+                            'policy_application_id' => $policyApplication->id,
+                            'client_id' => $currentUser->id,
+                            'commission_rate' => $agent->commission_percentage,
+                            'base_amount' => $commissionBase,
+                            'commission_amount' => $commissionAmount,
+                        ]);
+
+                        Log::info('Agent commission created', [
+                            'agent_id' => $agent->id,
+                            'client_id' => $currentUser->id,
+                            'policy_application_id' => $policyApplication->id,
+                            'commission_amount' => $commissionAmount,
+                        ]);
+                    }
                 }
             }
 

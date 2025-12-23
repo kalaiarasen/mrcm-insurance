@@ -83,9 +83,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('agents', AgentController::class);
     Route::post('agents/{agent}/approve', [AgentController::class, 'approve'])->name('agents.approve');
     Route::post('agents/{agent}/reject', [AgentController::class, 'reject'])->name('agents.reject');
+    Route::get('agents/{agent}/commissions', [AgentController::class, 'getCommissions'])->name('agents.commissions');
+    Route::get('agents/{agent}/payments', [AgentController::class, 'getPaymentHistory'])->name('agents.payments');
+    Route::post('agents/{agent}/issue-payment', [AgentController::class, 'issuePayment'])->name('agents.issue-payment');
+    Route::delete('payments/{payment}', [AgentController::class, 'deletePayment'])->name('payments.delete');
     
     // Agent Commission Dashboard
     Route::get('agent/commissions', [AgentCommissionController::class, 'index'])->name('agent.commissions');
+    Route::get('agent/payments', [AgentCommissionController::class, 'getPayments'])->name('agent.payments');
     Route::get('agent/profile', [AgentCommissionController::class, 'profile'])->name('agent.profile');
     Route::put('agent/profile', [AgentCommissionController::class, 'updateProfile'])->name('agent.profile.update');
     

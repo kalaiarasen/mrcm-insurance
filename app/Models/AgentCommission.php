@@ -13,6 +13,7 @@ class AgentCommission extends Model
         'commission_rate' => 'decimal:2',
         'base_amount' => 'decimal:2',
         'commission_amount' => 'decimal:2',
+        'paid_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -51,3 +52,4 @@ class AgentCommission extends Model
         return $policyStatus === 'active' ? 'active' : 'pending';
     }
 }
+

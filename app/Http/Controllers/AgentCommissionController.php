@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AgentCommission;
+use App\Models\AgentPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -85,11 +86,14 @@ class AgentCommissionController extends Controller
 
         $totalCommissions = AgentCommission::where('agent_id', Auth::id())->count();
 
+        $totalPayments = AgentPayment::where('agent_id', Auth::id())->sum('amount');
+
         return view('pages.agent.commissions', compact(
             'totalPending',
             'totalActive',
             'totalEarned',
-            'totalCommissions'
+            'totalCommissions',
+            'totalPayments'
         ));
     }
 
@@ -157,6 +161,41 @@ class AgentCommissionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully'
+        ]);
+    }
+
+    /**
+     * Get payment history for the logged-in agent
+     */
+    public function getPayments(Request $request)
+    {
+        $payments = AgentPayment::with('creator')
+            ->where('agent_id', Auth::id())
+            ->orderBy('payment_date', 'desc')
+            ->get()
+            ->map(function ($payment) {
+                return [
+                    'id' => $payment->id,
+                    'amount' => $payment->amount,
+                    'payment_date' => $payment->payment_date->format('d-M-Y'),
+                    'payment_method' => $payment->payment_method,
+                    'reference_number' => $payment->reference_number,
+                    'notes' => $payment->notes,
+                    'receipt_path' => $payment->receipt_path,
+                    'receipt_url' => $payment->receipt_path ? asset('storage/' . $payment->receipt_path) : null,
+                    'created_by' => $payment->creator->name ?? '-',
+                    'created_at' => $payment->created_at->format('d-M-Y H:i'),
+                ];
+            });
+
+        $totalPayments = AgentPayment::where('agent_id', Auth::id())->sum('amount');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'payments' => $payments,
+                'total_payments' => $totalPayments,
+            ]
         ]);
     }
 }
