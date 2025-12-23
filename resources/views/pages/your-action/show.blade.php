@@ -1158,17 +1158,13 @@
                 </div>
             @endif
 
-            <!-- Step 4: Risk Management - Title -->
-            <div class="col-12">
-                <h5 class="mb-3">
-                    <i class="fa fa-shield-alt me-2"></i>Step 4: Risk Management
-                </h5>
-            </div>
 
-            <!-- Risk Management Card -->
-            <div class="col-12">
+
+            <!-- Step 4: Risk Management Card -->
+            <div class="col-md-6">
                 <div class="card info-card mb-3">
                     <div class="card-body">
+                        <h6 class="text-primary mb-3"><i class="fa fa-shield-alt me-2"></i>Step 4: Risk Management</h6>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex align-items-center">
@@ -1231,17 +1227,13 @@
                 </div>
             </div>
 
-            <!-- Step 5: Insurance History - Title -->
-            <div class="col-12">
-                <h5 class="mb-3">
-                    <i class="fa fa-history me-2"></i>Step 5: Insurance History
-                </h5>
-            </div>
 
-            <!-- Insurance History Card -->
-            <div class="col-12">
+
+            <!-- Step 5: Insurance History Card -->
+            <div class="col-md-6">
                 <div class="card info-card mb-3">
                     <div class="card-body">
+                        <h6 class="text-primary mb-3"><i class="fa fa-history me-2"></i>Step 5: Insurance History</h6>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -1306,20 +1298,17 @@
                 </div>
             </div>
 
-            <!-- Step 6: Claims Experience - Title -->
-            <div class="col-12">
-                <h5 class="mb-3">
-                    <i class="fa fa-exclamation-triangle me-2"></i>Step 6: Claims Experience
-                </h5>
-            </div>
 
-            <!-- Claims Experience Card -->
-            <div class="col-12">
+
+            <!-- Step 6: Claims Experience Card -->
+            <div class="col-md-6">
                 <div class="card info-card mb-3">
                     <div class="card-body">
+                        <h6 class="text-primary mb-3"><i class="fa fa-exclamation-triangle me-2"></i>Step 6: Claims
+                            Experience</h6>
 
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-12 mb-3">
                                 <div class="info-label">Claims Ever Made?</div>
                                 <div class="info-value">
                                     @if ($claims && $claims->claims_made)
@@ -1329,7 +1318,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-12 mb-3">
                                 <div class="info-label">Aware of Errors/Omissions?</div>
                                 <div class="info-value">
                                     @if ($claims && $claims->aware_of_errors)
@@ -1339,7 +1328,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-12">
                                 <div class="info-label">Subject to Disciplinary Action?</div>
                                 <div class="info-value">
                                     @if ($claims && $claims->disciplinary_action)
@@ -1392,17 +1381,14 @@
                 </div>
             </div>
 
-            <!-- Step 7 & 8: Declarations and Signature - Title -->
-            <div class="col-12">
-                <h5 class="mb-3">
-                    <i class="fa fa-file-signature me-2"></i>Step 7 & 8: Declarations and Signature
-                </h5>
-            </div>
 
-            <!-- Declarations and Signature Card -->
-            <div class="col-12">
+
+            <!-- Step 7 & 8: Declarations and Signature Card -->
+            <div class="col-md-6">
                 <div class="card info-card mb-3">
                     <div class="card-body">
+                        <h6 class="text-primary mb-3"><i class="fa fa-file-signature me-2"></i>Step 7 & 8: Declarations
+                            and Signature</h6>
 
                         <div class="row mb-4">
                             <div class="col-md-6">
