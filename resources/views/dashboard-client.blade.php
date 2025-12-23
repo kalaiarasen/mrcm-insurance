@@ -356,7 +356,7 @@
                                                                 class="btn btn-sm btn-outline-primary" target="_blank"
                                                                 title="Download Policy Schedule">
                                                                 <i class="fa fa-download"></i>
-                                                                Schedule
+                                                                Certificate
                                                             </a>
                                                         @endif
                                                     </div>
