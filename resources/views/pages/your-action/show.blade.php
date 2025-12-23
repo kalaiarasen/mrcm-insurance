@@ -266,6 +266,24 @@
                 print-color-adjust: exact;
             }
         }
+
+        /* Equal Height Cards - Flexbox Solution */
+        @media (min-width: 768px) {
+            .row>.col-md-6 {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .row>.col-md-6>.info-card {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .row>.col-md-6>.info-card>.card-body {
+                flex: 1;
+            }
+        }
     </style>
 @endsection
 

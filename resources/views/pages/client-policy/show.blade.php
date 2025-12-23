@@ -288,6 +288,24 @@
             }
         }
 
+        /* Equal Height Cards - Flexbox Solution */
+        @media (min-width: 768px) {
+            .row>.col-md-6 {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .row>.col-md-6>.info-card {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .row>.col-md-6>.info-card>.card-body {
+                flex: 1;
+            }
+        }
+
         /* Mobile Responsive Styles */
         @media (max-width: 767px) {
             .info-card .card-body h4 {
@@ -1679,7 +1697,7 @@
                                     <strong>Your Certificate of Insurance is Ready!</strong>
                                     <p class="mb-2 mt-2">Your policy is now active. Download your Certificate of
                                         Insurance below.</p>
-                                        <br>
+                                    <br>
                                     <a href="{{ Storage::url($policyApplication->certificate_document) }}"
                                         target="_blank" class="btn btn-success btn-sm">
                                         <i class="fa fa-download me-2"></i>Download Certificate of Insurance
