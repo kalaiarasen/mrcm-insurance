@@ -619,10 +619,15 @@ class YourActionController extends Controller
             $data = $request->input('application_data');
             $user = $policyApplication->user;
 
-            // Update User
+            // Update User - only name and contact_no, NOT email (email is unique and shouldn't change)
+            $applicantTitle = $data['title'] ?? null;
+            $applicantFullName = $data['full_name'] ?? null;
+            $applicantName = $applicantTitle && $applicantFullName 
+                ? strtoupper($applicantTitle) . '. ' . $applicantFullName 
+                : ($applicantFullName ?? $user->name);
+            
             $user->update([
-                'name' => $data['full_name'] ?? $user->name,
-                'email' => $data['email_address'] ?? $user->email,
+                'name' => $applicantName,
                 'contact_no' => $data['contact_no'] ?? $user->contact_no,
             ]);
 
@@ -713,9 +718,14 @@ class YourActionController extends Controller
                     'policy_expiry_date' => $data['policy_expiry_date'] ?? $pricing->policy_expiry_date,
                     'liability_limit' => $data['liability_limit'] ?? $pricing->liability_limit,
                     'base_premium' => $data['displayBasePremium'] ?? $pricing->base_premium,
+                    'loading_percentage' => $data['displayLoadingPercentage'] ?? $pricing->loading_percentage,
+                    'loading_amount' => $data['displayLoadingAmount'] ?? $pricing->loading_amount,
                     'gross_premium' => $data['displayGrossPremium'] ?? $pricing->gross_premium,
                     'locum_addon' => $data['displayLocumAddon'] ?? $pricing->locum_addon,
                     'locum_extension' => $data['locum_extension'] ?? $pricing->locum_extension,
+                    'discount_percentage' => $data['displayDiscountPercentage'] ?? $pricing->discount_percentage,
+                    'discount_amount' => $data['displayDiscountAmount'] ?? $pricing->discount_amount,
+                    'voucher_code' => $data['voucher_code'] ?? $pricing->voucher_code,
                     'sst' => $data['displaySST'] ?? $pricing->sst,
                     'stamp_duty' => $data['displayStampDuty'] ?? $pricing->stamp_duty,
                     'total_payable' => $data['displayTotalPayable'] ?? $pricing->total_payable,
@@ -770,12 +780,8 @@ class YourActionController extends Controller
                 ]);
             }
 
-            // Update Policy Application declarations
-            $policyApplication->update([
-                'agree_data_protection' => ($data['agree_declaration'] ?? 'no') === 'yes',
-                'agree_declaration' => ($data['agree_declaration_final'] ?? 'no') === 'yes',
-                'signature_data' => $data['signature'] ?? $policyApplication->signature_data,
-            ]);
+            // DON'T update Policy Application declarations (agree_data_protection, agree_declaration, signature_data)
+            // These remain as originally submitted by the user and should not be changed during admin edit
 
             DB::commit();
 

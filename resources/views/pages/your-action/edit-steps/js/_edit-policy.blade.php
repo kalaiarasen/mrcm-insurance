@@ -14,11 +14,14 @@
      */
     function prePopulateExisting() {
         if (!window.policyData) {
+            console.error('[Edit] No policyData found in window');
             return;
         }
 
         const data = window.policyData;
-
+        console.log('[Edit] Starting prePopulateExisting with data:', data);
+        console.log('[Edit] data.user:', data.user);
+        
         // Helper function to find address by type
         const findAddress = (type) => {
             return data.user?.addresses?.find(addr => addr.type === type);
@@ -100,7 +103,12 @@
         };
 
         // Step 3: Pricing Details
-        const policyPricing = getRelation(data.user, 'policyPricing', 'policy_pricing');
+        // NOTE: policyPricing is a relationship of PolicyApplication, not User
+        const policyPricing = getRelation(data, 'policyPricing', 'policy_pricing');
+        console.log('[Edit] policyPricing object:', policyPricing);
+        console.log('[Edit] policy_start_date from DB:', policyPricing?.policy_start_date);
+        console.log('[Edit] policy_expiry_date from DB:', policyPricing?.policy_expiry_date);
+        
         const liabilityLimitValue = policyPricing?.liability_limit ? String(Math.round(parseFloat(policyPricing.liability_limit))) : '';
         
         const step3Data = {
@@ -109,12 +117,19 @@
             liability_limit: liabilityLimitValue,
             locum_extension: policyPricing?.locum_extension || false,
             displayBasePremium: policyPricing?.base_premium || '0',
+            displayLoadingPercentage: policyPricing?.loading_percentage || '0',
+            displayLoadingAmount: policyPricing?.loading_amount || '0',
             displayGrossPremium: policyPricing?.gross_premium || '0',
             displayLocumAddon: policyPricing?.locum_addon || '0',
+            displayDiscountPercentage: policyPricing?.discount_percentage || '0',
+            displayDiscountAmount: policyPricing?.discount_amount || '0',
+            voucher_code: policyPricing?.voucher_code || '',
             displaySST: policyPricing?.sst || '0',
             displayStampDuty: policyPricing?.stamp_duty || '10',
             displayTotalPayable: policyPricing?.total_payable || '0',
         };
+        
+        console.log('[Edit] Constructed step3Data:', step3Data);
 
         // Step 4: Risk Management
         const riskManagement = getRelation(data.user, 'riskManagement', 'risk_management');
@@ -161,7 +176,141 @@
         localStorage.setItem(`policy_${userId}_step4`, JSON.stringify(step4Data));
         localStorage.setItem(`policy_${userId}_step5`, JSON.stringify(step5Data));
         localStorage.setItem(`policy_${userId}_step6`, JSON.stringify(step6Data));
+        
+        console.log('[Edit] Pre-populated localStorage with existing policy data');
+        console.log('[Edit] Step 3 Data:', step3Data);
     }
+
+    /**
+     * Override populatePricingSummary to properly handle edit mode
+     * In EDIT mode, we show SAVED data, not recalculate
+     */
+    const originalPopulatePricingSummary = window.populatePricingSummary;
+    window.populatePricingSummary = function() {
+        const step3Data = loadFormData(3);
+        
+        console.log('[Edit] populatePricingSummary called with step3Data:', step3Data);
+        
+        // First, call original to set up structure and options
+        if (originalPopulatePricingSummary) {
+            originalPopulatePricingSummary();
+        }
+        
+        // Then restore ALL saved values for edit mode (don't recalculate)
+        if (step3Data && Object.keys(step3Data).length > 0) {
+            console.log('[Edit] Restoring saved pricing data');
+            
+            // Helper to format currency
+            const formatCurrency = (value) => {
+                const num = parseFloat(value) || 0;
+                return num.toLocaleString('en-MY', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            };
+            
+            // Restore dates
+            if (step3Data.policy_start_date) {
+                const el = document.getElementById('policyStartDate');
+                if (el) el.value = step3Data.policy_start_date;
+            }
+            if (step3Data.policy_expiry_date) {
+                const el = document.getElementById('policyExpiryDate');
+                if (el) el.value = step3Data.policy_expiry_date;
+            }
+            
+            // Restore liability limit
+            if (step3Data.liability_limit) {
+                const el = document.getElementById('liabilityLimit');
+                if (el) el.value = step3Data.liability_limit;
+            }
+            
+            // Restore locum extension checkbox and button
+            const locumCheckbox = document.getElementById('locumExtension');
+            const toggleBtn = document.getElementById('toggleLocumExtensionBtn');
+            const isLocumEnabled = step3Data.locum_extension === true || 
+                                  step3Data.locum_extension === 'true' || 
+                                  step3Data.locum_extension === '1';
+            
+            if (locumCheckbox) locumCheckbox.checked = isLocumEnabled;
+            if (toggleBtn && isLocumEnabled) {
+                toggleBtn.innerHTML = '<i class="fa fa-minus-circle"></i> Remove Locum Extension';
+                toggleBtn.classList.remove('btn-outline-primary');
+                toggleBtn.classList.add('btn-outline-danger');
+            }
+            
+            // Restore all display values
+            const displayMappings = [
+                { id: 'displayLiabilityLimit', value: step3Data.liability_limit },
+                { id: 'displayBasePremium', value: step3Data.displayBasePremium },
+                { id: 'displayLoadingPercentage', value: step3Data.displayLoadingPercentage },
+                { id: 'displayLoadingAmount', value: step3Data.displayLoadingAmount },
+                { id: 'displayGrossPremium', value: step3Data.displayGrossPremium },
+                { id: 'displayLocumAddon', value: step3Data.displayLocumAddon },
+                { id: 'displayDiscountPercentage', value: step3Data.displayDiscountPercentage },
+                { id: 'displayDiscountAmount', value: step3Data.displayDiscountAmount },
+                { id: 'displaySST', value: step3Data.displaySST },
+                { id: 'displayStampDuty', value: step3Data.displayStampDuty },
+                { id: 'displayTotalPayable', value: step3Data.displayTotalPayable }
+            ];
+            
+            displayMappings.forEach(({ id, value }) => {
+                const el = document.getElementById(id);
+                if (el && value !== undefined && value !== null) {
+                    el.textContent = formatCurrency(value);
+                }
+            });
+            
+            // Restore hidden inputs
+            const hiddenMappings = [
+                { id: 'displayBasePremiumInput', value: step3Data.displayBasePremium },
+                { id: 'displayGrossPremiumInput', value: step3Data.displayGrossPremium },
+                { id: 'displayLocumAddonInput', value: step3Data.displayLocumAddon },
+                { id: 'displaySSTInput', value: step3Data.displaySST },
+                { id: 'displayStampDutyInput', value: step3Data.displayStampDuty },
+                { id: 'displayTotalPayableInput', value: step3Data.displayTotalPayable }
+            ];
+            
+            hiddenMappings.forEach(({ id, value }) => {
+                const el = document.getElementById(id);
+                if (el && value !== undefined && value !== null) {
+                    el.value = parseFloat(value) || 0;
+                }
+            });
+            
+            // Show/hide conditional rows based on saved values
+            const loadingAmount = parseFloat(step3Data.displayLoadingAmount) || 0;
+            const loadingPercentage = parseFloat(step3Data.displayLoadingPercentage) || 0;
+            const loadingRow = document.getElementById('loadingRow');
+            if (loadingRow) {
+                loadingRow.style.display = (loadingAmount > 0 || loadingPercentage > 0) ? 'flex' : 'none';
+                console.log('[Edit] Loading row display:', loadingAmount > 0 || loadingPercentage > 0 ? 'visible' : 'hidden', 'Loading:', loadingAmount, 'Percentage:', loadingPercentage);
+            }
+            
+            const discountAmount = parseFloat(step3Data.displayDiscountAmount) || 0;
+            const discountPercentage = parseFloat(step3Data.displayDiscountPercentage) || 0;
+            const discountRow = document.getElementById('discountRow');
+            if (discountRow) {
+                discountRow.style.display = (discountAmount > 0 || discountPercentage > 0) ? 'flex' : 'none';
+                console.log('[Edit] Discount row display:', discountAmount > 0 || discountPercentage > 0 ? 'visible' : 'hidden');
+            }
+            
+            const locumAddon = parseFloat(step3Data.displayLocumAddon) || 0;
+            const locumAddonRow = document.getElementById('locumAddonRow');
+            if (locumAddonRow) {
+                locumAddonRow.style.display = locumAddon > 0 ? 'flex' : 'none';
+            }
+            
+            // Show pricing breakdown
+            const pricingBreakdown = document.getElementById('pricingBreakdown');
+            if (pricingBreakdown) pricingBreakdown.style.display = 'block';
+            
+            const amountHr = document.getElementById('amountHr');
+            if (amountHr) amountHr.style.display = 'block';
+            
+            console.log('[Edit] Pricing display restored from saved data');
+        }
+    };
 
     /**
      * Override submitFormData function to use update endpoint instead of create
@@ -262,6 +411,42 @@
 
     // Hide steps 7 & 8, make step 6 the final step
     $(document).ready(function() {
+        // CRITICAL: Pre-populate data FIRST before any calculations run
+        prePopulateExisting();
+        
+        // Override calculatePremium with safety checks for edit mode
+        const originalCalculatePremium = window.calculatePremium;
+        window.calculatePremium = function() {
+            // Add null safety checks
+            const liabilityLimitEl = document.getElementById('liabilityLimit');
+            const policyStartDateEl = document.getElementById('policyStartDate');
+            const policyExpiryDateEl = document.getElementById('policyExpiryDate');
+            const step3Card = document.getElementById('step3Card');
+            const voucherCodeAppliedEl = document.getElementById('voucherCodeApplied');
+            
+            // Only proceed if all required elements exist and step 3 is visible
+            if (!liabilityLimitEl || !policyStartDateEl || !policyExpiryDateEl || !voucherCodeAppliedEl) {
+                console.warn('[Edit] calculatePremium called but required elements not found yet');
+                return;
+            }
+            
+            if (!step3Card || step3Card.style.display === 'none') {
+                console.warn('[Edit] calculatePremium called but step 3 not visible yet');
+                return;
+            }
+            
+            console.log('[Edit] calculatePremium - dates:', {
+                start: policyStartDateEl.value,
+                expiry: policyExpiryDateEl.value,
+                liability: liabilityLimitEl.value
+            });
+            
+            // Call original function
+            if (originalCalculatePremium) {
+                originalCalculatePremium();
+            }
+        };
+        
         // CRITICAL: Override updateProgressBar function AFTER new-policy script loads
         window.updateProgressBar = function(step) {
             const totalSteps = 6;
@@ -286,8 +471,6 @@
             }
             return allData;
         };
-        
-        prePopulateExisting();
         
         // Hide step 7 and 8 cards
         $('#step7Card').hide();
