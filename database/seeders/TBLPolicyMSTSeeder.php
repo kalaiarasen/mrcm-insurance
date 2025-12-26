@@ -316,9 +316,9 @@ class TBLPolicyMSTSeeder extends Seeder
 
             case 2: // Pending review
                 return [
-                    'status' => 'submitted',
-                    'customer_status' => 'submitted',
-                    'admin_status' => 'new_case',
+                    'status' => 'rejected',
+                    'customer_status' => 'rejected',
+                    'admin_status' => 'rejected',
                     'submitted_at' => $now,
                     'approved_at' => null,
                     'payment_received_at' => null,
@@ -326,9 +326,19 @@ class TBLPolicyMSTSeeder extends Seeder
 
             case 3: // Approved/Paid
                 return [
-                    'status' => 'paid',
-                    'customer_status' => 'paid',
-                    'admin_status' => 'paid',
+                    'status' => 'approved',
+                    'customer_status' => 'pay_now',
+                    'admin_status' => 'not_paid',
+                    'submitted_at' => $now,
+                    'approved_at' => $now,
+                    'payment_received_at' => $now,
+                ];
+
+            case 4: // Active with reference number
+                return [
+                    'status' => 'sent_uw',
+                    'customer_status' => 'processing',
+                    'admin_status' => 'sent_uw',
                     'submitted_at' => $now,
                     'approved_at' => $now,
                     'payment_received_at' => $now,
@@ -336,9 +346,9 @@ class TBLPolicyMSTSeeder extends Seeder
 
             case 5: // Active with reference number
                 return [
-                    'status' => 'active',
-                    'customer_status' => 'active',
-                    'admin_status' => 'active',
+                    'status' => 'sent_uw',
+                    'customer_status' => 'processing',
+                    'admin_status' => 'sent_uw',
                     'submitted_at' => $now,
                     'approved_at' => $now,
                     'payment_received_at' => $now,
@@ -346,9 +356,9 @@ class TBLPolicyMSTSeeder extends Seeder
 
             case 6: // Cancelled/Rejected
                 return [
-                    'status' => 'rejected',
-                    'customer_status' => 'rejected',
-                    'admin_status' => 'rejected',
+                    'status' => 'cancelled',
+                    'customer_status' => 'cancelled',
+                    'admin_status' => 'cancelled',
                     'submitted_at' => $now,
                     'approved_at' => null,
                     'payment_received_at' => null,
