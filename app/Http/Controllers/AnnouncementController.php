@@ -13,6 +13,11 @@ class AnnouncementController extends Controller
      */
     public function index()
     {
+        // Restrict Client role from accessing this page
+        if (auth()->user()->hasRole('Client')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $announcements = Announcement::latest()->get();
         return view('pages.announcement.index', compact('announcements'));
     }

@@ -12,6 +12,11 @@ class DashboardSettingController extends Controller
      */
     public function edit()
     {
+        // Restrict Client role from accessing this page
+        if (auth()->user()->hasRole('Client')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $setting = DashboardSetting::first();
         
         // Create default if doesn't exist

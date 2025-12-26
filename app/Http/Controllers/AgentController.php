@@ -17,6 +17,11 @@ class AgentController extends Controller
 {
     public function index()
     {
+        // Restrict Client and Agent roles from accessing this page
+        if (auth()->user()->hasRole('Client') || auth()->user()->hasRole('Agent')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $users = User::with('roles')
             ->whereNot('id', Auth::id())
             ->whereHas('roles', function($query) {

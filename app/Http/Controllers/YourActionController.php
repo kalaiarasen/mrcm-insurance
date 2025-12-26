@@ -22,6 +22,11 @@ class YourActionController extends Controller
      */
     public function index(Request $request)
     {
+        // Restrict Client role from accessing this page
+        if (auth()->user()->hasRole('Client')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         if ($request->ajax()) {
             $query = PolicyApplication::with('user', 'user.applicantContact', 'user.healthcareService', 'policyPricing');
 

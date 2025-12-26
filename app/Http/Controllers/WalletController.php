@@ -15,6 +15,11 @@ class WalletController extends Controller
      */
     public function index(Request $request)
     {
+        // Restrict Client role from accessing this page
+        if (auth()->user()->hasRole('Client')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         if ($request->ajax()) {
             $query = User::with(['roles', 'applicantProfile'])
                 ->whereHas('roles', function($query) {

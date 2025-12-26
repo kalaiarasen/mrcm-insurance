@@ -13,6 +13,11 @@ class DiscountController extends Controller
      */
     public function index()
     {
+        // Restrict Client role from accessing this page
+        if (auth()->user()->hasRole('Client')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $discounts = Discount::orderBy('start_date', 'desc')->get();
         return view('pages.discounts.index', compact('discounts'));
     }
