@@ -37,7 +37,7 @@ class TBLMemberMSTSeeder extends Seeder
                 $name     = trim($row[2] ?? '');
                 $nric     = trim($row[3] ?? '');
                 $title    = trim($row[1] ?? '');
-                $email    = trim($row[9] ?? '');
+                $email    = trim($row[73] ?? '');
                 $password = trim($row[10] ?? '');
                 $contact = trim($row[13] ?? '');
                 $gender   = trim($row[7] ?? '');
