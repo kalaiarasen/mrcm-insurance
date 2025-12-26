@@ -54,6 +54,7 @@ class TBLMemberMSTSeeder extends Seeder
                         'gender'             => $gender ?: null,
                         'contact_no'         => $contact ?: null,
                         'password'           => $password ? Hash::make($password) : Hash::make('password123'),
+                        'password_enc'           => $password ? $password : 'password123',
                         'application_status' => $status,
                         'old_member_id'      => $memberId,
                         'created_at'         => now(),
