@@ -105,7 +105,8 @@ class TBLPolicyMSTSeeder extends Seeder
                 $statusMapping = $this->mapStatus($status, $referenceNumber);
 
                 // Parse card expiry date (format: "2027-10-01 00:00:00.000")
-                $cardExpiry = $this->toDate($row[37] ?? null);
+//                $cardExpiry = $this->toDate($row[37] ?? null);
+                $cardExpiry = $row[37];
                 $expiryMonth = null;
                 $expiryYear = null;
                 if ($cardExpiry && $cardExpiry !== '1900-01-01') {
@@ -144,8 +145,10 @@ class TBLPolicyMSTSeeder extends Seeder
                     'approved_at'           => $statusMapping['approved_at'],
                     'payment_received_at'   => $statusMapping['payment_received_at'],
                     'signature_data'        => $user->signature,
-                    'created_at'            => $this->toDateTime($row[27] ?? null),
-                    'updated_at'            => $this->toDateTime($row[28] ?? null),
+//                        'created_at'                  => $this->toDateTime($row[27] ?? null),
+//                        'updated_at'                  => $this->toDateTime($row[28] ?? null),
+                    'created_at'                  => $row[27],
+                    'updated_at'                  => $row[28],
                 ];
 
                 // Only add payment fields if payment_method is set
@@ -218,14 +221,18 @@ class TBLPolicyMSTSeeder extends Seeder
                         'base_premium'        => $this->toNumeric($row[17] ?? 0),
                         'gross_premium'        => $this->toNumeric($row[17] ?? 0),
                         'locum_addon'          => $this->toNumeric($row[24] ?? 0), // Amount (e.g., 500.00)
-                        'policy_start_date'    => $this->toDate($row[19] ?? null),
-                        'policy_expiry_date'   => $this->toDate($row[20] ?? null),
+//                        'policy_start_date'    => $this->toDate($row[19] ?? null),
+//                        'policy_expiry_date'   => $this->toDate($row[20] ?? null),
+                        'policy_start_date'    => $row[19],
+                        'policy_expiry_date'   => $row[20],
                         'locum_extension'      => $this->toBool($row[21] ?? 0), // Boolean (0 or 1)
                         'sst'                  => $this->toNumeric($row[22] ?? 0),
                         'total_payable'        => $this->toNumeric($row[25] ?? 0),
                         'is_used'              => 1,
-                        'created_at'           => $this->toDateTime($row[27] ?? null),
-                        'updated_at'           => $this->toDateTime($row[28] ?? null),
+//                        'created_at'                  => $this->toDateTime($row[27] ?? null),
+//                        'updated_at'                  => $this->toDateTime($row[28] ?? null),
+                        'created_at'                  => $row[27],
+                        'updated_at'                  => $row[28],
                     ]
                 );
 
