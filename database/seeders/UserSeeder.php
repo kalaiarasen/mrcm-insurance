@@ -28,12 +28,24 @@ class UserSeeder extends Seeder
                 'created_at' => now()->subDays(8),
                 'updated_at' => now()->subDays(8),
             ],
+            [
+                'name' => 'Insurance Admin',
+                'email' => 'Insurance@mrcm.com.my',
+                'password' => Hash::make('!n5umrcm'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         foreach ($users as $userData) {
             $user = User::create($userData);
-            // Assign Admin role to all users created in this seeder
-            $user->assignRole('Admin');
+
+            if ($user->email === 'Insurance@mrcm.com.my') {
+                $user->assignRole('Super Admin');
+            } else {
+                $user->assignRole('Admin');
+            }
         }
+
     }
 }

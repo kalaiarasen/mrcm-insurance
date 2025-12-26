@@ -148,6 +148,32 @@
                 </div>
             </div>
             <div class="col-md-3 col-sm-12">
+                <!-- Client Code Card -->
+                @if(auth()->user()->client_code)
+                <div class="card mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body text-center p-3">
+                        <h6 class="text-white mb-2">
+                            <i class="fa fa-id-card me-1"></i>Your Client Code
+                        </h6>
+                        <div class="position-relative d-inline-block">
+                            <input type="text" 
+                                   id="clientCodeInput" 
+                                   value="{{ auth()->user()->client_code }}" 
+                                   readonly 
+                                   class="form-control text-center fw-bold"
+                                   style="background-color: rgba(255,255,255,0.9); border: none; font-size: 1.2rem; letter-spacing: 1px; cursor: pointer;"
+                                   onclick="copyClientCode()">
+                        </div>
+                        <button class="btn btn-light btn-sm mt-2 w-100" onclick="copyClientCode()">
+                            <i class="fa fa-copy me-1"></i>Copy Code
+                        </button>
+                        <small class="text-white d-block mt-2" style="opacity: 0.9;">
+                            Share this code with your agent
+                        </small>
+                    </div>
+                </div>
+                @endif
+
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
                         <h5>⚡ Quick Actions</h5>
@@ -665,6 +691,76 @@
     <script src="{{ asset('assets/js/datatable/datatables/dataTables.bootstrap5.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatables/datatable.custom2.js') }}"></script>
     <script>
+        // Copy Client Code Function
+        function copyClientCode() {
+            const input = document.getElementById('clientCodeInput');
+            
+            // Select the text
+            input.select();
+            input.setSelectionRange(0, 99999); // For mobile devices
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(input.value).then(function() {
+                // Show success notification
+                showNotification('Client code copied to clipboard!', 'success');
+            }).catch(function(err) {
+                // Fallback for older browsers
+                document.execCommand('copy');
+                showNotification('Client code copied to clipboard!', 'success');
+            });
+        }
+
+        // Show Notification Function
+        function showNotification(message, type = 'info') {
+            const alertTypes = {
+                'success': 'alert-success',
+                'error': 'alert-danger',
+                'warning': 'alert-warning',
+                'info': 'alert-info'
+            };
+
+            const alertClass = alertTypes[type] || 'alert-info';
+            const iconMap = {
+                'success': 'fa-check-circle',
+                'error': 'fa-exclamation-circle',
+                'warning': 'fa-exclamation-triangle',
+                'info': 'fa-info-circle'
+            };
+
+            const icon = iconMap[type] || 'fa-info-circle';
+
+            const alertHTML = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert" style="box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <i class="fa ${icon} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+
+            // Create container if it doesn't exist
+            let alertContainer = document.getElementById('notificationContainer');
+            if (!alertContainer) {
+                alertContainer = document.createElement('div');
+                alertContainer.id = 'notificationContainer';
+                alertContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 500px;';
+                document.body.appendChild(alertContainer);
+            }
+
+            // Add the alert
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = alertHTML;
+            const alertElement = tempDiv.firstElementChild;
+            alertContainer.appendChild(alertElement);
+
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                alertElement.classList.remove('show');
+                alertElement.addEventListener('transitionend', () => {
+                    alertElement.remove();
+                }, { once: true });
+            }, 3000);
+        }
+
         $(document).ready(function() {
             $(".datatable").DataTable({
                 "order": [

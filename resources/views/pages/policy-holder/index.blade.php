@@ -186,6 +186,7 @@
                                 <thead>
                                     <tr>
                                         <th>Date</th>
+                                        <th>Client Code</th>
                                         <th>Name</th>
                                         <th>Gender</th>
                                         <th>Nation Status</th>
@@ -354,6 +355,12 @@
                         name: 'date',
                         orderable: true,
                         searchable: false
+                    },
+                    {
+                        data: 'client_code',
+                        name: 'client_code',
+                        orderable: true,
+                        searchable: true
                     },
                     {
                         data: 'name',

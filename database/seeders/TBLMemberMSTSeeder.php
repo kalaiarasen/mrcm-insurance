@@ -23,12 +23,12 @@ class TBLMemberMSTSeeder extends Seeder
             return;
         }
 
-        $header = fgetcsv($handle); // skip header row
+        $header = fgetcsv($handle, 0, ';'); // skip header row - using semicolon delimiter
 
         DB::beginTransaction();
 
         try {
-            while (($row = fgetcsv($handle)) !== false) {
+            while (($row = fgetcsv($handle, 0, ';')) !== false) {
 
                 // -------------------------
                 // 1. USERS
@@ -37,7 +37,7 @@ class TBLMemberMSTSeeder extends Seeder
                 $name     = trim($row[2] ?? '');
                 $nric     = trim($row[3] ?? '');
                 $title    = trim($row[1] ?? '');
-                $email    = trim($row[9] ?? '');
+                $email    = trim($row[73] ?? '');
                 $password = trim($row[10] ?? '');
                 $contact = trim($row[13] ?? '');
                 $gender   = trim($row[7] ?? '');

@@ -82,13 +82,15 @@ class ExcelMedicalSeeder extends Seeder
 
                 // If still not found → create new user
                 if (!$user) {
-                    $user = User::create([
-                        'name'       => $name ?: 'Unknown',
-                        'email'      => $email ?: null,
-                        'gender'     => $gender ?: null,
-                        'contact_no' => $contact_no ?: null,
-                        'password'   => Hash::make('password123'),
-                    ]);
+                    if($email != null || $email != '') {
+                        $user = User::create([
+                            'name'       => $name ?: 'Unknown',
+                            'email'      => $email ?: null,
+                            'gender'     => $gender ?: null,
+                            'contact_no' => $contact_no ?: null,
+                            'password'   => Hash::make('password123'),
+                        ]);
+                    }
                 } else {
                     // Update contact_no if user exists
                     if ($contact_no) {

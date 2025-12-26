@@ -37,6 +37,11 @@ class PolicyHolderController extends Controller
                 ->addColumn('date', function ($holder) {
                     return '<small>' . $holder->created_at->format('d-M-Y') . '</small>';
                 })
+                ->addColumn('client_code', function ($holder) {
+                    return $holder->client_code 
+                        ? '<span class="badge" style="background-color: #e9ecef; color: #000; font-size: 0.85rem; padding: 0.5rem 0.75rem; font-weight: 600; border-radius: 8px;">' . e($holder->client_code) . '</span>'
+                        : '<span class="text-muted">-</span>';
+                })
                 ->addColumn('name', function ($holder) {
                     $title = $holder->applicantProfile?->title ?? '';
                     $fullName = trim($title . ' ' . $holder->name);
@@ -105,7 +110,10 @@ class PolicyHolderController extends Controller
                 ->filterColumn('contact_no', function($query, $keyword) {
                     $query->where('users.contact_no', 'like', "%{$keyword}%");
                 })
-                ->rawColumns(['date', 'name', 'nation_status', 'action'])
+                ->filterColumn('client_code', function($query, $keyword) {
+                    $query->where('users.client_code', 'like', "%{$keyword}%");
+                })
+                ->rawColumns(['date', 'client_code', 'name', 'nation_status', 'action'])
                 ->make(true);
         }
 
