@@ -95,7 +95,7 @@ class UserController extends Controller
             $updateData['password_enc'] = $request->password;
         }
 
-        $user->assignRole('Super Admin');
+        // $user->assignRole('Super Admin');
         $user->update($updateData);
 
         return response()->json([
