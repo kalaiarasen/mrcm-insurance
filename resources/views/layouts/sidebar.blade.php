@@ -132,8 +132,8 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav" href="#"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <a class="sidebar-link sidebar-title link-nav" href="{{ route('logout') }}">
+{{--                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">--}}
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-authenticate') }}"></use>
                                 </svg>
@@ -352,8 +352,8 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            <a class="sidebar-link sidebar-title link-nav" href="#"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <a class="sidebar-link sidebar-title link-nav" href="{{ route('logout') }}">
+                                {{--                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">--}}
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-authenticate') }}"></use>
                                 </svg>

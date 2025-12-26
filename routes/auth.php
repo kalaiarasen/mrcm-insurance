@@ -46,4 +46,5 @@ Route::middleware('auth')->group(function () {
 
 // Logout routes
 // Route::post('logout', App\Livewire\Actions\Logout::class)->name('logout');
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+//Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');

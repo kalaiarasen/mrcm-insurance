@@ -110,12 +110,13 @@
                             </li>
                         @endhasrole
                         <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <i data-feather="log-out"></i>
-                                    <span>Log out</span>
-                                </button>
+{{--                            <form method="POST" action="{{ route('logout') }}">--}}
+{{--                                @csrf--}}
+                            <a href="{{ route('logout') }}"><i data-feather="log-out"></i><span>Log out</span></a>
+{{--                                <button type="submit" class="dropdown-item">--}}
+{{--                                    <i data-feather="log-out"></i>--}}
+{{--                                    <span>Log out</span>--}}
+{{--                                </button>--}}
                             </form>
                         </li>
                     </ul>
