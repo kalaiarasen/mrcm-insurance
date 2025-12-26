@@ -23,12 +23,12 @@ class TBLMemberMSTSeeder extends Seeder
             return;
         }
 
-        $header = fgetcsv($handle, 0, ';'); // skip header row - using semicolon delimiter
+        $header = fgetcsv($handle, 0, ','); // skip header row - using semicolon delimiter
 
         DB::beginTransaction();
 
         try {
-            while (($row = fgetcsv($handle, 0, ';')) !== false) {
+            while (($row = fgetcsv($handle, 0, ',')) !== false) {
 
                 // -------------------------
                 // 1. USERS
