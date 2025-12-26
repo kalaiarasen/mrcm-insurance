@@ -54,6 +54,7 @@ class UsersOldDataSeeder extends Seeder
                 'name' => $chvUserName,
                 'email' => $email,
                 'password' => Hash::make($chvPassword),
+                'password_enc' => $chvPassword,
                 'status' => (int)$tnyStatus,
                 'old_user_id' => $numUserID,
                 'old_member_id' => $numMemberID,
