@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendAnnouncementToClients;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +14,11 @@ class AnnouncementController extends Controller
      */
     public function index()
     {
+        // Restrict Client role from accessing this page
+        if (auth()->user()->hasRole('Client')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $announcements = Announcement::latest()->get();
         return view('pages.announcement.index', compact('announcements'));
     }
@@ -32,9 +38,12 @@ class AnnouncementController extends Controller
             'description' => $request->description,
         ]);
 
+        // Dispatch job to send emails to all clients
+        SendAnnouncementToClients::dispatch($announcement);
+
         return response()->json([
             'success' => true,
-            'message' => 'Announcement created successfully!',
+            'message' => 'Announcement created successfully! Emails are being sent to all clients.',
             'data' => $announcement
         ]);
     }

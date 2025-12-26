@@ -14,6 +14,11 @@ class RoleController extends Controller
      */
     public function index()
     {
+        // Restrict Client and Agent roles from accessing this page
+        if (auth()->user()->hasRole('Client') || auth()->user()->hasRole('Agent')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $roles = Role::with('permissions')->get();
         $permissions = Permission::all();
         return view('pages.role.index', compact('roles', 'permissions'));

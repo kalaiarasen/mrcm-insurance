@@ -14,6 +14,11 @@ class ProductController extends Controller
      */
     public function index()
     {
+        // Restrict Client role from accessing this page
+        if (auth()->user()->hasRole('Client')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $products = Product::ordered()->get();
         return view('pages.products.index', compact('products'));
     }
