@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerProductController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardSettingController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\EmailSettingController;
 use App\Http\Controllers\MyPoliciesController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PolicyHolderController;
@@ -109,6 +110,10 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard Settings
     Route::get('dashboard-settings', [DashboardSettingController::class, 'edit'])->name('dashboard-settings.edit');
     Route::put('dashboard-settings', [DashboardSettingController::class, 'update'])->name('dashboard-settings.update');
+
+    // Email Settings (Super Admin Only)
+    Route::get('email-settings', [EmailSettingController::class, 'edit'])->name('email-settings.edit');
+    Route::put('email-settings', [EmailSettingController::class, 'update'])->name('email-settings.update');
 
     // Product Management (Admin)
 

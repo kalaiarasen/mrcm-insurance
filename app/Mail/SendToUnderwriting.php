@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\EmailSetting;
 use App\Models\PolicyApplication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -36,6 +37,15 @@ class SendToUnderwriting extends Mailable
      */
     public function envelope(): Envelope
     {
+        // Get email settings from database
+        $emailSettings = EmailSetting::first();
+        
+        // Fallback to env if database settings don't exist
+        $mailNewPolicy = $emailSettings->mail_new_policy ?? env('MAIL_NEW_POLICY', 'nurmaisarahmasaaud@greateasterngeneral.com');
+        $mailCcUw = $emailSettings->mail_cc_uw ?? env('MAIL_CC_UW', '');
+        $mailFromUw = $emailSettings->mail_from_uw ?? env('MAIL_FROM_UW', 'insurance@mrcm.com.my');
+        $mailFromName = $emailSettings->mail_from_name ?? 'MRCM Insurance';
+        
         // Determine if it's renewal or new application
         $type = $this->policyApplication->submission_version > 1 ? 'Renewal' : 'New Application';
         
@@ -54,15 +64,15 @@ class SendToUnderwriting extends Mailable
             $name
         );
 
-        // Get CC emails from env
-        $ccEmails = array_filter(array_map('trim', explode(',', env('MAIL_CC_UW', ''))));
+        // Get CC emails
+        $ccEmails = array_filter(array_map('trim', explode(',', $mailCcUw)));
 
         return new Envelope(
             from: new \Illuminate\Mail\Mailables\Address(
-                env('MAIL_FROM_UW', 'insurance@mrcm.com.my'),
-                'MRCM Insurance'
+                $mailFromUw,
+                $mailFromName
             ),
-            to: [env('MAIL_NEW_POLICY', 'nurmaisarahmasaaud@greateasterngeneral.com')],
+            to: [$mailNewPolicy],
             cc: $ccEmails,
             subject: $subject
         );
