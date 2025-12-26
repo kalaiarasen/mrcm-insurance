@@ -66,7 +66,7 @@ class TBLMemberMSTSeeder extends Seeder
                         'nric_number' => $nric
                     ]
                 );
-
+                $user->assignRole('Client');
                 $userId = $user->id;
 
                 $mailingAddress     = trim($row[14] ?? '');

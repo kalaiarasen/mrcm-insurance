@@ -42,7 +42,9 @@ class UsersOldDataSeeder extends Seeder
                 2 => 'Client',
                 default => 'Client',
             };
-
+            if ((int)$tnyUserType === 2) {
+                continue;
+            }
             // Prevent duplicate emails
             $email = $chvUserName; // or generate placeholder if empty
             if (User::where('email', $email)->exists()) {
