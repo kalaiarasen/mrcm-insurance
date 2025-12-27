@@ -336,7 +336,7 @@ class TBLPolicyMSTSeeder extends Seeder
 
             case 4: // Active with reference number
                 return [
-                    'status' => 'sent_uw',
+                    'status' => 'send_uw',
                     'customer_status' => 'processing',
                     'admin_status' => 'sent_uw',
                     'submitted_at' => $now,
@@ -346,7 +346,7 @@ class TBLPolicyMSTSeeder extends Seeder
 
             case 5: // Active with reference number
                 return [
-                    'status' => 'sent_uw',
+                    'status' => 'send_uw',
                     'customer_status' => 'processing',
                     'admin_status' => 'sent_uw',
                     'submitted_at' => $now,
