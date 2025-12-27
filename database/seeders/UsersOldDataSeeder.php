@@ -42,7 +42,8 @@ class UsersOldDataSeeder extends Seeder
                 2 => 'Client',
                 default => 'Client',
             };
-            if ((int)$tnyUserType === 2) {
+
+            if ((int)$tnyUserType === 1) {
                 continue;
             }
             // Prevent duplicate emails
