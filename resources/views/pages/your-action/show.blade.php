@@ -1961,52 +1961,75 @@
             @endif
 
             <!-- Certificate of Insurance (CI) Document Display -->
-            @if ($policyApplication->certificate_document)
-                <div class="col-12">
-                    <div class="card info-card mb-3 border-success">
-                        <div class="card-body">
-                            <h5 class="section-title text-success">
-                                <i class="fa fa-certificate me-2"></i>Certificate of Insurance (CI)
-                            </h5>
+            <!-- Certificate of Insurance (CI) Document Display -->
+            @if ($policyApplication->admin_status === 'active')
+                @if ($policyApplication->certificate_document)
+                    <div class="col-12">
+                        <div class="card info-card mb-3 border-success">
+                            <div class="card-body">
+                                <h5 class="section-title text-success">
+                                    <i class="fa fa-certificate me-2"></i>Certificate of Insurance (CI)
+                                </h5>
 
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <i class="fa fa-check-circle me-2"></i>
-                                    <strong>Certificate Document Available</strong>
-                                    <p class="mb-2 mt-2">The Certificate of Insurance has been uploaded and is
-                                        available for download.</p>
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        <a href="{{ Storage::url($policyApplication->certificate_document) }}"
-                                            target="_blank" class="btn btn-success btn-sm">
-                                            <i class="fa fa-download me-2"></i>Download CI Document
-                                        </a>
-                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#reuploadCIModal">
-                                            <i class="fa fa-upload me-2"></i>Reupload CI
-                                        </button>
-                                        {{-- <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#removeCIModal">
-                                            <i class="fa fa-trash me-2"></i>Remove CI
-                                        </button> --}}
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <i class="fa fa-check-circle me-2"></i>
+                                        <strong>Certificate Document Available</strong>
+                                        <p class="mb-2 mt-2">The Certificate of Insurance has been uploaded and is
+                                            available for download.</p>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a href="{{ Storage::url($policyApplication->certificate_document) }}"
+                                                target="_blank" class="btn btn-success btn-sm">
+                                                <i class="fa fa-download me-2"></i>Download CI Document
+                                            </a>
+                                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#reuploadCIModal">
+                                                <i class="fa fa-upload me-2"></i>Reupload CI
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="info-label">Document Information</div>
-                                    <div class="info-value">
-                                        <small>
-                                            <strong>Uploaded:</strong>
-                                            {{ $policyApplication->activated_at ? $policyApplication->activated_at->format('d M Y, h:i A') : 'N/A' }}<br>
-                                            <strong>Policy Status:</strong> <span
-                                                class="badge bg-success">Active</span><br>
-                                            <strong>File:</strong>
-                                            {{ basename($policyApplication->certificate_document) }}
-                                        </small>
+                                    <div class="col-md-4">
+                                        <div class="info-label">Document Information</div>
+                                        <div class="info-value">
+                                            <small>
+                                                <strong>Uploaded:</strong>
+                                                {{ $policyApplication->activated_at ? $policyApplication->activated_at->format('d M Y, h:i A') : 'N/A' }}<br>
+                                                <strong>Policy Status:</strong> <span
+                                                    class="badge bg-success">Active</span><br>
+                                                <strong>File:</strong>
+                                                {{ basename($policyApplication->certificate_document) }}
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="col-12">
+                        <div class="card info-card mb-3 border-warning">
+                            <div class="card-body">
+                                <h5 class="section-title text-warning">
+                                    <i class="fa fa-certificate me-2"></i>Certificate of Insurance (CI)
+                                </h5>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert alert-warning mb-0">
+                                            <i class="fa fa-exclamation-triangle me-2"></i>
+                                            <strong>Certificate Not Yet Uploaded</strong>
+                                            <p class="mb-2 mt-2">The Certificate of Insurance document has not been uploaded yet. Please upload it to complete the policy activation.</p>
+                                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#ciUploadModal">
+                                                <i class="fa fa-upload me-2"></i>Upload CI Document
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             @endif
 
             <!-- Action Buttons -->

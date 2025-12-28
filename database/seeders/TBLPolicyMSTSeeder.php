@@ -139,6 +139,7 @@ class TBLPolicyMSTSeeder extends Seeder
                     'agree_data_protection' => true,
                     'agree_declaration'     => true,
                     'remarks'               => trim($row[40] ?? '') ?: null,
+                    'certificate_document'  => trim($row[29] ?? '') ?: null,
                     'policy_schedule_path'  => trim($row[29] ?? '') ?: null,
                     'payment_document'      => (!is_null($doc = trim($row[30] ?? '')) && $doc !== '' && strtoupper($doc) !== 'NULL') ? "app/" . ltrim($doc, '/') : null,
                     'submitted_at'          => $statusMapping['submitted_at'],
