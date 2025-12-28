@@ -1,26 +1,28 @@
 <script>
     /**
-     * Edit Policy Application JavaScript
-     * This file extends the new-policy JavaScript to support editing existing applications
-     * It pre-loads existing data and changes the submission endpoint
+     * Edit Policy Application JavaScript  
+     * This file directly populates form fields from server data
+     * WITHOUT using localStorage to avoid conflicts
      */
 
     // Get the policy application ID
     const policyApplicationId = document.getElementById('policyApplicationId')?.value || null;
 
     /**
-     * Pre-populate localStorage with existing policy data
-     * This function runs before the new-policy script to inject existing data
+     * Directly populate form fields from policyData
+     * This bypasses localStorage completely
      */
-    function prePopulateExisting() {
+    function directlyPopulateFields() {
         if (!window.policyData) {
             console.error('[Edit] No policyData found in window');
             return;
         }
 
         const data = window.policyData;
-        console.log('[Edit] Starting prePopulateExisting with data:', data);
-        console.log('[Edit] data.user:', data.user);
+        console.log('[Edit] Directly populating fields with data:', data);
+        console.log('[Edit] user.applicant_profile:', data.user?.applicant_profile);
+        console.log('[Edit] Title value:', data.user?.applicant_profile?.title);
+        console.log('[Edit] Gender value:', data.user?.applicant_profile?.gender);
         
         // Helper function to find address by type
         const findAddress = (type) => {
@@ -32,286 +34,234 @@
             return data.user?.qualifications?.find(qual => qual.sequence === sequence);
         };
 
+        // Helper to get relationship data (handles both camelCase and snake_case)
+        const getRelation = (obj, camelCase, snakeCase) => {
+            return obj?.[camelCase] || obj?.[snakeCase];
+        };
+
+        // Helper to set field value
+        const setFieldValue = (name, value) => {
+            if (value === null || value === undefined || value === '') {
+                console.log(`[Edit] Skipping empty value for ${name}`);
+                return;
+            }
+            
+            const elements = document.getElementsByName(name);
+            if (elements.length === 0) {
+                console.warn(`[Edit] No elements found with name="${name}"`);
+                return;
+            }
+
+            console.log(`[Edit] Setting ${name} = ${value}, found ${elements.length} elements`);
+
+            elements.forEach(el => {
+                if (el.type === 'radio') {
+                    // Convert both to lowercase for case-insensitive comparison
+                    if (el.value.toLowerCase() === String(value).toLowerCase()) {
+                        el.checked = true;
+                        console.log(`[Edit] Checked radio ${name} with value ${value}`);
+                    }
+                } else if (el.type === 'checkbox') {
+                    el.checked = (value === true || value === 'true' || value === 1 || value === '1' || value === 'yes');
+                    console.log(`[Edit] Set checkbox ${name} to ${el.checked}`);
+                } else if (el.tagName === 'SELECT') {
+                    // Try lowercase first (for title, gender fields), then original value
+                    const lowerValue = String(value).toLowerCase().replace(/\./g, '');
+                    el.value = lowerValue;
+                    if (!el.value) {
+                        el.value = value; // Fallback to original
+                    }
+                    // Trigger change event for select elements
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log(`[Edit] Set select ${name} to ${value} (tried: ${lowerValue}, result: ${el.value})`);
+                } else {
+                    el.value = value;
+                    console.log(`[Edit] Set ${el.type} ${name} to ${value}`);
+                }
+            });
+        };
+
         // Get addresses
         const mailingAddress = findAddress('mailing');
         const primaryAddress = findAddress('primary_clinic');
         const secondaryAddress = findAddress('secondary_clinic');
+        
+        console.log('[Edit] Addresses:', { mailingAddress, primaryAddress, secondaryAddress });
+        console.log('[Edit] Primary clinic_type:', primaryAddress?.clinic_type);
+        console.log('[Edit] Secondary clinic_type:', secondaryAddress?.clinic_type);
 
         // Get qualifications
         const qual1 = findQualification(1);
         const qual2 = findQualification(2);
         const qual3 = findQualification(3);
 
-        // Helper to get relationship data (handles both camelCase and snake_case)
-        const getRelation = (obj, camelCase, snakeCase) => {
-            return obj?.[camelCase] || obj?.[snakeCase];
-        };
-
         // Step 1: Applicant Details
-        const step1Data = {
-            title: data.user?.applicant_profile?.title || '',
-            full_name: data.user?.name || '',
-            nationality_status: data.user?.applicant_profile?.nationality_status || '',
-            nric_number: data.user?.applicant_profile?.nric_number || '',
-            passport_number: data.user?.applicant_profile?.passport_number || '',
-            gender: data.user?.applicant_profile?.gender || '',
-            contact_no: data.user?.applicant_contact?.contact_no || '',
-            email_address: data.user?.email || '',
-            mailing_address: mailingAddress?.address || '',
-            mailing_postcode: mailingAddress?.postcode || '',
-            mailing_city: mailingAddress?.city || '',
-            mailing_state: mailingAddress?.state || '',
-            mailing_country: mailingAddress?.country || '',
-            primary_clinic_type: primaryAddress?.clinic_type || '',
-            primary_clinic_name: primaryAddress?.clinic_name || '',
-            primary_address: primaryAddress?.address || '',
-            primary_postcode: primaryAddress?.postcode || '',
-            primary_city: primaryAddress?.city || '',
-            primary_state: primaryAddress?.state || '',
-            primary_country: primaryAddress?.country || '',
-            secondary_clinic_type: secondaryAddress?.clinic_type || '',
-            secondary_clinic_name: secondaryAddress?.clinic_name || '',
-            secondary_address: secondaryAddress?.address || '',
-            secondary_postcode: secondaryAddress?.postcode || '',
-            secondary_city: secondaryAddress?.city || '',
-            secondary_state: secondaryAddress?.state || '',
-            secondary_country: secondaryAddress?.country || '',
-            institution_1: qual1?.institution || '',
-            qualification_1: qual1?.degree_or_qualification || '',
-            year_obtained_1: qual1?.year_obtained || '',
-            institution_2: qual2?.institution || '',
-            qualification_2: qual2?.degree_or_qualification || '',
-            year_obtained_2: qual2?.year_obtained || '',
-            institution_3: qual3?.institution || '',
-            qualification_3: qual3?.degree_or_qualification || '',
-            year_obtained_3: qual3?.year_obtained || '',
-            registration_council: data.user?.applicant_profile?.registration_council || '',
-            other_council: data.user?.applicant_profile?.other_council || '',
-            registration_number: data.user?.applicant_profile?.registration_number || '',
-        };
+        const applicantProfile = data.user?.applicant_profile || data.user?.applicantProfile;
+        const applicantContact = data.user?.applicant_contact || data.user?.applicantContact;
+        
+        console.log('[Edit] Setting Step 1 fields...');
+        console.log('[Edit] applicantProfile:', applicantProfile);
+        
+        setFieldValue('title', applicantProfile?.title);
+        setFieldValue('full_name', data.user?.name);
+        setFieldValue('nationality_status', applicantProfile?.nationality_status);
+        setFieldValue('nric_number', applicantProfile?.nric_number);
+        setFieldValue('passport_number', applicantProfile?.passport_number);
+        setFieldValue('gender', applicantProfile?.gender);
+        setFieldValue('contact_no', applicantContact?.contact_no);
+        setFieldValue('email_address', data.user?.email);
+        setFieldValue('mailing_address', mailingAddress?.address);
+        setFieldValue('mailing_postcode', mailingAddress?.postcode);
+        setFieldValue('mailing_city', mailingAddress?.city);
+        setFieldValue('mailing_state', mailingAddress?.state);
+        setFieldValue('mailing_country', mailingAddress?.country);
+        setFieldValue('primary_clinic_type', primaryAddress?.clinic_type);
+        setFieldValue('primary_clinic_name', primaryAddress?.clinic_name);
+        setFieldValue('primary_address', primaryAddress?.address);
+        setFieldValue('primary_postcode', primaryAddress?.postcode);
+        setFieldValue('primary_city', primaryAddress?.city);
+        setFieldValue('primary_state', primaryAddress?.state);
+        setFieldValue('primary_country', primaryAddress?.country);
+        setFieldValue('secondary_clinic_type', secondaryAddress?.clinic_type);
+        setFieldValue('secondary_clinic_name', secondaryAddress?.clinic_name);
+        setFieldValue('secondary_address', secondaryAddress?.address);
+        setFieldValue('secondary_postcode', secondaryAddress?.postcode);
+        setFieldValue('secondary_city', secondaryAddress?.city);
+        setFieldValue('secondary_state', secondaryAddress?.state);
+        setFieldValue('secondary_country', secondaryAddress?.country);
+        setFieldValue('institution_1', qual1?.institution);
+        setFieldValue('qualification_1', qual1?.degree_or_qualification);
+        setFieldValue('year_obtained_1', qual1?.year_obtained);
+        setFieldValue('institution_2', qual2?.institution);
+        setFieldValue('qualification_2', qual2?.degree_or_qualification);
+        setFieldValue('year_obtained_2', qual2?.year_obtained);
+        setFieldValue('institution_3', qual3?.institution);
+        setFieldValue('qualification_3', qual3?.degree_or_qualification);
+        setFieldValue('year_obtained_3', qual3?.year_obtained);
+        setFieldValue('registration_council', data.user?.applicant_profile?.registration_council);
+        setFieldValue('other_council', data.user?.applicant_profile?.other_council);
+        setFieldValue('registration_number', data.user?.applicant_profile?.registration_number);
 
         // Step 2: Healthcare Services
         const healthcareService = getRelation(data.user, 'healthcareService', 'healthcare_service');
-        const step2Data = {
-            professional_indemnity_type: healthcareService?.professional_indemnity_type || '',
-            employment_status: healthcareService?.employment_status || '',
-            specialty_area: healthcareService?.specialty_area || '',
-            cover_type: healthcareService?.cover_type || '',
-            locum_practice_location: healthcareService?.locum_practice_location || '',
-            service_type: healthcareService?.service_type || '',
-            practice_area: healthcareService?.practice_area || '',
-        };
+        setFieldValue('professional_indemnity_type', healthcareService?.professional_indemnity_type);
+        setFieldValue('employment_status', healthcareService?.employment_status);
+        setFieldValue('specialty_area', healthcareService?.specialty_area);
+        setFieldValue('cover_type', healthcareService?.cover_type);
+        setFieldValue('locum_practice_location', healthcareService?.locum_practice_location);
+        setFieldValue('service_type', healthcareService?.service_type);
+        setFieldValue('practice_area', healthcareService?.practice_area);
 
         // Step 3: Pricing Details
-        // NOTE: policyPricing is a relationship of PolicyApplication, not User
         const policyPricing = getRelation(data, 'policyPricing', 'policy_pricing');
-        console.log('[Edit] policyPricing object:', policyPricing);
-        console.log('[Edit] policy_start_date from DB:', policyPricing?.policy_start_date);
-        console.log('[Edit] policy_expiry_date from DB:', policyPricing?.policy_expiry_date);
+        setFieldValue('policy_start_date', policyPricing?.policy_start_date);
+        setFieldValue('policy_expiry_date', policyPricing?.policy_expiry_date);
         
         const liabilityLimitValue = policyPricing?.liability_limit ? String(Math.round(parseFloat(policyPricing.liability_limit))) : '';
+        setFieldValue('liability_limit', liabilityLimitValue);
         
-        const step3Data = {
-            policy_start_date: policyPricing?.policy_start_date || '',
-            policy_expiry_date: policyPricing?.policy_expiry_date || '',
-            liability_limit: liabilityLimitValue,
-            locum_extension: policyPricing?.locum_extension || false,
-            displayBasePremium: policyPricing?.base_premium || '0',
-            displayLoadingPercentage: policyPricing?.loading_percentage || '0',
-            displayLoadingAmount: policyPricing?.loading_amount || '0',
-            displayGrossPremium: policyPricing?.gross_premium || '0',
-            displayLocumAddon: policyPricing?.locum_addon || '0',
-            displayDiscountPercentage: policyPricing?.discount_percentage || '0',
-            displayDiscountAmount: policyPricing?.discount_amount || '0',
-            voucher_code: policyPricing?.voucher_code || '',
-            displaySST: policyPricing?.sst || '0',
-            displayStampDuty: policyPricing?.stamp_duty || '10',
-            displayTotalPayable: policyPricing?.total_payable || '0',
-        };
-        
-        console.log('[Edit] Constructed step3Data:', step3Data);
+        const locumExtensionCheckbox = document.getElementById('locumExtension');
+        if (locumExtensionCheckbox) {
+            locumExtensionCheckbox.checked = policyPricing?.locum_extension || false;
+        }
 
         // Step 4: Risk Management
         const riskManagement = getRelation(data.user, 'riskManagement', 'risk_management');
-        const step4Data = {
-            medical_records: riskManagement?.medical_records ? 'yes' : 'no',
-            informed_consent: riskManagement?.informed_consent ? 'yes' : 'no',
-            adverse_incidents: riskManagement?.adverse_incidents ? 'yes' : 'no',
-            sterilisation_facilities: riskManagement?.sterilisation_facilities ? 'yes' : 'no',
-        };
+        setFieldValue('medical_records', riskManagement?.medical_records ? 'yes' : 'no');
+        setFieldValue('informed_consent', riskManagement?.informed_consent ? 'yes' : 'no');
+        setFieldValue('adverse_incidents', riskManagement?.adverse_incidents ? 'yes' : 'no');
+        setFieldValue('sterilisation_facilities', riskManagement?.sterilisation_facilities ? 'yes' : 'no');
 
         // Step 5: Insurance History
         const insuranceHistory = getRelation(data.user, 'insuranceHistory', 'insurance_history');
-        const step5Data = {
-            current_insurance: insuranceHistory?.current_insurance ? 'yes' : 'no',
-            insurer_name: insuranceHistory?.insurer_name || '',
-            period_of_insurance: insuranceHistory?.period_of_insurance || '',
-            policy_limit_myr: insuranceHistory?.policy_limit_myr || '',
-            excess_myr: insuranceHistory?.excess_myr || '',
-            retroactive_date: insuranceHistory?.retroactive_date || '',
-            previous_claims: insuranceHistory?.previous_claims ? 'yes' : 'no',
-            claims_details: insuranceHistory?.claims_details || '',
-        };
+        setFieldValue('current_insurance', insuranceHistory?.current_insurance ? 'yes' : 'no');
+        setFieldValue('insurer_name', insuranceHistory?.insurer_name);
+        setFieldValue('period_of_insurance', insuranceHistory?.period_of_insurance);
+        setFieldValue('policy_limit_myr', insuranceHistory?.policy_limit_myr);
+        setFieldValue('excess_myr', insuranceHistory?.excess_myr);
+        setFieldValue('retroactive_date', insuranceHistory?.retroactive_date);
+        setFieldValue('previous_claims', insuranceHistory?.previous_claims ? 'yes' : 'no');
+        setFieldValue('claims_details', insuranceHistory?.claims_details);
 
         // Step 6: Claims Experience
         const claimsExperience = getRelation(data.user, 'claimsExperience', 'claims_experience');
-        const step6Data = {
-            claims_made: claimsExperience?.claims_made ? 'yes' : 'no',
-            aware_of_errors: claimsExperience?.aware_of_errors ? 'yes' : 'no',
-            disciplinary_action: claimsExperience?.disciplinary_action ? 'yes' : 'no',
-            claim_date_of_claim: claimsExperience?.claim_date_of_claim || '',
-            claim_notified_date: claimsExperience?.claim_notified_date || '',
-            claim_claimant_name: claimsExperience?.claim_claimant_name || '',
-            claim_allegations: claimsExperience?.claim_allegations || '',
-            claim_amount_claimed: claimsExperience?.claim_amount_claimed || '',
-            claim_status: claimsExperience?.claim_status || '',
-            claim_amounts_paid: claimsExperience?.claim_amounts_paid || '',
-        };
+        setFieldValue('claims_made', claimsExperience?.claims_made ? 'yes' : 'no');
+        setFieldValue('aware_of_errors', claimsExperience?.aware_of_errors ? 'yes' : 'no');
+        setFieldValue('disciplinary_action', claimsExperience?.disciplinary_action ? 'yes' : 'no');
+        setFieldValue('claim_date_of_claim', claimsExperience?.claim_date_of_claim);
+        setFieldValue('claim_notified_date', claimsExperience?.claim_notified_date);
+        setFieldValue('claim_claimant_name', claimsExperience?.claim_claimant_name);
+        setFieldValue('claim_allegations', claimsExperience?.claim_allegations);
+        setFieldValue('claim_amount_claimed', claimsExperience?.claim_amount_claimed);
+        setFieldValue('claim_status', claimsExperience?.claim_status);
+        setFieldValue('claim_amounts_paid', claimsExperience?.claim_amounts_paid);
 
-        // Save all to localStorage using the same keys as new-policy
-        const userId = getUserId();
-        localStorage.setItem(`policy_${userId}_step1`, JSON.stringify(step1Data));
-        localStorage.setItem(`policy_${userId}_step2`, JSON.stringify(step2Data));
-        localStorage.setItem(`policy_${userId}_step3`, JSON.stringify(step3Data));
-        localStorage.setItem(`policy_${userId}_step4`, JSON.stringify(step4Data));
-        localStorage.setItem(`policy_${userId}_step5`, JSON.stringify(step5Data));
-        localStorage.setItem(`policy_${userId}_step6`, JSON.stringify(step6Data));
-        
-        console.log('[Edit] Pre-populated localStorage with existing policy data');
-        console.log('[Edit] Step 3 Data:', step3Data);
+        // Restore pricing display
+        if (policyPricing) {
+            restorePricingDisplay(policyPricing);
+        }
+
+        console.log('[Edit] All fields directly populated from server data');
     }
 
     /**
-     * Override populatePricingSummary to properly handle edit mode
-     * In EDIT mode, we show SAVED data, not recalculate
+     * Restore pricing display without localStorage
      */
-    const originalPopulatePricingSummary = window.populatePricingSummary;
-    window.populatePricingSummary = function() {
-        const step3Data = loadFormData(3);
-        
-        console.log('[Edit] populatePricingSummary called with step3Data:', step3Data);
-        
-        // First, call original to set up structure and options
-        if (originalPopulatePricingSummary) {
-            originalPopulatePricingSummary();
-        }
-        
-        // Then restore ALL saved values for edit mode (don't recalculate)
-        if (step3Data && Object.keys(step3Data).length > 0) {
-            console.log('[Edit] Restoring saved pricing data');
-            
-            // Helper to format currency
-            const formatCurrency = (value) => {
-                const num = parseFloat(value) || 0;
-                return num.toLocaleString('en-MY', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-            };
-            
-            // Restore dates
-            if (step3Data.policy_start_date) {
-                const el = document.getElementById('policyStartDate');
-                if (el) el.value = step3Data.policy_start_date;
-            }
-            if (step3Data.policy_expiry_date) {
-                const el = document.getElementById('policyExpiryDate');
-                if (el) el.value = step3Data.policy_expiry_date;
-            }
-            
-            // Restore liability limit
-            if (step3Data.liability_limit) {
-                const el = document.getElementById('liabilityLimit');
-                if (el) el.value = step3Data.liability_limit;
-            }
-            
-            // Restore locum extension checkbox and button
-            const locumCheckbox = document.getElementById('locumExtension');
-            const toggleBtn = document.getElementById('toggleLocumExtensionBtn');
-            const isLocumEnabled = step3Data.locum_extension === true || 
-                                  step3Data.locum_extension === 'true' || 
-                                  step3Data.locum_extension === '1';
-            
-            if (locumCheckbox) locumCheckbox.checked = isLocumEnabled;
-            if (toggleBtn && isLocumEnabled) {
-                toggleBtn.innerHTML = '<i class="fa fa-minus-circle"></i> Remove Locum Extension';
-                toggleBtn.classList.remove('btn-outline-primary');
-                toggleBtn.classList.add('btn-outline-danger');
-            }
-            
-            // Restore all display values
-            const displayMappings = [
-                { id: 'displayLiabilityLimit', value: step3Data.liability_limit },
-                { id: 'displayBasePremium', value: step3Data.displayBasePremium },
-                { id: 'displayLoadingPercentage', value: step3Data.displayLoadingPercentage },
-                { id: 'displayLoadingAmount', value: step3Data.displayLoadingAmount },
-                { id: 'displayGrossPremium', value: step3Data.displayGrossPremium },
-                { id: 'displayLocumAddon', value: step3Data.displayLocumAddon },
-                { id: 'displayDiscountPercentage', value: step3Data.displayDiscountPercentage },
-                { id: 'displayDiscountAmount', value: step3Data.displayDiscountAmount },
-                { id: 'displaySST', value: step3Data.displaySST },
-                { id: 'displayStampDuty', value: step3Data.displayStampDuty },
-                { id: 'displayTotalPayable', value: step3Data.displayTotalPayable }
-            ];
-            
-            displayMappings.forEach(({ id, value }) => {
-                const el = document.getElementById(id);
-                if (el && value !== undefined && value !== null) {
-                    el.textContent = formatCurrency(value);
-                }
+    function restorePricingDisplay(policyPricing) {
+        const formatCurrency = (value) => {
+            const num = parseFloat(value) || 0;
+            return num.toLocaleString('en-MY', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             });
-            
-            // Restore hidden inputs
-            const hiddenMappings = [
-                { id: 'displayBasePremiumInput', value: step3Data.displayBasePremium },
-                { id: 'displayGrossPremiumInput', value: step3Data.displayGrossPremium },
-                { id: 'displayLocumAddonInput', value: step3Data.displayLocumAddon },
-                { id: 'displaySSTInput', value: step3Data.displaySST },
-                { id: 'displayStampDutyInput', value: step3Data.displayStampDuty },
-                { id: 'displayTotalPayableInput', value: step3Data.displayTotalPayable }
-            ];
-            
-            hiddenMappings.forEach(({ id, value }) => {
-                const el = document.getElementById(id);
-                if (el && value !== undefined && value !== null) {
-                    el.value = parseFloat(value) || 0;
-                }
-            });
-            
-            // Show/hide conditional rows based on saved values
-            const loadingAmount = parseFloat(step3Data.displayLoadingAmount) || 0;
-            const loadingPercentage = parseFloat(step3Data.displayLoadingPercentage) || 0;
-            const loadingRow = document.getElementById('loadingRow');
-            if (loadingRow) {
-                loadingRow.style.display = (loadingAmount > 0 || loadingPercentage > 0) ? 'flex' : 'none';
-                console.log('[Edit] Loading row display:', loadingAmount > 0 || loadingPercentage > 0 ? 'visible' : 'hidden', 'Loading:', loadingAmount, 'Percentage:', loadingPercentage);
-            }
-            
-            const discountAmount = parseFloat(step3Data.displayDiscountAmount) || 0;
-            const discountPercentage = parseFloat(step3Data.displayDiscountPercentage) || 0;
-            const discountRow = document.getElementById('discountRow');
-            if (discountRow) {
-                discountRow.style.display = (discountAmount > 0 || discountPercentage > 0) ? 'flex' : 'none';
-                console.log('[Edit] Discount row display:', discountAmount > 0 || discountPercentage > 0 ? 'visible' : 'hidden');
-            }
-            
-            const locumAddon = parseFloat(step3Data.displayLocumAddon) || 0;
-            const locumAddonRow = document.getElementById('locumAddonRow');
-            if (locumAddonRow) {
-                locumAddonRow.style.display = locumAddon > 0 ? 'flex' : 'none';
-            }
-            
-            // Show pricing breakdown
-            const pricingBreakdown = document.getElementById('pricingBreakdown');
-            if (pricingBreakdown) pricingBreakdown.style.display = 'block';
-            
-            const amountHr = document.getElementById('amountHr');
-            if (amountHr) amountHr.style.display = 'block';
-            
-            console.log('[Edit] Pricing display restored from saved data');
-        }
-    };
+        };
 
+        const displayMappings = [
+            { id: 'displayLiabilityLimit', value: policyPricing.liability_limit },
+            { id: 'displayBasePremium', value: policyPricing.base_premium },
+            { id: 'displayLoadingPercentage', value: policyPricing.loading_percentage },
+            { id: 'displayLoadingAmount', value: policyPricing.loading_amount },
+            { id: 'displayGrossPremium', value: policyPricing.gross_premium },
+            { id: 'displayLocumAddon', value: policyPricing.locum_addon },
+            { id: 'displayDiscountPercentage', value: policyPricing.discount_percentage },
+            { id: 'displayDiscountAmount', value: policyPricing.discount_amount },
+            { id: 'displaySST', value: policyPricing.sst },
+            { id: 'displayStampDuty', value: policyPricing.stamp_duty },
+            { id: 'displayTotalPayable', value: policyPricing.total_payable }
+        ];
+
+        displayMappings.forEach(({ id, value }) => {
+            const el = document.getElementById(id);
+            if (el && value !== undefined && value !== null) {
+                el.textContent = formatCurrency(value);
+            }
+        });
+
+        // Show conditional rows
+        const loadingRow = document.getElementById('loadingRow');
+        if (loadingRow && (parseFloat(policyPricing.loading_amount) > 0 || parseFloat(policyPricing.loading_percentage) > 0)) {
+            loadingRow.style.display = 'flex';
+        }
+
+        const discountRow = document.getElementById('discountRow');
+        if (discountRow && (parseFloat(policyPricing.discount_amount) > 0 || parseFloat(policyPricing.discount_percentage) > 0)) {
+            discountRow.style.display = 'flex';
+        }
+
+        const locumAddonRow = document.getElementById('locumAddonRow');
+        if (locumAddonRow && parseFloat(policyPricing.locum_addon) > 0) {
+            locumAddonRow.style.display = 'flex';
+        }
+
+        // Show pricing breakdown
+        const pricingBreakdown = document.getElementById('pricingBreakdown');
+        if (pricingBreakdown) pricingBreakdown.style.display = 'block';
+
+        const amountHr = document.getElementById('amountHr');
+        if (amountHr) amountHr.style.display = 'block';
+
+        console.log('[Edit] Pricing display restored');
+    }
     /**
      * Override submitFormData function to use update endpoint instead of create
      */
@@ -342,7 +292,7 @@
         // Send AJAX request to UPDATE endpoint
         $.ajax({
             url: `/for-your-action/${policyApplicationId}/update`,
-            type: 'POST', // Use POST with _method: PUT
+            type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(submissionData),
             headers: {
@@ -351,7 +301,6 @@
             },
             timeout: 30000,
             success: function(response) {
-                // Show success message
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
                         icon: 'success',
@@ -362,14 +311,11 @@
                         allowEscapeKey: false
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Clear localStorage and redirect
-                            clearAllSavedData();
                             window.location.href = response.redirect_url || `/for-your-action/${policyApplicationId}`;
                         }
                     });
                 } else {
                     alert('Application Updated Successfully!');
-                    clearAllSavedData();
                     window.location.href = response.redirect_url || `/for-your-action/${policyApplicationId}`;
                 }
 
@@ -411,43 +357,14 @@
 
     // Hide steps 7 & 8, make step 6 the final step
     $(document).ready(function() {
-        // CRITICAL: Pre-populate data FIRST before any calculations run
-        prePopulateExisting();
+        // Wait for DOM and all scripts to be fully ready, then populate
+        setTimeout(() => {
+            console.log('[Edit] Starting field population...');
+            directlyPopulateFields();
+            console.log('[Edit] Field population completed');
+        }, 500);
         
-        // Override calculatePremium with safety checks for edit mode
-        const originalCalculatePremium = window.calculatePremium;
-        window.calculatePremium = function() {
-            // Add null safety checks
-            const liabilityLimitEl = document.getElementById('liabilityLimit');
-            const policyStartDateEl = document.getElementById('policyStartDate');
-            const policyExpiryDateEl = document.getElementById('policyExpiryDate');
-            const step3Card = document.getElementById('step3Card');
-            const voucherCodeAppliedEl = document.getElementById('voucherCodeApplied');
-            
-            // Only proceed if all required elements exist and step 3 is visible
-            if (!liabilityLimitEl || !policyStartDateEl || !policyExpiryDateEl || !voucherCodeAppliedEl) {
-                console.warn('[Edit] calculatePremium called but required elements not found yet');
-                return;
-            }
-            
-            if (!step3Card || step3Card.style.display === 'none') {
-                console.warn('[Edit] calculatePremium called but step 3 not visible yet');
-                return;
-            }
-            
-            console.log('[Edit] calculatePremium - dates:', {
-                start: policyStartDateEl.value,
-                expiry: policyExpiryDateEl.value,
-                liability: liabilityLimitEl.value
-            });
-            
-            // Call original function
-            if (originalCalculatePremium) {
-                originalCalculatePremium();
-            }
-        };
-        
-        // CRITICAL: Override updateProgressBar function AFTER new-policy script loads
+        // Override updateProgressBar function
         window.updateProgressBar = function(step) {
             const totalSteps = 6;
             const progressBar = document.getElementById('progressBar');
@@ -462,12 +379,24 @@
             }
         };
         
-        // Override getAllSavedData to only get 6 steps
+        // Override getAllSavedData to collect current form values
         window.getAllSavedData = function() {
             const allData = {};
             for (let i = 1; i <= 6; i++) {
-                const stepData = loadFormData(i);
-                Object.assign(allData, stepData);
+                const stepForm = document.getElementById(`step${i}Form`) || 
+                               document.getElementById(`applicantDetailsForm`) ||
+                               document.getElementById(`healthcareServicesForm`) ||
+                               document.getElementById(`pricingDetailsForm`) ||
+                               document.getElementById(`riskManagementForm`) ||
+                               document.getElementById(`insuranceHistoryForm`) ||
+                               document.getElementById('claimsExperienceForm');
+                               
+                if (stepForm) {
+                    const formData = new FormData(stepForm);
+                    formData.forEach((value, key) => {
+                        allData[key] = value;
+                    });
+                }
             }
             return allData;
         };
@@ -476,31 +405,22 @@
         $('#step7Card').hide();
         $('#step8Card').hide();
         
-        // Re-update progress bar to ensure it shows 6 steps
+        // Update progress bar to show 6 steps
         updateProgressBar(1);
         
-        // Override step 6 Next button behavior to submit instead of going to next step
+        // Override step 6 Next button to submit
         $('#step6NextBtn').off('click').on('click', function(e) {
             e.preventDefault();
             
-            // Validate step 6 form
             const claimsExperienceForm = document.getElementById('claimsExperienceForm');
             if (!claimsExperienceForm.checkValidity()) {
                 claimsExperienceForm.reportValidity();
                 return;
             }
             
-            // Save step 6 data
-            const formData = getFormData(claimsExperienceForm);
-            saveFormData(6, formData);
-            
-            // Change button text and style
             $(this).text('Submit Application').removeClass('btn-primary').addClass('btn-success');
             
-            // Collect all form data from steps 1-6
             const allFormData = getAllSavedData();
-            
-            // Submit data
             submitFormData(allFormData);
         });
     });

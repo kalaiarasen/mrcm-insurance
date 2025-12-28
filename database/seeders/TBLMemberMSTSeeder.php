@@ -134,6 +134,7 @@ class TBLMemberMSTSeeder extends Seeder
                     DB::table('addresses')->updateOrInsert(
                         ['user_id' => $userId, 'type' => 'secondary_clinic', 'clinic_name' => $secondaryClinic],
                         [
+                            'clinic_type' => $secondaryType,
                             'address'    => $secondaryAddress,
                             'postcode'   => $secondaryPostcode,
                             'state'      => $secondaryState,
@@ -158,11 +159,6 @@ class TBLMemberMSTSeeder extends Seeder
                 DB::table('qualifications')->where('user_id', $userId)->delete();
 
                 foreach ($qualifications as $index => [$institution, $degree, $year]) {
-                    // Skip if both institution and degree are empty or NULL string
-                    if (empty($institution) && empty($degree)) continue;
-                    if ($institution === 'NULL') $institution = null;
-                    if ($degree === 'NULL') $degree = null;
-
                     // Clean year value - store as string to handle legacy data
                     if ($year === 'NULL' || empty($year)) {
                         $year = null;
