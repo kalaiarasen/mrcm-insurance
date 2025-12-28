@@ -159,6 +159,9 @@ class TBLMemberMSTSeeder extends Seeder
                 DB::table('qualifications')->where('user_id', $userId)->delete();
 
                 foreach ($qualifications as $index => [$institution, $degree, $year]) {
+                    // Skip if both institution and degree are empty or NULL string
+                    if (empty($institution) && empty($degree)) continue;
+
                     // Clean year value - store as string to handle legacy data
                     if ($year === 'NULL' || empty($year)) {
                         $year = null;

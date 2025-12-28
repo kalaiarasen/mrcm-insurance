@@ -338,7 +338,17 @@
 
         if (!policyStartDate.value) {
             const today = new Date();
-            policyStartDate.value = today.toISOString().split('T')[0];
+            let defaultStartDate;
+            
+            // For renewals, set start date to January 1st of next year
+            if (window.isRenewalMode) {
+                const nextYear = today.getFullYear() + 1;
+                defaultStartDate = new Date(nextYear, 0, 1); // January 1st of next year
+            } else {
+                defaultStartDate = today;
+            }
+            
+            policyStartDate.value = defaultStartDate.toISOString().split('T')[0];
             updateExpiryDate();
         }
 
@@ -774,10 +784,19 @@
 
         let startDateInput = policyStartDateInput.value;
 
-        // If no start date is set, use today's date
+        // If no start date is set, use today's date (or Jan 1 next year for renewals)
         if (!startDateInput) {
             const today = new Date();
-            startDateInput = today.toISOString().split('T')[0];
+            let defaultStartDate;
+            
+            if (window.isRenewalMode) {
+                const nextYear = today.getFullYear() + 1;
+                defaultStartDate = new Date(nextYear, 0, 1);
+            } else {
+                defaultStartDate = today;
+            }
+            
+            startDateInput = defaultStartDate.toISOString().split('T')[0];
             policyStartDateInput.value = startDateInput;
         }
 

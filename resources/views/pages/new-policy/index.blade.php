@@ -1829,6 +1829,11 @@
     @endif
 
     <script>
+        // Pass renewal status to JavaScript
+        window.isRenewalMode = {{ $hasExistingData && !$isRejectedPolicy ? 'true' : 'false' }};
+    </script>
+
+    <script>
         // Auto-uppercase for full name field (for all users)
         document.addEventListener('DOMContentLoaded', function() {
             const fullNameInput = document.getElementById('fullName');
