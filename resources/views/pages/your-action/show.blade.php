@@ -1448,7 +1448,7 @@
 
             <!-- Payment Document Section -->
             @if (
-                $policyApplication->payment_document ||
+                $policyApplication->payment_method != null ||
                     $policyApplication->customer_status === 'paid' ||
                     $policyApplication->admin_status === 'paid')
                 <div class="col-12">
@@ -1479,9 +1479,8 @@
                                                 <i class="fa fa-clock me-1"></i>Awaiting Payment
                                             </span>
                                         @else
-                                            <span class="badge bg-secondary fs-6">
-                                                <i
-                                                    class="fa fa-info-circle me-1"></i>{{ ucfirst(str_replace('_', ' ', $policyApplication->customer_status)) }}
+                                            <span class="badge bg-info fs-6">
+                                                <i class="fa fa-check-circle me-1"></i>Payment Received
                                             </span>
                                         @endif
                                     </div>
