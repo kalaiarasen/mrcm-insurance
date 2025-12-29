@@ -37,10 +37,8 @@ class SidebarComposer
                 $renewalEligible = $now->greaterThanOrEqualTo($sixMonthsBeforeExpiry);
             }
 
-            // Check for pending/submitted policies (not active, not rejected)
             $pendingPolicy = PolicyApplication::where('user_id', Auth::id())
-                ->whereIn('customer_status', ['submitted', 'pay_now', 'paid', 'processing'])
-                ->whereNotIn('customer_status', ['rejected', 'cancelled'])
+                ->whereIn('customer_status', ['submitted', 'pay_now', 'paid', 'processing', 'rejected'])
                 ->first();
             
             $hasPendingPolicy = $pendingPolicy !== null;

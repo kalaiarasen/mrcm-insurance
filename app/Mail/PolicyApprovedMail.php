@@ -39,7 +39,8 @@ class PolicyApprovedMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Application Approved - Payment Required - MRCM Insurance')
+        return $this->from('MRCM - Professional Indemnity')
+                    ->subject('Application Approved - Payment Required - MRCM Insurance')
                     ->view('emails.policy-approved');
     }
 }

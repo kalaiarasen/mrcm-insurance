@@ -39,7 +39,8 @@ class PolicyCancelledMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Application Cancelled - MRCM Insurance')
+        return $this->from('MRCM - Professional Indemnity')
+                    ->subject('Application Cancelled - MRCM Insurance')
                     ->view('emails.policy-cancelled');
     }
 }

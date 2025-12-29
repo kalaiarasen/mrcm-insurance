@@ -37,7 +37,8 @@ class PolicySentToUnderwritingClientMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Application Submitted to Underwriting - MRCM Insurance')
+        return $this->from('MRCM - Professional Indemnity')
+                    ->subject('Application Submitted to Underwriting - MRCM Insurance')
                     ->view('emails.policy-sent-to-underwriting');
     }
 }

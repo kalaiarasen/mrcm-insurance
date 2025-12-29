@@ -47,7 +47,8 @@ class PolicyActiveMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Certificate of Insurance Issued - MRCM Insurance')
+        return $this->from('MRCM - Professional Indemnity')
+                    ->subject('Certificate of Insurance Issued - MRCM Insurance')
                     ->view('emails.policy-active');
     }
 }

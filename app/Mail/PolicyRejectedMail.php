@@ -39,7 +39,8 @@ class PolicyRejectedMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Application Requires Amendment - MRCM Insurance')
+        return $this->from('MRCM - Professional Indemnity')
+                    ->subject('Application Requires Amendment - MRCM Insurance')
                     ->view('emails.policy-rejected');
     }
 }
