@@ -778,6 +778,17 @@
                                 </div>
                             </div>
 
+                            <!-- Loading Indicator -->
+                            <div id="pricingLoadingIndicator" style="display: none;">
+                                <div class="alert alert-info text-center" role="alert">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <strong>Calculating pricing details...</strong>
+                                    <p class="mb-0 mt-2 small">Please wait while we fetch the latest rates and discounts.</p>
+                                </div>
+                            </div>
+
                             <!-- Pricing Breakdown Section -->
                             <hr id="amountHr" style="display: none;">
                             <div id="pricingBreakdown" style="display: none;">
@@ -920,7 +931,12 @@
                                 <div class="col-md-12 text-end">
                                     <button type="button" class="btn btn-light me-2" id="step3PrevBtn">Previous
                                         Step</button>
-                                    <button type="submit" class="btn btn-primary" id="step3NextBtn">Next Step</button>
+                                    <button type="submit" class="btn btn-primary" id="step3NextBtn">
+                                        <span id="step3NextBtnText">Next Step</span>
+                                        <span id="step3NextBtnSpinner" class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </form>

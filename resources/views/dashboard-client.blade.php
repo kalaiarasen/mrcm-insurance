@@ -79,7 +79,22 @@
                                 <p class="text-muted mb-4" style="white-space: pre-line;">
                                     {{ $dashboardSetting->welcome_description ?? 'Welcome to your dashboard!' }}</p>
                                 <div class="d-flex gap-3 flex-wrap justify-content-center justify-content-lg-start">
-                                    @if ($hasActiveProfessionalIndemnity && !$renewalEligible)
+                                    @if ($hasPendingPolicy)
+                                        {{-- Has pending/submitted policy --}}
+                                        @php
+                                            $statusDisplay = match($pendingPolicy->customer_status) {
+                                                'submitted' => ['text' => 'Application Submitted', 'icon' => 'fa-paper-plane'],
+                                                'pay_now' => ['text' => 'Payment Required', 'icon' => 'fa-credit-card'],
+                                                'paid' => ['text' => 'Payment Received', 'icon' => 'fa-check-circle'],
+                                                'processing' => ['text' => 'Under Processing', 'icon' => 'fa-spinner'],
+                                                default => ['text' => 'Application Pending', 'icon' => 'fa-clock']
+                                            };
+                                        @endphp
+                                        <button class="btn btn-secondary" disabled
+                                            title="Your policy application is currently {{ $statusDisplay['text'] }}. Please wait for approval.">
+                                            <i class="fa {{ $statusDisplay['icon'] }} me-2"></i>{{ $statusDisplay['text'] }}
+                                        </button>
+                                    @elseif ($hasActiveProfessionalIndemnity && !$renewalEligible)
                                         {{-- Has active policy, not eligible for renewal --}}
                                         <button class="btn btn-secondary" disabled
                                             title="You already have an active Professional Indemnity policy">
@@ -180,7 +195,22 @@
                     </div>
                     <div class="card-body quick-actions">
                         <div class="d-grid gap-2">
-                            @if ($hasActiveProfessionalIndemnity && !$renewalEligible)
+                            @if ($hasPendingPolicy)
+                                {{-- Has pending/submitted policy --}}
+                                @php
+                                    $statusDisplay = match($pendingPolicy->customer_status) {
+                                        'submitted' => ['text' => 'Application Submitted', 'icon' => 'fa-paper-plane'],
+                                        'pay_now' => ['text' => 'Payment Required', 'icon' => 'fa-credit-card'],
+                                        'paid' => ['text' => 'Payment Received', 'icon' => 'fa-check-circle'],
+                                        'processing' => ['text' => 'Under Processing', 'icon' => 'fa-spinner'],
+                                        default => ['text' => 'Application Pending', 'icon' => 'fa-clock']
+                                    };
+                                @endphp
+                                <button class="btn btn-secondary" disabled
+                                    title="Your policy application is currently {{ $statusDisplay['text'] }}.">
+                                    <i class="fa {{ $statusDisplay['icon'] }} me-2"></i>{{ $statusDisplay['text'] }}
+                                </button>
+                            @elseif ($hasActiveProfessionalIndemnity && !$renewalEligible)
                                 {{-- Has active policy, not eligible for renewal --}}
                                 <button class="btn btn-secondary" disabled
                                     title="You already have an active Professional Indemnity policy">

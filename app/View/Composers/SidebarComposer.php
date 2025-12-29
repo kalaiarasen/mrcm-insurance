@@ -37,17 +37,29 @@ class SidebarComposer
                 $renewalEligible = $now->greaterThanOrEqualTo($sixMonthsBeforeExpiry);
             }
 
+            // Check for pending/submitted policies (not active, not rejected)
+            $pendingPolicy = PolicyApplication::where('user_id', Auth::id())
+                ->whereIn('customer_status', ['submitted', 'pay_now', 'paid', 'processing'])
+                ->whereNotIn('customer_status', ['rejected', 'cancelled'])
+                ->first();
+            
+            $hasPendingPolicy = $pendingPolicy !== null;
+
             $view->with([
                 'hasActiveProfessionalIndemnity' => $hasActiveProfessionalIndemnity,
                 'renewalEligible' => $renewalEligible,
-                'activeProfessionalIndemnityPolicy' => $activeProfessionalIndemnityPolicy
+                'activeProfessionalIndemnityPolicy' => $activeProfessionalIndemnityPolicy,
+                'hasPendingPolicy' => $hasPendingPolicy,
+                'pendingPolicy' => $pendingPolicy
             ]);
         } else {
             // For non-client users, set default values
             $view->with([
                 'hasActiveProfessionalIndemnity' => false,
                 'renewalEligible' => false,
-                'activeProfessionalIndemnityPolicy' => null
+                'activeProfessionalIndemnityPolicy' => null,
+                'hasPendingPolicy' => false,
+                'pendingPolicy' => null
             ]);
         }
     }

@@ -81,6 +81,14 @@ class DashboardController extends Controller
                 $renewalEligible = $now->greaterThanOrEqualTo($sixMonthsBeforeExpiry);
             }
 
+            // Check for pending/submitted policies (not active, not rejected)
+            $pendingPolicy = PolicyApplication::where('user_id', auth()->id())
+                ->whereIn('customer_status', ['submitted', 'pay_now', 'paid', 'processing'])
+                ->whereNotIn('customer_status', ['rejected', 'cancelled'])
+                ->first();
+            
+            $hasPendingPolicy = $pendingPolicy !== null;
+
             return view('dashboard-client', compact(
                 'announcements',
                 'policies',
@@ -95,7 +103,9 @@ class DashboardController extends Controller
                 'walletAmount',
                 'hasActiveProfessionalIndemnity',
                 'renewalEligible',
-                'activeProfessionalIndemnityPolicy'
+                'activeProfessionalIndemnityPolicy',
+                'hasPendingPolicy',
+                'pendingPolicy'
             ));
         }
 

@@ -823,8 +823,19 @@
 
         if (!liabilityLimit || !policyStartDate || !policyExpiryDate) {
             document.getElementById('pricingBreakdown').style.display = 'none';
+            const loadingIndicator = document.getElementById('pricingLoadingIndicator');
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
             return;
         }
+
+        // Show loading indicator and hide pricing breakdown
+        const loadingIndicator = document.getElementById('pricingLoadingIndicator');
+        const pricingBreakdown = document.getElementById('pricingBreakdown');
+        const nextBtn = document.getElementById('step3NextBtn');
+        
+        if (loadingIndicator) loadingIndicator.style.display = 'block';
+        if (pricingBreakdown) pricingBreakdown.style.display = 'none';
+        if (nextBtn) nextBtn.disabled = true;
 
         // Calculate actual number of days between start and expiry date
         const startDate = new Date(policyStartDate);
@@ -860,6 +871,14 @@
 
         // Helper function to update pricing display
         const updatePricingUI = (discountPercentage, discountAmount) => {
+            // Hide loading indicator
+            const loadingIndicator = document.getElementById('pricingLoadingIndicator');
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
+            
+            // Re-enable next button
+            const nextBtn = document.getElementById('step3NextBtn');
+            if (nextBtn) nextBtn.disabled = false;
+            
             const discountedPremium = grossPremium - discountAmount;
             const sstPercentage = 0.08;
             const sst = discountedPremium * sstPercentage;
@@ -1846,6 +1865,40 @@
             if (!this.checkValidity()) {
                 e.stopPropagation();
                 $(this).addClass('was-validated');
+                return;
+            }
+
+            // Check if pricing breakdown is visible and has been calculated
+            const pricingBreakdown = document.getElementById('pricingBreakdown');
+            const totalPayableElement = document.getElementById('displayTotalPayable');
+            const totalPayableValue = parseFloat(
+                totalPayableElement.textContent.replace(/[^0-9.]/g, '')
+            ) || 0;
+
+            // Ensure pricing details are displayed and calculated (not 0)
+            if (!pricingBreakdown || pricingBreakdown.style.display === 'none' || totalPayableValue === 0) {
+                // Show error message to user
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+                alertDiv.role = 'alert';
+                alertDiv.innerHTML = `
+                    <strong><i class="fa fa-exclamation-circle me-2"></i>Pricing Details Required</strong><br>
+                    Please select a liability limit and ensure the pricing details are displayed before proceeding to the next step.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                // Insert alert at the top of the form
+                const formElement = document.getElementById('pricingDetailsForm');
+                formElement.parentElement.insertBefore(alertDiv, formElement);
+                
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentElement) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+                
+                console.warn('Cannot proceed to step 4: Pricing details not calculated');
                 return;
             }
 

@@ -54,7 +54,29 @@
                         </li>
                         <li class="sidebar-list">
                             <i class="fa-solid fa-thumbtack"></i>
-                            @if ($hasActiveProfessionalIndemnity && !$renewalEligible)
+                            @if ($hasPendingPolicy ?? false)
+                                {{-- Has pending/submitted policy - disabled state --}}
+                                @php
+                                    $statusDisplay = match($pendingPolicy->customer_status) {
+                                        'submitted' => ['text' => 'Application Submitted', 'icon' => 'fa-paper-plane'],
+                                        'pay_now' => ['text' => 'Payment Required', 'icon' => 'fa-credit-card'],
+                                        'paid' => ['text' => 'Payment Received', 'icon' => 'fa-check-circle'],
+                                        'processing' => ['text' => 'Under Processing', 'icon' => 'fa-spinner'],
+                                        default => ['text' => 'Application Pending', 'icon' => 'fa-clock']
+                                    };
+                                @endphp
+                                <a class="sidebar-link sidebar-title link-nav" href="#"
+                                    style="opacity: 0.5; cursor: not-allowed; pointer-events: none;"
+                                    title="Your policy application is currently {{ $statusDisplay['text'] }}.">
+                                    <svg class="stroke-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-reports') }}"></use>
+                                    </svg>
+                                    <svg class="fill-icon">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#fill-reports') }}"></use>
+                                    </svg>
+                                    <span>{{ $statusDisplay['text'] }}</span>
+                                </a>
+                            @elseif ($hasActiveProfessionalIndemnity && !$renewalEligible)
                                 {{-- Has active policy, not eligible for renewal - disabled state --}}
                                 <a class="sidebar-link sidebar-title link-nav" href="#"
                                     style="opacity: 0.5; cursor: not-allowed; pointer-events: none;"
