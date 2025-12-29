@@ -480,6 +480,11 @@ class YourActionController extends Controller
                     $policyApplication->customer_status = 'pay_now';
                     $policyApplication->admin_status = 'not_paid';
                     $policyApplication->approved_at = now();
+                    
+                    // Generate sequential reference number when approved
+                    if (!$policyApplication->reference_number) {
+                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
+                    }
                     break;
 
                 case 'active':
@@ -490,9 +495,9 @@ class YourActionController extends Controller
                     $policyApplication->admin_status = 'active';
                     $policyApplication->activated_at = now();
                     
-                    // Generate reference number ONLY when status becomes active
+                    // Generate reference number if not already generated (fallback)
                     if (!$policyApplication->reference_number) {
-                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
+                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
                     }
                     
                     // Handle Certificate of Insurance (CI) document upload
@@ -525,7 +530,7 @@ class YourActionController extends Controller
                     $policyApplication->admin_status = 'sent_uw';
                     $policyApplication->sent_to_underwriter_at = now();
                     if (!$policyApplication->reference_number) {
-                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
+                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
                     }
                     
                     // Send email to underwriting with PDF attachment
@@ -1202,19 +1207,42 @@ class YourActionController extends Controller
     }
 
     /**
-     * Generate a unique reference number for the application
-     * Format: MRCM#YY-XXXX where YY is policy year (e.g., 26 for 2025-2026 policy)
+     * Generate sequential reference number that resets annually based on policy year
+     * Format: MRCM26-0001, MRCM26-0002, etc.
+     * Generated when admin approves the application
+     * Resets based on policy_start_date from policy_pricings table
      * 
-     * @param int $userId
+     * @param PolicyApplication $policyApplication
      * @return string
      */
-    private function generateReferenceNumber($userId)
+    private function generateReferenceNumber(PolicyApplication $policyApplication)
     {
-        // Get the last 2 digits of current year + 1 for policy year
-        // For 2025, policy year is 2025-2026, so we use 26
-        $policyYear = substr((string)(date('Y') + 1), -2);
+        // Get policy start date from policy_pricings table
+        $policyPricing = $policyApplication->policyPricing;
         
-        return 'MRCM#' . $policyYear . '-' . str_pad($userId, 4, '0', STR_PAD_LEFT);
+        if (!$policyPricing || !$policyPricing->policy_start_date) {
+            // Fallback: use current year + 1 if policy_start_date not available
+            $policyYear = substr((string)(date('Y') + 1), -2);
+        } else {
+            // Extract year from policy_start_date and get last 2 digits
+            $startYear = date('Y', strtotime($policyPricing->policy_start_date));
+            $policyYear = substr((string)$startYear, -2);
+        }
+        
+        // Get the highest reference number for this policy year (e.g., MRCM26-XXXX)
+        // Query based on policy year in the reference number
+        $lastPolicy = PolicyApplication::whereNotNull('reference_number')
+            ->where('reference_number', 'LIKE', 'MRCM' . $policyYear . '-%')
+            ->orderByRaw('CAST(SUBSTRING_INDEX(reference_number, "-", -1) AS UNSIGNED) DESC')
+            ->first();
+        
+        if ($lastPolicy && preg_match('/MRCM(\d{2})-(\d{4})/', $lastPolicy->reference_number, $matches)) {
+            $nextNumber = intval($matches[2]) + 1;
+        } else {
+            $nextNumber = 1;
+        }
+        
+        return 'MRCM' . $policyYear . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
     }
 
     /**
