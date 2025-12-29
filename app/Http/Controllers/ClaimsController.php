@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ClaimStatusMail;
 
 class ClaimsController extends Controller
 {
@@ -244,6 +246,9 @@ class ClaimsController extends Controller
         try {
             $claim = Claim::findOrFail($id);
             
+            // Store old status for email notification
+            $oldStatus = $claim->status;
+            
             // Update claim
             $claim->status = $request->status;
             if (isset($validated['admin_notes'])) {
@@ -253,6 +258,19 @@ class ClaimsController extends Controller
                 $claim->claim_amount = $validated['claim_amount'];
             }
             $claim->save();
+
+            // Send email notification to user if status changed
+            if ($oldStatus !== $claim->status) {
+                try {
+                    Mail::to($claim->user->email)->send(new ClaimStatusMail($claim->load('user', 'policyApplication'), $oldStatus));
+                } catch (\Exception $mailException) {
+                    Log::warning('Failed to send claim status email', [
+                        'claim_id' => $claim->id,
+                        'user_id' => $claim->user_id,
+                        'error' => $mailException->getMessage(),
+                    ]);
+                }
+            }
 
             DB::commit();
 

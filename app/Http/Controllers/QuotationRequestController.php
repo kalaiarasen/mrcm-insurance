@@ -6,6 +6,9 @@ use App\Models\QuotationRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\QuotationStatusMail;
 
 class QuotationRequestController extends Controller
 {
@@ -53,7 +56,23 @@ class QuotationRequestController extends Controller
         // Sync customer_status to match admin_status
         $validated['customer_status'] = $validated['admin_status'];
 
+        // Store old status for comparison
+        $oldStatus = $quotationRequest->admin_status;
+
         $quotationRequest->update($validated);
+
+        // Send email notification if status changed
+        if ($oldStatus !== $validated['admin_status']) {
+            try {
+                Mail::to($quotationRequest->user->email)->send(new QuotationStatusMail($quotationRequest->load('user', 'product'), $validated['admin_status']));
+            } catch (\Exception $mailException) {
+                Log::warning('Failed to send quotation status email', [
+                    'quotation_id' => $quotationRequest->id,
+                    'user_id' => $quotationRequest->user_id,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
+        }
 
         return redirect()->route('quotation-requests.show', $quotationRequest->id)
             ->with('success', 'Quotation request updated successfully.');

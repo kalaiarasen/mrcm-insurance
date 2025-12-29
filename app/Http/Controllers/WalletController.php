@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WalletCreditMail;
 use Yajra\DataTables\Facades\DataTables;
 
 class WalletController extends Controller
@@ -128,6 +130,16 @@ class WalletController extends Controller
                 'admin_id' => auth()->id(),
             ]);
 
+            // Send email notification to user
+            try {
+                Mail::to($user->email)->send(new WalletCreditMail($user, $validated['amount'], $newAmount));
+            } catch (\Exception $mailException) {
+                Log::warning('Failed to send wallet credit email', [
+                    'user_id' => $user->id,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
+
             DB::commit();
 
             return response()->json([
@@ -187,7 +199,15 @@ class WalletController extends Controller
                 'new_amount' => $newAmount,
                 'admin_id' => auth()->id(),
             ]);
-
+            // Send email notification to user
+            try {
+                Mail::to($user->email)->send(new WalletCreditMail($user, $validated['amount'], $newAmount));
+            } catch (\Exception $mailException) {
+                Log::warning('Failed to send wallet credit email', [
+                    'user_id' => $user->id,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
             DB::commit();
 
             return response()->json([

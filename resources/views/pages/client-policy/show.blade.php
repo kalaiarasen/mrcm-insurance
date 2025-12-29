@@ -582,10 +582,10 @@
 
                                                 <div class="row">
                                                     <div class="col-12 text-end">
-                                                        <button type="button" class="btn btn-outline-secondary me-2"
+                                                        {{-- <button type="button" class="btn btn-outline-secondary me-2"
                                                             data-bs-toggle="modal" data-bs-target="#policyDetailsModal">
                                                             <i class="fa fa-eye me-2"></i>View Policy Details
-                                                        </button>
+                                                        </button> --}}
                                                         <button type="submit" class="btn btn-success">
                                                             <i class="fa fa-check me-2"></i>Submit Payment Proof
                                                         </button>

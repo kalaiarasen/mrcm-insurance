@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\AgentApprovedMail;
+use App\Mail\CommissionPaymentMail;
 use Illuminate\Validation\Rules\Password;
 
 class AgentController extends Controller
@@ -149,6 +153,16 @@ class AgentController extends Controller
             'approved_by' => Auth::id(),
             'commission_percentage' => $request->commission_percentage,
         ]);
+
+        // Send email notification to agent
+        try {
+            Mail::to($user->email)->send(new AgentApprovedMail($user, $request->commission_percentage));
+        } catch (\Exception $mailException) {
+            Log::warning('Failed to send agent approval email', [
+                'agent_id' => $user->id,
+                'error' => $mailException->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'success' => true,
@@ -315,6 +329,17 @@ class AgentController extends Controller
                 'receipt_path' => $receiptPath,
                 'created_by' => Auth::id(),
             ]);
+
+            // Send email notification to agent
+            try {
+                Mail::to($agent->email)->send(new CommissionPaymentMail($payment->load('agent')));
+            } catch (\Exception $mailException) {
+                Log::warning('Failed to send commission payment email', [
+                    'agent_id' => $agent->id,
+                    'payment_id' => $payment->id,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
 
             DB::commit();
 
