@@ -30,7 +30,7 @@ class PolicyCancelledMail extends Mailable
         // Remove title from name if it's already there
         $nameWithoutTitle = preg_replace('/^(DR\.|PROF\.|MR\.|MS\.|MRS\.)\s*/i', '', $name);
         
-        $this->clientName = trim(ucfirst(strtolower($title)) . '. ' . $nameWithoutTitle);
+        $this->clientName = trim(ucfirst(strtolower($title)) . ' ' . $nameWithoutTitle);
         $this->portalUrl = 'https://insurance.mrcm.com.my';
     }
 
