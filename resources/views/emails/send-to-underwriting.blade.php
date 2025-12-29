@@ -128,7 +128,7 @@
                 </tr>
                 <tr>
                     <td>Class:</td>
-                    <td>{{ getClassValue($healthcare) }}</td>
+                    <td>{{ getClassValue($healthcare) }}@if($pricing && $pricing->locum_extension) (with locum extension)@endif</td>
                 </tr>
                 <tr>
                     <td>Liability Limit:</td>

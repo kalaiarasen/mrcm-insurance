@@ -191,6 +191,7 @@ class YourActionController extends Controller
                 })
                 ->addColumn('class', function ($policy) {
                     $healthcareService = $policy->user?->healthcareService;
+                    $pricing = $policy->policyPricing;
                     
                     // Try practice_area first, fallback to service_type, then cover_type
                     $classValue = $healthcareService?->practice_area 
@@ -222,7 +223,14 @@ class YourActionController extends Controller
                         'general_dental_practitioners' => 'General Dentist Practice, practicing accredited specialised procedures',
                     ];
                     
-                    return e($classMap[$classValue] ?? 'N/A');
+                    $classDisplay = e($classMap[$classValue] ?? 'N/A');
+                    
+                    // Add locum extension indicator
+                    if ($pricing && $pricing->locum_extension) {
+                        $classDisplay .= ' (with locum extension)';
+                    }
+                    
+                    return $classDisplay;
                 })
                 ->addColumn('amount', function ($policy) {
                     $amount = $policy->policyPricing?->total_payable;

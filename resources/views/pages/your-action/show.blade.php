@@ -1052,7 +1052,7 @@
                             <div class="col-md-6 mb-3">
                                 <div class="info-label">Class</div>
                                 <div class="info-value">
-                                    {{ getClassValue($healthcare) }}
+                                    {{ getClassValue($healthcare) }}@if($pricing && $pricing->locum_extension) (with locum extension)@endif
                                 </div>
                             </div>
                             <div class="col-md-6">
