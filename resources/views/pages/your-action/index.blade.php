@@ -807,13 +807,11 @@
 
                         // Reinitialize DataTable for the modal table
                         $(document.getElementById('policyHistoryContent')).find('.datatable').DataTable({
-                            order: [
-                                [1, 'desc']
-                            ], // Sort by submission date descending
+                            order: [], // Sort by Submitted Date column (index 3) descending
                             pageLength: 5,
-                            lengthMenu: [
-                                [5, 10, 25],
-                                [5, 10, 25]
+                            lengthMenu: [[5, 10, 25], [5, 10, 25]],
+                            columnDefs: [
+                                { orderable: false, targets: 4 } // Disable sorting on Action column
                             ]
                         });
                     } else {

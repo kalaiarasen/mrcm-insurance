@@ -252,7 +252,7 @@ class PolicyHolderController extends Controller
         // Get all policy applications for this user (including drafts), ordered by newest first
         $policyApplications = $user->policyApplications()
             ->with(['policyPricing', 'healthcareService'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('policy_applications.created_at', 'desc')
             ->get();
 
         return view('pages.policy-holder.show', compact('user', 'policyApplications'));

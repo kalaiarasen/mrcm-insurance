@@ -319,11 +319,11 @@
                                                             'processing' => ['badge' => 'bg-info', 'icon' => 'fa-spinner', 'text' => 'Processing'],
                                                             'rejected' => ['badge' => 'bg-danger', 'icon' => 'fa-times-circle', 'text' => 'Rejected'],
                                                         ];
-                                                        $customerStatus = $application->customer_status ?? 'pending';
-                                                        $statusInfo = $statusMap[$customerStatus] ?? [
+                                                        $adminStatus = $application->admin_status ?? 'pending';
+                                                        $statusInfo = $statusMap[$adminStatus] ?? [
                                                             'badge' => 'bg-secondary',
                                                             'icon' => 'fa-info-circle',
-                                                            'text' => ucfirst(str_replace('_', ' ', $customerStatus)),
+                                                            'text' => ucfirst(str_replace('_', ' ', $adminStatus)),
                                                         ];
                                                     @endphp
                                                     <span class="badge {{ $statusInfo['badge'] }}">
