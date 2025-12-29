@@ -47,11 +47,8 @@ class PolicySubmissionController extends Controller
             $applicationData = $request->input('application_data');
             $rejectedPolicyId = $request->input('rejected_policy_id');
 
-            $applicantTitle = $applicationData['title'] ?? null;
             $applicantFullName = $applicationData['full_name'] ?? null;
-            $applicantName = $applicantTitle && $applicantFullName 
-                ? strtoupper($applicantTitle) . '. ' . $applicantFullName 
-                : ($applicantFullName ?? 'Applicant');
+            $applicantName = $applicantFullName;
             $applicantContactNo = $applicationData['contact_no'] ?? null;
 
             // Get the authenticated user
