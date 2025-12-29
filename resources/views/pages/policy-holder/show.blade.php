@@ -260,13 +260,10 @@
                                 <table class="display table-striped border datatable">
                                     <thead>
                                         <tr>
-                                            <th>Reference No</th>
-                                            <th>Submission Date</th>
-                                            <th>Policy Expiry Date</th>
-                                            <th>Professional Type</th>
-                                            <th>Liability Limit</th>
-                                            <th>Total Payable</th>
+                                            <th style="min-width: 250px">Policy Info</th>
+                                            <th>Total Amount</th>
                                             <th>Status</th>
+                                            <th>Submitted Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -274,77 +271,107 @@
                                         @foreach ($policyApplications as $application)
                                             <tr>
                                                 <td>
-                                                    <strong>{{ $application->reference_number }}</strong>
+                                                    <div class="d-flex flex-column">
+                                                        <span class="mb-1"><strong>Ref:</strong>
+                                                            {{ $application->reference_number ?? '-' }}</span>
+
+                                                        <span class="text-muted small mb-1">
+                                                            <i class="fa fa-briefcase me-1"></i>
+                                                            Class:
+                                                            @php
+                                                                $healthcareService = $application->healthcareService;
+                                                                $classValue =
+                                                                    $healthcareService->practice_area ??
+                                                                    ($healthcareService->service_type ??
+                                                                        ($healthcareService->cover_type ?? null));
+                                                            @endphp
+                                                            {{ $classValue ? ucfirst(str_replace('_', ' ', $classValue)) : 'N/A' }}
+                                                        </span>
+
+                                                        @if ($application->policyPricing)
+                                                            <span class="text-muted small mb-1">
+                                                                <i class="fa fa-calendar me-1"></i>
+                                                                {{ \Carbon\Carbon::parse($application->policyPricing->policy_start_date)->format('d M Y') }}
+                                                                -
+                                                                {{ \Carbon\Carbon::parse($application->policyPricing->policy_expiry_date)->format('d M Y') }}
+                                                            </span>
+                                                            <span class="text-muted small">
+                                                                <i class="fa fa-shield-alt me-1"></i>Limit: RM
+                                                                {{ number_format($application->policyPricing->liability_limit ?? 0) }}
+                                                            </span>
+                                                        @else
+                                                            <span class="text-muted small">Pricing Pending</span>
+                                                        @endif
+                                                    </div>
                                                 </td>
-                                                <td>
-                                                    {{ $application->created_at->format('d M Y') }}<br>
-                                                    <small
-                                                        class="text-muted">{{ $application->created_at->format('h:i A') }}</small>
+                                                <td class="align-middle">RM
+                                                    {{ number_format($application->policyPricing->total_payable ?? 0, 2) }}
                                                 </td>
-                                                <td>
-                                                    @if ($application->policyPricing && $application->policyPricing->policy_expiry_date)
-                                                        <strong>{{ \Carbon\Carbon::parse($application->policyPricing->policy_expiry_date)->format('d M Y') }}</strong>
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if ($application->healthcareService)
-                                                        {{ ucfirst(str_replace('_', ' ', $application->healthcareService->professional_indemnity_type ?? '-')) }}
-                                                    @else
-                                                        -
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if ($application->policyPricing && $application->policyPricing->liability_limit)
-                                                        RM
-                                                        {{ number_format($application->policyPricing->liability_limit, 0) }}
-                                                    @else
-                                                        -
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if ($application->policyPricing)
-                                                        <strong>RM
-                                                            {{ number_format($application->policyPricing->total_payable ?? 0, 2) }}</strong>
-                                                    @else
-                                                        -
-                                                    @endif
-                                                </td>
-                                                <td>
+                                                <td class="align-middle">
                                                     @php
                                                         $statusMap = [
-                                                            'pending' => ['badge' => 'bg-warning', 'text' => 'Pending'],
-                                                            'pay_now' => ['badge' => 'bg-info', 'text' => 'Pay Now'],
-                                                            'paid' => ['badge' => 'bg-success', 'text' => 'Paid'],
-                                                            'sent_uw' => [
-                                                                'badge' => 'bg-primary',
-                                                                'text' => 'Sent to UW',
-                                                            ],
-                                                            'active' => ['badge' => 'bg-success', 'text' => 'Active'],
-                                                            'rejected' => [
-                                                                'badge' => 'bg-danger',
-                                                                'text' => 'Rejected',
-                                                            ],
+                                                            'pending' => ['badge' => 'bg-warning text-dark', 'icon' => 'fa-clock', 'text' => 'Pending'],
+                                                            'pay_now' => ['badge' => 'bg-warning text-dark', 'icon' => 'fa-clock', 'text' => 'Payment Required'],
+                                                            'paid' => ['badge' => 'bg-success', 'icon' => 'fa-check', 'text' => 'Paid'],
+                                                            'sent_uw' => ['badge' => 'bg-info', 'icon' => 'fa-paper-plane', 'text' => 'Sent to UW'],
+                                                            'approved' => ['badge' => 'bg-info', 'icon' => 'fa-check-circle', 'text' => 'Approved'],
+                                                            'active' => ['badge' => 'bg-success', 'icon' => 'fa-check-circle', 'text' => 'Active'],
+                                                            'processing' => ['badge' => 'bg-info', 'icon' => 'fa-spinner', 'text' => 'Processing'],
+                                                            'rejected' => ['badge' => 'bg-danger', 'icon' => 'fa-times-circle', 'text' => 'Rejected'],
                                                         ];
-                                                        $adminStatus = $application->admin_status ?? 'pending';
-                                                        $statusInfo = $statusMap[$adminStatus] ?? [
+                                                        $customerStatus = $application->customer_status ?? 'pending';
+                                                        $statusInfo = $statusMap[$customerStatus] ?? [
                                                             'badge' => 'bg-secondary',
-                                                            'text' => ucfirst($adminStatus),
+                                                            'icon' => 'fa-info-circle',
+                                                            'text' => ucfirst(str_replace('_', ' ', $customerStatus)),
                                                         ];
                                                     @endphp
-                                                    <span
-                                                        class="badge {{ $statusInfo['badge'] }}">{{ $statusInfo['text'] }}</span>
+                                                    <span class="badge {{ $statusInfo['badge'] }}">
+                                                        <i class="fa {{ $statusInfo['icon'] }} me-1"></i>{{ $statusInfo['text'] }}
+                                                    </span>
                                                 </td>
-                                                <td>
-                                                    @hasanyrole('Super Admin|Admin')
-                                                        <a href="{{ route('policy-holders.application.show', ['user' => $user->id, 'application' => $application->id]) }}"
-                                                            class="btn btn-sm btn-primary" title="View Details">
-                                                            <i class="fa fa-eye me-1"></i>View
-                                                        </a>
-                                                    @else
-                                                        <span class="text-muted small">View only</span>
-                                                    @endhasanyrole
+                                                <td class="align-middle">{{ $application->created_at->format('d M Y') }}</td>
+                                                <td class="align-middle">
+                                                    <div class="btn-group">
+                                                        @hasanyrole('Super Admin|Admin')
+                                                            <a href="{{ route('policy-holders.application.show', ['user' => $user->id, 'application' => $application->id]) }}"
+                                                                class="btn btn-primary btn-sm">
+                                                                <i class="fa fa-eye me-1"></i>View
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted small">View only</span>
+                                                        @endhasanyrole
+
+                                                        {{-- Download CI Document --}}
+                                                        @if ($application->certificate_document)
+                                                            <a href="{{ Storage::url($application->certificate_document) }}"
+                                                                class="btn btn-sm btn-outline-success" target="_blank"
+                                                                title="Download CI">
+                                                                <i class="fa fa-download"></i>
+                                                                CI
+                                                            </a>
+                                                        @endif
+
+                                                        {{-- Download Tax Receipt --}}
+                                                        @if ($application->tax_receipt_path)
+                                                            <a href="{{ Storage::url($application->tax_receipt_path) }}"
+                                                                class="btn btn-sm btn-outline-info" target="_blank"
+                                                                title="Download Tax Receipt">
+                                                                <i class="fa fa-download"></i>
+                                                                Tax
+                                                            </a>
+                                                        @endif
+
+                                                        {{-- Download Policy Schedule --}}
+                                                        @if ($application->policy_schedule_path)
+                                                            <a href="{{ Storage::url($application->policy_schedule_path) }}"
+                                                                class="btn btn-sm btn-outline-primary" target="_blank"
+                                                                title="Download Policy Schedule">
+                                                                <i class="fa fa-download"></i>
+                                                                Certificate
+                                                            </a>
+                                                        @endif
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -370,9 +397,10 @@
     <script>
         $(document).ready(function() {
             $(".datatable").DataTable({
-                order: [
-                    [1, 'desc']
-                ] // Sort by submission date descending
+                order: [[3, 'desc']], // Sort by submission date descending
+                columnDefs: [
+                    { orderable: false, targets: [4] } // Disable sorting on Action column
+                ]
             });
         });
 

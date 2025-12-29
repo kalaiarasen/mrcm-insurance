@@ -67,6 +67,12 @@
                                     </div>
                                 @endif
 
+                                @if (session('message'))
+                                    <div class="alert alert-warning">
+                                        {{ session('message') }}
+                                    </div>
+                                @endif
+
                                 <div class="form-group">
                                     <label class="col-form-label">Email Address</label>
                                     <input class="form-control" type="email" name="email"
