@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PolicySubmittedMail;
 
 class PolicySubmissionController extends Controller
 {
@@ -353,6 +355,21 @@ class PolicySubmissionController extends Controller
                 'user_id' => $currentUser->id,
                 'submitted_at' => now(),
             ]);
+
+            // Send email notification to client
+            try {
+                Mail::to($currentUser->email)->send(new PolicySubmittedMail($policyApplication->load('user.applicantProfile')));
+                Log::info('Policy submission email sent', [
+                    'policy_id' => $policyApplication->id,
+                    'user_email' => $currentUser->email,
+                ]);
+            } catch (\Exception $mailException) {
+                Log::warning('Failed to send policy submission email', [
+                    'policy_id' => $policyApplication->id,
+                    'user_email' => $currentUser->email,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
 
             return response()->json([
                 'success' => true,

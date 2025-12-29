@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\PolicyApplication;
 use App\Mail\SendToUnderwriting;
+use App\Mail\PolicyApprovedMail;
+use App\Mail\PolicySentToUnderwritingClientMail;
+use App\Mail\PolicyActiveMail;
+use App\Mail\PolicyRejectedMail;
+use App\Mail\PolicyCancelledMail;
 use App\Exports\PolicyApplicationsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -571,6 +576,11 @@ class YourActionController extends Controller
                         'reference' => $policyApplication->reference_number,
                     ]);
                     break;
+                    
+                case 'cancelled':
+                    $policyApplication->customer_status = 'cancelled';
+                    $policyApplication->admin_status = 'cancelled';
+                    break;
             }
 
             $policyApplication->save();
@@ -581,6 +591,64 @@ class YourActionController extends Controller
             ]);
 
             DB::commit();
+
+            // Send email notifications to client based on status change
+            Log::info('Email notification check', [
+                'policy_id' => $id,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'status_changed' => $oldStatus !== $newStatus,
+            ]);
+            
+            if ($oldStatus !== $newStatus) {
+                try {
+                    $policyApplication->load('user.applicantProfile');
+                    
+                    Log::info('Attempting to send email', [
+                        'policy_id' => $id,
+                        'status' => $newStatus,
+                        'user_email' => $policyApplication->user->email,
+                    ]);
+                    
+                    switch ($newStatus) {
+                        case 'approved':
+                            Mail::to($policyApplication->user->email)->send(new PolicyApprovedMail($policyApplication));
+                            Log::info('Policy approved email sent', ['policy_id' => $id]);
+                            break;
+                            
+                        case 'send_uw':
+                            Mail::to($policyApplication->user->email)->send(new PolicySentToUnderwritingClientMail($policyApplication));
+                            Log::info('Policy sent to underwriting client email sent', ['policy_id' => $id]);
+                            break;
+                            
+                        case 'active':
+                            Mail::to($policyApplication->user->email)->send(new PolicyActiveMail($policyApplication));
+                            Log::info('Policy active email sent', ['policy_id' => $id]);
+                            break;
+                            
+                        case 'rejected':
+                            Mail::to($policyApplication->user->email)->send(new PolicyRejectedMail($policyApplication));
+                            Log::info('Policy rejected email sent', ['policy_id' => $id]);
+                            break;
+                            
+                        case 'cancelled':
+                            Mail::to($policyApplication->user->email)->send(new PolicyCancelledMail($policyApplication));
+                            Log::info('Policy cancelled email sent', ['policy_id' => $id]);
+                            break;
+                    }
+                } catch (\Exception $mailException) {
+                    Log::warning('Failed to send policy status email', [
+                        'policy_id' => $id,
+                        'status' => $newStatus,
+                        'error' => $mailException->getMessage(),
+                    ]);
+                }
+            } else {
+                Log::info('Email skipped - status unchanged', [
+                    'policy_id' => $id,
+                    'status' => $newStatus,
+                ]);
+            }
 
             $successMessage = "Application status updated from '{$oldStatus}' to '{$newStatus}' successfully!";
             if ($newStatus === 'send_uw') {

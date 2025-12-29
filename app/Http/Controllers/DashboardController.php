@@ -19,7 +19,7 @@ class DashboardController extends Controller
     /**
      * Display the dashboard.
      */
-    public function index(): View
+    public function index()
     {
         if(auth()->user()->hasRole('Client')) {
            $announcements = Announcement::latest()
@@ -109,7 +109,7 @@ class DashboardController extends Controller
             ));
         }
 
-        return view('dashboard');
+        return redirect()->route('for-your-action');
     }
 
     /**
