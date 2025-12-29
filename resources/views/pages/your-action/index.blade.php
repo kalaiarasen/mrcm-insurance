@@ -343,7 +343,7 @@
                                 <select class="form-select" id="statusFilter">
                                     <option value="">All Status</option>
                                     <option value="new_case">New Case</option>
-                                    <option value="new_renewal">New Renewal</option>
+                                    {{-- <option value="new_renewal">New Renewal</option> --}}
                                     <option value="not_paid">Not Paid</option>
                                     <option value="paid">Paid</option>
                                     <option value="sent_uw">Sent UW</option>

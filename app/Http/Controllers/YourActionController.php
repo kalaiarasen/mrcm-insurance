@@ -160,11 +160,14 @@ class YourActionController extends Controller
                         'Approved' => 'bg-success',
                         'Submitted' => 'bg-info',
                         'Rejected' => 'bg-danger',
-                        'Active' => 'bg-primary',
+                        'Active' => 'bg-success',
                         'Processing' => 'bg-warning',
-                        'Send UW', 'Sent UW' => 'bg-info',
+                        'Not Paid' => 'bg-danger',
+                        'Send UW', 'Sent UW' => 'bg-warning',
                         'Cancelled' => 'bg-secondary',
-                        'New', 'New Case' => 'bg-light text-dark',
+                        'New', 'New Case' => 'bg-secondary',
+                        'Paid' => 'bg-success',
+                        'New Renewal' => 'bg-info',
                         default => 'bg-secondary'
                     };
                     

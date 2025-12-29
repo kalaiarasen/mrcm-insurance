@@ -84,9 +84,9 @@
                                                     @php
                                                         $customerStatusBadges = [
                                                             'submitted' => 'bg-secondary',
-                                                            'pay_now' => 'bg-warning text-dark',
+                                                            'pay_now' => 'bg-danger',
                                                             'paid' => 'bg-info',
-                                                            'processing' => 'bg-primary',
+                                                            'processing' => 'bg-warning',
                                                             'active' => 'bg-success',
                                                             'rejected' => 'bg-danger',
                                                         ];

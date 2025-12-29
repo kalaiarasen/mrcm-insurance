@@ -339,7 +339,7 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     @if ($policy->customer_status === 'pay_now')
-                                                        <span class="badge bg-warning text-dark">
+                                                        <span class="badge bg-danger">
                                                             <i class="fa fa-clock me-1"></i>Payment Required
                                                         </span>
                                                     @elseif($policy->customer_status === 'paid')
@@ -355,7 +355,7 @@
                                                             <i class="fa fa-check-circle me-1"></i>Active
                                                         </span>
                                                     @elseif($policy->customer_status === 'processing')
-                                                        <span class="badge bg-info">
+                                                        <span class="badge bg-warning">
                                                             <i class="fa fa-spinner me-1"></i>Processing
                                                         </span>
                                                     @elseif($policy->status === 'rejected')

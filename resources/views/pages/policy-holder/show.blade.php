@@ -310,14 +310,16 @@
                                                 <td class="align-middle">
                                                     @php
                                                         $statusMap = [
-                                                            'pending' => ['badge' => 'bg-warning text-dark', 'icon' => 'fa-clock', 'text' => 'Pending'],
-                                                            'pay_now' => ['badge' => 'bg-warning text-dark', 'icon' => 'fa-clock', 'text' => 'Payment Required'],
+                                                            'pending' => ['badge' => 'bg-secondary', 'icon' => 'fa-clock', 'text' => 'Pending'],
+                                                            'pay_now' => ['badge' => 'bg-danger', 'icon' => 'fa-clock', 'text' => 'Payment Required'],
+                                                            'not_paid' => ['badge' => 'bg-danger', 'icon' => 'fa-exclamation-circle', 'text' => 'Not Paid'],
                                                             'paid' => ['badge' => 'bg-success', 'icon' => 'fa-check', 'text' => 'Paid'],
-                                                            'sent_uw' => ['badge' => 'bg-info', 'icon' => 'fa-paper-plane', 'text' => 'Sent to UW'],
-                                                            'approved' => ['badge' => 'bg-info', 'icon' => 'fa-check-circle', 'text' => 'Approved'],
+                                                            'sent_uw' => ['badge' => 'bg-warning', 'icon' => 'fa-paper-plane', 'text' => 'Sent to UW'],
+                                                            'approved' => ['badge' => 'bg-success', 'icon' => 'fa-check-circle', 'text' => 'Approved'],
                                                             'active' => ['badge' => 'bg-success', 'icon' => 'fa-check-circle', 'text' => 'Active'],
-                                                            'processing' => ['badge' => 'bg-info', 'icon' => 'fa-spinner', 'text' => 'Processing'],
+                                                            'processing' => ['badge' => 'bg-warning', 'icon' => 'fa-spinner', 'text' => 'Processing'],
                                                             'rejected' => ['badge' => 'bg-danger', 'icon' => 'fa-times-circle', 'text' => 'Rejected'],
+                                                            'new_case' => ['badge' => 'bg-secondary', 'icon' => 'fa-file', 'text' => 'New Case'],
                                                         ];
                                                         $adminStatus = $application->admin_status ?? 'pending';
                                                         $statusInfo = $statusMap[$adminStatus] ?? [
