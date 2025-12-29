@@ -1883,9 +1883,9 @@
 
                             <div class="row">
                                 <div class="col-12 text-end">
-                                    <button type="button" class="btn btn-outline-secondary me-2" onclick="resetForm()">
+                                    {{-- <button type="button" class="btn btn-outline-secondary me-2" onclick="resetForm()">
                                         <i class="fa fa-undo me-2"></i>Reset
-                                    </button>
+                                    </button> --}}
                                     <button type="submit" class="btn btn-success">
                                         <i class="fa fa-save me-2"></i>Update Status
                                     </button>

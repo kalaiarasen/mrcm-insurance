@@ -90,10 +90,10 @@
                                                 default => ['text' => 'Application Pending', 'icon' => 'fa-clock']
                                             };
                                         @endphp
-                                        <button class="btn btn-secondary" disabled
-                                            title="Your policy application is currently {{ $statusDisplay['text'] }}. Please wait for approval.">
+                                        <a href="{{ route('client-policy.show', $pendingPolicy->id) }}" class="btn btn-secondary"
+                                            title="Click to view your policy - {{ $statusDisplay['text'] }}">
                                             <i class="fa {{ $statusDisplay['icon'] }} me-2"></i>{{ $statusDisplay['text'] }}
-                                        </button>
+                                        </a>
                                     @elseif ($hasActiveProfessionalIndemnity && !$renewalEligible)
                                         {{-- Has active policy, not eligible for renewal --}}
                                         <button class="btn btn-secondary" disabled
@@ -206,10 +206,10 @@
                                         default => ['text' => 'Application Pending', 'icon' => 'fa-clock']
                                     };
                                 @endphp
-                                <button class="btn btn-secondary" disabled
-                                    title="Your policy application is currently {{ $statusDisplay['text'] }}.">
+                                <a href="{{ route('client-policy.show', $pendingPolicy->id) }}" class="btn btn-secondary"
+                                    title="Click to view your policy - {{ $statusDisplay['text'] }}">
                                     <i class="fa {{ $statusDisplay['icon'] }} me-2"></i>{{ $statusDisplay['text'] }}
-                                </button>
+                                </a>
                             @elseif ($hasActiveProfessionalIndemnity && !$renewalEligible)
                                 {{-- Has active policy, not eligible for renewal --}}
                                 <button class="btn btn-secondary" disabled

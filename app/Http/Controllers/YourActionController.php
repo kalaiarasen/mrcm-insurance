@@ -152,6 +152,8 @@ class YourActionController extends Controller
                         'paid' => 'Paid',
                         'sent_uw' => 'Sent UW',
                         'active' => 'Active',
+                        'cancelled' => 'Cancelled',
+                        'rejected' => 'Rejected',
                     ];
                     
                     $displayStatus = $statusMap[$policy->admin_status] ?? ucfirst($policy->admin_status ?? 'N/A');
@@ -279,6 +281,8 @@ class YourActionController extends Controller
                         'sent uw' => 'sent_uw',
                         'send uw' => 'sent_uw',
                         'active' => 'active',
+                        'cancelled' => 'cancelled',
+                        'rejected' => 'rejected',
                     ];
                     
                     $searchTerm = strtolower($keyword);

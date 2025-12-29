@@ -170,6 +170,8 @@ class PolicyApplicationsExport implements FromCollection, WithHeadings, WithMapp
             'paid' => 'Paid',
             'sent_uw' => 'Sent UW',
             'active' => 'Active',
+            'cancelled' => 'Cancelled',
+            'rejected' => 'Rejected',
         ];
 
         $displayStatus = $statusMap[$policy->admin_status] ?? ucfirst($policy->admin_status ?? 'N/A');

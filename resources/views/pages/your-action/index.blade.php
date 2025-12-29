@@ -348,6 +348,8 @@
                                     <option value="paid">Paid</option>
                                     <option value="sent_uw">Sent UW</option>
                                     <option value="active">Active</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="rejected">Rejected</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
