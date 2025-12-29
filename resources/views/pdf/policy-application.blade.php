@@ -133,6 +133,61 @@
     </style>
 </head>
 
+@php
+    // Helper function to get Class value (following YourActionController logic)
+    function getClassValue($healthcareService)
+    {
+        if (!$healthcareService) {
+            return 'N/A';
+        }
+
+        // Try practice_area first, fallback to service_type, then cover_type
+        $classValue = $healthcareService->practice_area 
+                   ?? $healthcareService->service_type 
+                   ?? $healthcareService->cover_type;
+
+        // Comprehensive mapping
+        $classMap = [
+            'general_practice' => 'General Practice',
+            'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+            'core_services' => 'Core Services',
+            'core_services_with_procedures' => 'Core Services with Procedures',
+            'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
+            'cosmetic_aesthetic_non_invasive' => 'Cosmetic & Aesthetic – Non-Invasive',
+            'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic & Aesthetic – Non-Surgical Invasive',
+            'office_clinical_orthopaedics' => 'Office / Clinical Orthopaedics',
+            'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A.)',
+            'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic (Surgical, Invasive)',
+            'general_dental_practice' => 'General Dental Practice',
+            'general_dental_practitioners_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
+            'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
+            'general_practitioner_private_hospital_emergency' => 'General Practitioner in Private Hospital – Emergency Department',
+            'basic_coverage' => 'Basic Coverage',
+            'comprehensive_coverage' => 'Comprehensive Coverage',
+            'premium_coverage' => 'Premium Coverage',
+            'general_dentist_practice' => 'General Dentist Practice',
+            'general_dentist_practice_practising_accredited_specialised_procedures' => 'General Dentist Practice, practising accredited specialised procedures',
+            'general_dental_practitioners' => 'General Dental Practitioners, practising accredited specialised procedures',
+        ];
+
+        return $classMap[$classValue] ?? 'N/A';
+    }
+
+    // Helper function to format relationship display
+    function formatRelationship($relationship)
+    {
+        if (!$relationship) {
+            return 'Self(01)';
+        }
+        
+        if (is_array($relationship)) {
+            return implode(', ', array_map('ucfirst', str_replace('_', ' ', $relationship)));
+        }
+        
+        return ucfirst(str_replace('_', ' ', $relationship));
+    }
+@endphp
+
 <body>
     <!-- Header -->
     <div class="header">
@@ -309,8 +364,7 @@
         </tr>
         <tr>
             <td class="label">Class</td>
-            <td>{{ $healthcare && $healthcare->cover_type ? ucfirst(str_replace('_', ' ', $healthcare->cover_type)) : 'N/A' }}
-            </td>
+            <td>{{ getClassValue($healthcare) }}</td>
         </tr>
         <tr>
             <td class="label">Liability Limit</td>
@@ -352,13 +406,14 @@
 
     <!-- 2.(A) Payment Details -->
     @if ($policyApplication->payment_method === 'credit_card' && $policyApplication->card_no)
+        {{-- Credit Card Payment --}}
         <div class="section-title">2. (A) Payment Details</div>
         <p style="font-size: 9px; margin: 5px 0;">I hereby authorise Great Eastern General Insurance (Malaysia) Berhad
             (GEGM) to charge one-off payment for the above insurance policy to my card as started below:</p>
         <table>
             <tr>
                 <td class="label">Payment Type</td>
-                <td>Online</td>
+                <td>Credit Card</td>
             </tr>
             <tr>
                 <td class="label">Name On Card</td>
@@ -386,11 +441,46 @@
             </tr>
             <tr>
                 <td class="label">Relationship To policy holders</td>
-                <td>
-                    @if ($policyApplication->relationship && is_array($policyApplication->relationship))
-                        {{ implode(', ', array_map('ucfirst', str_replace('_', ' ', $policyApplication->relationship))) }}
-                    @endif
-                </td>
+                <td>{{ formatRelationship($policyApplication->relationship) }}</td>
+            </tr>
+        </table>
+        <p style="font-size: 8px; margin-top: 10px;">I undertake that all information stated above is true and complete
+            in all respects. I have read and understood the terms & conditions contained in this form and I hereby
+            agreed that the company may process the manner as stated in GEGM's Easi-pay Service Form (A copy can be
+            obtained upon request).</p>
+    @elseif (($policyApplication->payment_method === 'proof' || $policyApplication->payment_document) && !$policyApplication->card_no)
+        {{-- Online Transfer Payment --}}
+        <div class="section-title">2. (A) Payment Details</div>
+        <p style="font-size: 9px; margin: 5px 0;">I hereby authorise Great Eastern General Insurance (Malaysia) Berhad
+            (GEGM) to charge one-off payment for the above insurance policy to my card as started below:</p>
+        <table>
+            <tr>
+                <td class="label">Payment Type</td>
+                <td>Online Transfer</td>
+            </tr>
+            <tr>
+                <td class="label">Name On Card</td>
+                <td>{{ $policyApplication->user->name ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">NRIC No</td>
+                <td>{{ $policyApplication->user->applicantProfile->nric_number ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Card No</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td class="label">Card Type:</td>
+                <td>Card Category: -</td>
+            </tr>
+            <tr>
+                <td class="label">Card Issuing Bank</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td class="label">Relationship To policy holders</td>
+                <td>Self(01)</td>
             </tr>
         </table>
         <p style="font-size: 8px; margin-top: 10px;">I undertake that all information stated above is true and complete

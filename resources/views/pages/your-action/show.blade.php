@@ -774,7 +774,49 @@
                 $insurance = $policyApplication->user->insuranceHistory;
                 $claims = $policyApplication->user->claimsExperience;
 
-                // Helper function to format field names properly
+                // Helper function to get Class value (following YourActionController logic)
+                function getClassValue($healthcareService)
+                {
+                    if (!$healthcareService) {
+                        return 'N/A';
+                    }
+
+                    // Try practice_area first, fallback to service_type, then cover_type
+                    $classValue = $healthcareService->practice_area 
+                               ?? $healthcareService->service_type 
+                               ?? $healthcareService->cover_type;
+
+                    // Comprehensive mapping for practice_area, service_type, and cover_type values
+                    $classMap = [
+                        // Practice Area values
+                        'general_practice' => 'General Practice',
+                        'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+                        'core_services' => 'Core Services',
+                        'core_services_with_procedures' => 'Core Services with Procedures',
+                        'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
+                        'cosmetic_aesthetic_non_invasive' => 'Cosmetic & Aesthetic – Non-Invasive',
+                        'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic & Aesthetic – Non-Surgical Invasive',
+                        'office_clinical_orthopaedics' => 'Office / Clinical Orthopaedics',
+                        'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A.)',
+                        'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic (Surgical, Invasive)',
+                        'general_dental_practice' => 'General Dental Practice',
+                        'general_dental_practitioners_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
+                        // Service Type values (fallback)
+                        'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
+                        'general_practitioner_private_hospital_emergency' => 'General Practitioner in Private Hospital – Emergency Department',
+                        // Cover Type values (third fallback)
+                        'basic_coverage' => 'Basic Coverage',
+                        'comprehensive_coverage' => 'Comprehensive Coverage',
+                        'premium_coverage' => 'Premium Coverage',
+                        'general_dentist_practice' => 'General Dentist Practice',
+                        'general_dentist_practice_practising_accredited_specialised_procedures' => 'General Dentist Practice, practising accredited specialised procedures',
+                        'general_dental_practitioners' => 'General Dental Practitioners, practising accredited specialised procedures',
+                    ];
+
+                    return $classMap[$classValue] ?? 'N/A';
+                }
+
+                // Helper function to format other field names
                 function formatFieldName($value)
                 {
                     if (!$value) {
@@ -783,30 +825,17 @@
 
                     // Special cases for proper display
                     $specialCases = [
-                        'general_dental_practice' => 'General Dentist Practice',
-                        'general_dental_practitioners' =>
-                            'General Dentist Practice, practicing accredited specialised procedures',
-                        'clinic_based_non_general_anaesthetic' =>
-                            'Clinic based Non-General Anaesthetic Dental only procedures',
-                        'hospital_based_full_fledged_omfs' => 'Hospital-based full-fledged OMFS',
-                        'general_practice_with_specialized_procedures' =>
-                            'General Practice with Specialized Procedures',
                         'locum_cover_only' => 'Locum Cover Only',
-                        'dental_specialists' => 'Dental Specialists',
-                        'dental_specialist_oral_maxillofacial_surgery' =>
-                            'Dental Specialist practicing Oral and Maxillofacial Surgery (OMFS)',
-                        'dentist_specialist' => 'Dentist Specialist',
-                        'general_dentist' => 'General Dentist',
+                        'dental_practice' => 'Dental Practice',
+                        'medical_practice' => 'Medical Practice',
+                        'private_clinic' => 'Private Clinic',
+                        'private_hospital' => 'Private Hospital',
                         'medical_specialist' => 'Medical Specialist',
                         'general_practitioner' => 'General Practitioner',
                         'low_risk_specialist' => 'Low Risk Specialist',
                         'medium_risk_specialist' => 'Medium Risk Specialist',
                         'lecturer_trainee' => 'Lecturer/Trainee',
                         'non_practicing' => 'Non-Practicing',
-                        'dental_practice' => 'Dental Practice',
-                        'medical_practice' => 'Medical Practice',
-                        'private_clinic' => 'Private Clinic',
-                        'private_hospital' => 'Private Hospital',
                     ];
 
                     return $specialCases[$value] ?? ucfirst(str_replace('_', ' ', $value));
@@ -1021,21 +1050,9 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div class="info-label">Cover Type</div>
+                                <div class="info-label">Class</div>
                                 <div class="info-value">
-                                    {{ $healthcare && $healthcare->cover_type ? formatFieldName($healthcare->cover_type) : 'N/A' }}
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="info-label">Service Type</div>
-                                <div class="info-value">
-                                    {{ $healthcare && $healthcare->service_type ? formatFieldName($healthcare->service_type) : 'N/A' }}
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="info-label">Practice Area</div>
-                                <div class="info-value">
-                                    {{ $healthcare && $healthcare->practice_area ? formatFieldName($healthcare->practice_area) : 'N/A' }}
+                                    {{ getClassValue($healthcare) }}
                                 </div>
                             </div>
                             <div class="col-md-6">

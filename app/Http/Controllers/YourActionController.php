@@ -219,6 +219,7 @@ class YourActionController extends Controller
                         'basic_coverage' => 'Basic Coverage',
                         'comprehensive_coverage' => 'Comprehensive Coverage',
                         'premium_coverage' => 'Premium Coverage',
+                        'general_dental_practitioners' => 'General Dentist Practice, practicing accredited specialised procedures',
                     ];
                     
                     return e($classMap[$classValue] ?? 'N/A');
@@ -510,6 +511,9 @@ class YourActionController extends Controller
                     $policyApplication->customer_status = 'processing';
                     $policyApplication->admin_status = 'sent_uw';
                     $policyApplication->sent_to_underwriter_at = now();
+                    if (!$policyApplication->reference_number) {
+                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication->user_id);
+                    }
                     
                     // Send email to underwriting with PDF attachment
                     try {
@@ -1031,6 +1035,18 @@ class YourActionController extends Controller
                 }
 
                 $policyApplication->payment_document = $path;
+                $policyApplication->payment_method = 'proof';
+                
+                // Clear credit card data when switching to proof payment
+                $policyApplication->name_on_card = null;
+                $policyApplication->nric_no = null;
+                $policyApplication->card_no = null;
+                $policyApplication->card_issuing_bank = null;
+                $policyApplication->card_type = null;
+                $policyApplication->expiry_month = null;
+                $policyApplication->expiry_year = null;
+                $policyApplication->relationship = null;
+                $policyApplication->authorize_payment = null;
             } elseif ($paymentType === 'credit_card') {
                 // Store credit card info
                 $policyApplication->payment_method = 'credit_card';

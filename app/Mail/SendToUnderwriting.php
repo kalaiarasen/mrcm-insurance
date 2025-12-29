@@ -29,7 +29,7 @@ class SendToUnderwriting extends Mailable
         $this->policyApplication = $policyApplication;
         $this->profile = $policyApplication->user->applicantProfile;
         $this->healthcare = $policyApplication->user->healthcareService;
-        $this->pricing = $policyApplication->user->policyPricing;
+        $this->pricing = $policyApplication->policyPricing;
     }
 
     /**
@@ -114,9 +114,23 @@ class SendToUnderwriting extends Mailable
         // Generate filename
         $filename = 'Policy_Application_' . ($this->policyApplication->reference_number ?? 'MRCM#' . $this->policyApplication->id) . '.pdf';
 
-        return [
+        $attachments = [
             Attachment::fromData(fn () => $pdf->output(), $filename)
                 ->withMime('application/pdf'),
         ];
+
+        // Attach payment proof if payment method is 'proof' and payment_document exists
+        if ($this->policyApplication->payment_method === 'proof' && $this->policyApplication->payment_document) {
+            $paymentProofPath = storage_path('app/public/' . $this->policyApplication->payment_document);
+            
+            if (file_exists($paymentProofPath)) {
+                $paymentProofFilename = 'Payment_Proof_' . ($this->policyApplication->reference_number ?? 'MRCM#' . $this->policyApplication->id) . '.' . pathinfo($paymentProofPath, PATHINFO_EXTENSION);
+                
+                $attachments[] = Attachment::fromPath($paymentProofPath)
+                    ->as($paymentProofFilename);
+            }
+        }
+
+        return $attachments;
     }
 }
