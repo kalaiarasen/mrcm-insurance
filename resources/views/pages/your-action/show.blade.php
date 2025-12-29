@@ -963,27 +963,30 @@
                     <div class="card-body">
                         <h6 class="text-primary mb-3"><i class="fa fa-graduation-cap me-2"></i>Qualifications</h6>
 
-                        <div class="row">
-                            @forelse($qualifications as $index => $qual)
-                                <div class="col-md-4">
-                                    <div class="card bg-light mb-3">
-                                        <div class="card-body">
-                                            <h6 class="text-secondary">Qualification {{ $index + 1 }}</h6>
-                                            <div class="info-label">Institution</div>
-                                            <div class="info-value">{{ $qual->institution }}</div>
-                                            <div class="info-label">Degree/Qualification</div>
-                                            <div class="info-value">{{ $qual->degree_or_qualification }}</div>
-                                            <div class="info-label">Year Obtained</div>
-                                            <div class="info-value">{{ $qual->year_obtained }}</div>
-                                        </div>
-                                    </div>
+                        @forelse($qualifications as $index => $qual)
+                            @if($index > 0)
+                                <hr class="my-3">
+                            @endif
+                            <div class="mb-3">
+                                <div class="mb-2">
+                                    <strong class="text-secondary">Qualification {{ $index + 1 }}</strong>
                                 </div>
-                            @empty
-                                <div class="col-12">
-                                    <p class="text-muted">No qualifications recorded.</p>
+                                <div class="mb-2">
+                                    <div class="info-label">Institution</div>
+                                    <div class="info-value">{{ $qual->institution }}</div>
                                 </div>
-                            @endforelse
-                        </div>
+                                <div class="mb-2">
+                                    <div class="info-label">Degree/Qualification</div>
+                                    <div class="info-value">{{ $qual->degree_or_qualification }}</div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="info-label">Year Obtained</div>
+                                    <div class="info-value">{{ $qual->year_obtained }}</div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-muted">No qualifications recorded.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
