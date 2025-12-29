@@ -37,7 +37,7 @@ class PolicySubmittedMail extends Mailable
      */
     public function build()
     {
-        return $this->from('MRCM - Professional Indemnity')
+        return $this->from(config('mail.from.address'), 'MRCM - Professional Indemnity')
                     ->subject('Application Successfully Submitted - MRCM Insurance')
                     ->view('emails.policy-submitted');
     }

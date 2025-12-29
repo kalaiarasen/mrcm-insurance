@@ -87,6 +87,7 @@
                                                 'pay_now' => ['text' => 'Payment Required', 'icon' => 'fa-credit-card'],
                                                 'paid' => ['text' => 'Payment Received', 'icon' => 'fa-check-circle'],
                                                 'processing' => ['text' => 'Under Processing', 'icon' => 'fa-spinner'],
+                                                'rejected' => ['text' => 'Application Rejected', 'icon' => 'fa-times-circle'],
                                                 default => ['text' => 'Application Pending', 'icon' => 'fa-clock']
                                             };
                                         @endphp
@@ -203,6 +204,7 @@
                                         'pay_now' => ['text' => 'Payment Required', 'icon' => 'fa-credit-card'],
                                         'paid' => ['text' => 'Payment Received', 'icon' => 'fa-check-circle'],
                                         'processing' => ['text' => 'Under Processing', 'icon' => 'fa-spinner'],
+                                        'rejected' => ['text' => 'Application Rejected', 'icon' => 'fa-times-circle'],
                                         default => ['text' => 'Application Pending', 'icon' => 'fa-clock']
                                     };
                                 @endphp
