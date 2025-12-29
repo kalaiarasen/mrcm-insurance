@@ -763,9 +763,7 @@
 
         $(document).ready(function() {
             $(".datatable").DataTable({
-                "order": [
-                    [6, "desc"]
-                ] // Sort by Submitted Date column (index 6) in descending order
+                "order": []
             });
 
             // File upload preview
