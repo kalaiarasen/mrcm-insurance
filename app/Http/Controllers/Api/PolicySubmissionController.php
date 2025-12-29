@@ -246,6 +246,10 @@ class PolicySubmissionController extends Controller
 
             // Update existing rejected policy or create new one
             if ($isEditingRejectedPolicy) {
+                // Unlink old pricing records from this policy application
+                PolicyPricing::where('policy_application_id', $existingPolicyApplication->id)
+                    ->update(['policy_application_id' => null, 'is_used' => false]);
+                
                 // Update existing rejected policy
                 $existingPolicyApplication->update([
                     'agree_data_protection' => $applicationData['agree_declaration'] === 'yes',
@@ -263,6 +267,7 @@ class PolicySubmissionController extends Controller
                 Log::info('Rejected policy resubmitted', [
                     'policy_id' => $policyApplication->id,
                     'user_id' => $currentUser->id,
+                    'new_pricing_id' => $policyPricing->id,
                 ]);
             } else {
                 // Create new policy application
