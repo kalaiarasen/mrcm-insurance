@@ -351,7 +351,7 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h4 class="mb-2">{{ $policyApplication->user->name ?? 'N/A' }}</h4>
+                                <h4 class="mb-2">{{ ucfirst($policyApplication->user->applicantProfile->title) }}. {{ $policyApplication->user->name ?? 'N/A' }}</h4>
                                 <p class="mb-1"><i
                                         class="fa fa-envelope me-2"></i>{{ $policyApplication->user->email ?? 'N/A' }}</p>
                                 <p class="mb-1"><i
