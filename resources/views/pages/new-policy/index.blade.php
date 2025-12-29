@@ -46,29 +46,6 @@
             </div>
         </div>
 
-        {{-- Rejection Reason Alert --}}
-        @if ($isRejectedPolicy && !empty($rejectedPolicy->remarks))
-            <div class="row">
-                <div class="col-12">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <h6 class="alert-heading mb-2">
-                            <i class="fa fa-exclamation-triangle me-2"></i>
-                            <strong>Policy Rejected - Action Required</strong>
-                        </h6>
-                        <p class="mb-2"><strong>Rejection Reason:</strong></p>
-                        <p class="mb-3" style="word-break: break-word; white-space: pre-wrap;">{{ $rejectedPolicy->remarks }}</p>
-                        <hr>
-                        <p class="mb-0" style="font-size: 0.95rem;">
-                            <i class="fa fa-info-circle me-2"></i>
-                            Please review the rejection reason above, make the necessary corrections to your application,
-                            and resubmit.
-                        </p>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </div>
-            </div>
-        @endif
-
         @if ($hasExistingData && !$isRejectedPolicy)
             <div class="row">
                 <div class="col-md-12">

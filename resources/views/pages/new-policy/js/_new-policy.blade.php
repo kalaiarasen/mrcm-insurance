@@ -357,8 +357,22 @@
             policyStartDate.addEventListener('change', function() {
                 updateExpiryDate();
                 calculatePremium();
+                
+                // Save the updated date to localStorage immediately
+                const step3Data = loadFormData(3);
+                step3Data.policy_start_date = this.value;
+                saveFormData(3, step3Data);
+                console.log('Policy start date changed and saved:', this.value);
             });
-            liabilityLimit.addEventListener('change', calculatePremium);
+            liabilityLimit.addEventListener('change', function() {
+                calculatePremium();
+                
+                // Save the updated liability limit to localStorage immediately
+                const step3Data = loadFormData(3);
+                step3Data.liability_limit = this.value;
+                saveFormData(3, step3Data);
+                console.log('Liability limit changed and saved:', this.value);
+            });
 
             pricingCalculationsSetup = true;
         }
