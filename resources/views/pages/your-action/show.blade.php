@@ -370,7 +370,7 @@
                                     <span class="status-badge badge bg-danger">Rejected</span>
                                 @else
                                     <span
-                                        class="status-badge badge bg-secondary">{{ ucfirst($policyApplication->status) }}</span>
+                                        class="status-badge badge bg-secondary">{{ str_replace('_', ' ', ucwords($policyApplication->status)) }}</span>
                                 @endif
                                 <p class="mt-3 mb-0 text-muted">
                                     <small>Submitted:

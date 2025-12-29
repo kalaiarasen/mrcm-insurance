@@ -636,14 +636,11 @@ class YourActionController extends Controller
             $user = $policyApplication->user;
 
             // Update User - only name and contact_no, NOT email (email is unique and shouldn't change)
-            $applicantTitle = $data['title'] ?? null;
+            // Note: full_name already includes title prefix, don't add it again
             $applicantFullName = $data['full_name'] ?? null;
-            $applicantName = $applicantTitle && $applicantFullName 
-                ? strtoupper($applicantTitle) . '. ' . $applicantFullName 
-                : ($applicantFullName ?? $user->name);
             
             $user->update([
-                'name' => $applicantName,
+                'name' => $applicantFullName ?? $user->name,
                 'contact_no' => $data['contact_no'] ?? $user->contact_no,
             ]);
 

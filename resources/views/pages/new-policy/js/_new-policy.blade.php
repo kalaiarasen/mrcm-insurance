@@ -803,16 +803,23 @@
         if (startDateInput) {
             // Parse the start date
             const startDate = new Date(startDateInput);
-
-            // Set expiry date to December 31st of next year
-            const expiryDate = new Date(startDate.getFullYear() + 1, 11, 31); // Month 11 = December, day 31
+            const startYear = startDate.getFullYear();
+            const startMonth = startDate.getMonth(); // 0-based (0 = January, 6 = July)
+            const startDay = startDate.getDate();
+            
+            // Logic: If start date is July 1st or later, expiry = Dec 31 NEXT year
+            //        If start date is before July 1st, expiry = Dec 31 SAME year
+            let expiryYear;
+            if (startMonth > 6 || (startMonth === 6 && startDay >= 1)) {
+                // On or after July 1st: next year
+                expiryYear = startYear + 1;
+            } else {
+                // Before July 1st: same year
+                expiryYear = startYear;
+            }
 
             // Format as YYYY-MM-DD for the input field
-            const expiryYear = expiryDate.getFullYear();
-            const expiryMonth = String(expiryDate.getMonth() + 1).padStart(2, '0');
-            const expiryDay = String(expiryDate.getDate()).padStart(2, '0');
-
-            policyExpiryDateInput.value = `${expiryYear}-${expiryMonth}-${expiryDay}`;
+            policyExpiryDateInput.value = `${expiryYear}-12-31`;
         }
     }
 

@@ -514,7 +514,7 @@
                                 <!-- Hidden Locum Extension Checkbox (for form submission only) -->
                                 <input type="checkbox" id="locumExtension" name="locum_extension" value="1" style="display: none;">
                                 
-                                <div class="col-md-4 mt-3">
+                                <div class="col-md-4">
                                     <label for="liabilityLimit" class="form-label">Liability Limit <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control d-none" id="liabilityLimitDisplay" readonly>
                                     <select class="form-select" id="liabilityLimit" name="liability_limit" required>
@@ -548,9 +548,19 @@
                                     <div class="col-md-6"><span>: RM <span id="displayBasePremium">0.00</span></span></div>
                                 </div>
                                 
+                                <div class="row mb-2" id="loadingRow" style="display: none;">
+                                    <div class="col-md-6"><span>Loading (<span id="displayLoadingPercentage">0.00</span>%)</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayLoadingAmount">0.00</span></span></div>
+                                </div>
+                                
                                 <div class="row mb-2">
                                     <div class="col-md-6"><span>Gross Premium</span></div>
                                     <div class="col-md-6"><span>: RM <span id="displayGrossPremium">0.00</span></span></div>
+                                </div>
+                                
+                                <div class="row mb-2" id="discountRow" style="display: none;">
+                                    <div class="col-md-6"><span>Discount (<span id="displayDiscountPercentage">0.00</span>%)</span></div>
+                                    <div class="col-md-6"><span>: RM <span id="displayDiscountAmount">0.00</span></span></div>
                                 </div>
                                 
                                 <div class="row mb-2" id="locumAddonRow" style="display: none;">
