@@ -634,7 +634,7 @@
                         `;
                     } else if (employmentType === 'private') {
                         coverTypeSelect.innerHTML += `
-                            <option value="general_dental_practice">General Dental Practice</option>
+                            <option value="general_dental_practice">General Dental Practitioner</option>
                             <option value="general_dental_practitioners">General Dental Practitioners, practising accredited specialised procedures</option>
                         `;
                     }

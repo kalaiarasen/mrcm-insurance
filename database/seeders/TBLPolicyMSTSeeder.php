@@ -522,7 +522,7 @@ class TBLPolicyMSTSeeder extends Seeder
 
     /**
      * Map CSV service type to form values
-     * CSV: "Core Services with procedures", "General Dental Practice", etc.
+     * CSV: "Core Services with procedures", "General Dental Practitioner", etc.
      * Form: "core_services", "core_services_with_procedures", etc.
      */
     private function mapServiceType($csvValue)

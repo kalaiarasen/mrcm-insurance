@@ -663,7 +663,7 @@
             return;
         }
 
-        // General Dental Practice (General Cover) - has 1M and 2M options
+        // General Dental Practitioner (General Cover) - has 1M and 2M options
         if (serviceType === 'general_dental_practice') {
             liabilityLimitSelect.innerHTML = `
                 <option value="">Select Liability Limit</option>

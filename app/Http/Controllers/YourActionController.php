@@ -216,7 +216,7 @@ class YourActionController extends Controller
                         'office_clinical_orthopaedics' => 'Office / Clinical Orthopaedics',
                         'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A.)',
                         'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic (Surgical, Invasive)',
-                        'general_dental_practice' => 'General Dental Practice',
+                        'general_dental_practice' => 'General Dental Practitioner',
                         'general_dental_practitioners_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
                         // Service Type values (fallback)
                         'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',

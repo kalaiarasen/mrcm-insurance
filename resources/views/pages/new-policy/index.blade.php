@@ -676,7 +676,7 @@
                                         </option>
                                         <option value="cosmetic_aesthetic_surgical_invasive">Cosmetic and Aesthetic (
                                             Surgical, Invasive)</option>
-                                        <option value="general_dental_practice">General Dental Practice</option>
+                                        <option value="general_dental_practice">General Dental Practitioner</option>
                                         <option value="general_dental_practitioners_accredited_specialised_procedures">
                                             General Dental Practitioners, practising accredited specialised procedures
                                         </option>
