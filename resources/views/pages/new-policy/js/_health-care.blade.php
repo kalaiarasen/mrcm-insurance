@@ -697,15 +697,15 @@
                 serviceSelect.innerHTML = `
                     <option value="">Select</option>
                     <option value="general_dental_practice">General Dentist Practice</option>
-                    <option value="general_dental_practitioners">General Dentist Practice, practicing accredited specialised procedures</option>
+                    <option value="general_dental_practitioners">General Dentist Practitioner, practicing accredited specialised procedures</option>
                 `;
                 console.log('Service options populated for general_cover. Current value:', serviceSelect.value);
             } else if (coverType === 'locum_cover_only') {
-                // For Locum Cover Only - show General Practice options
+                // For Locum Cover Only - show General Practitioner options
                 serviceSelect.innerHTML = `
                     <option value="">Select</option>
-                    <option value="general_practice">General Practice</option>
-                    <option value="general_practice_with_specialized_procedures">General Practice with Specialized Procedures</option>
+                    <option value="general_practice">General Practitioner</option>
+                    <option value="general_practice_with_specialized_procedures">General Practitioner with Specialized Procedures</option>
                 `;
                 console.log('Service options populated for locum_cover_only. Current value:', serviceSelect.value);
             }

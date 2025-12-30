@@ -64,8 +64,8 @@
 
             // Comprehensive mapping
             $classMap = [
-                'general_practice' => 'General Practice',
-                'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+                'general_practice' => 'General Practitioner',
+                'general_practice_with_specialized_procedures' => 'General Practitioner with Specialized Procedures',
                 'core_services' => 'Core Services',
                 'core_services_with_procedures' => 'Core Services with Procedures',
                 'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',

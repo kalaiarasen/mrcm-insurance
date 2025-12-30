@@ -63,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('for-your-action/{id}/update-status', [YourActionController::class, 'updateStatus'])->name('for-your-action.update-status');
     Route::post('for-your-action/{id}/upload-documents', [YourActionController::class, 'uploadDocuments'])->name('for-your-action.upload-documents');
     Route::post('for-your-action/{id}/upload-payment', [YourActionController::class, 'uploadPayment'])->name('for-your-action.upload-payment');
+    Route::post('for-your-action/{id}/update-reference', [YourActionController::class, 'updateReferenceNumber'])->name('for-your-action.update-reference');
     Route::post('for-your-action/{id}/reupload-ci', [YourActionController::class, 'reuploadCI'])->name('for-your-action.reupload-ci');
     Route::delete('for-your-action/{id}/remove-ci', [YourActionController::class, 'removeCI'])->name('for-your-action.remove-ci');
     Route::put('for-your-action/{id}/update', [YourActionController::class, 'update'])->name('for-your-action.update');

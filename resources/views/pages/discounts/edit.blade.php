@@ -75,10 +75,10 @@
                                             Pharmacist</option>
                                         <option value="medical_practice"
                                             {{ old('product', $discount->product) == 'medical_practice' ? 'selected' : '' }}>
-                                            Medical Practice</option>
+                                            Medical Practitioner</option>
                                         <option value="dental_practice"
                                             {{ old('product', $discount->product) == 'dental_practice' ? 'selected' : '' }}>
-                                            Dental Practice</option>
+                                            Dental Practitioner</option>
                                     </select>
                                     @error('product')
                                         <div class="invalid-feedback">{{ $message }}</div>

@@ -785,8 +785,8 @@
                     // Comprehensive mapping for practice_area, service_type, and cover_type values
                     $classMap = [
                         // Practice Area values
-                        'general_practice' => 'General Practice',
-                        'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+                        'general_practice' => 'General Practitioner',
+                        'general_practice_with_specialized_procedures' => 'General Practitioner with Specialized Procedures',
                         'core_services' => 'Core Services',
                         'core_services_with_procedures' => 'Core Services with Procedures',
                         'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
@@ -804,8 +804,8 @@
                         'basic_coverage' => 'Basic Coverage',
                         'comprehensive_coverage' => 'Comprehensive Coverage',
                         'premium_coverage' => 'Premium Coverage',
-                        'general_dentist_practice' => 'General Dentist Practice',
-                        'general_dentist_practice_practising_accredited_specialised_procedures' => 'General Dentist Practice, practising accredited specialised procedures',
+                        'general_dentist_practice' => 'General Dentist Practitioner',
+                        'general_dentist_practice_practising_accredited_specialised_procedures' => 'General Dentist Practitioner, practising accredited specialised procedures',
                         'general_dental_practitioners' => 'General Dental Practitioners, practising accredited specialised procedures',
                     ];
 
@@ -822,8 +822,8 @@
                     // Special cases for proper display
                     $specialCases = [
                         'locum_cover_only' => 'Locum Cover Only',
-                        'dental_practice' => 'Dental Practice',
-                        'medical_practice' => 'Medical Practice',
+                        'dental_practice' => 'Dental Practitioner',
+                        'medical_practice' => 'Medical Practitioner',
                         'private_clinic' => 'Private Clinic',
                         'private_hospital' => 'Private Hospital',
                         'medical_specialist' => 'Medical Specialist',
@@ -1052,7 +1052,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="info-label">Locum Practice Location</div>
+                                <div class="info-label">Locum Practitioner Location</div>
                                 <div class="info-value">
                                     {{ $healthcare && $healthcare->locum_practice_location ? formatFieldName($healthcare->locum_practice_location) : 'N/A' }}
                                 </div>
@@ -1822,11 +1822,17 @@
                                     <label class="form-label fw-bold">
                                         <i class="fa fa-info-circle me-2"></i>Reference Number
                                     </label>
-                                    <input type="text" class="form-control"
-                                        value="{{ $policyApplication->reference_number ?? 'Will be auto-generated on approval' }}"
-                                        disabled>
-                                    <small class="text-muted">Reference number is auto-assigned when status is changed to
-                                        "Approved"</small>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="referenceNumberInput"
+                                            value="{{ $policyApplication->reference_number ?? 'Will be auto-generated when payment is received' }}"
+                                            {{ $policyApplication->reference_number ? '' : 'disabled' }}>
+                                        @if($policyApplication->reference_number)
+                                            <button class="btn btn-primary" type="button" id="updateReferenceBtn">
+                                                <i class="fa fa-save me-1"></i>Update
+                                            </button>
+                                        @endif
+                                    </div>
+                                    <small class="text-muted">Reference number is auto-assigned when payment is received from client/admin</small>
                                 </div>
                             </div>
 
@@ -2772,4 +2778,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Update Reference Number
+        document.getElementById('updateReferenceBtn')?.addEventListener('click', function() {
+            const referenceNumber = document.getElementById('referenceNumberInput').value.trim();
+            
+            if (!referenceNumber) {
+                alert('Reference number cannot be empty');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to update the reference number to: ' + referenceNumber + '?')) {
+                return;
+            }
+
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Updating...';
+
+            fetch('{{ route('for-your-action.update-reference', $policyApplication->id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ reference_number: referenceNumber })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Reference number updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to update reference number'));
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa fa-save me-1"></i>Update';
+                }
+            })
+            .catch(error => {
+                alert('Error: Failed to update reference number');
+                console.error('Error:', error);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-save me-1"></i>Update';
+            });
+        });
+    </script>
 @endsection

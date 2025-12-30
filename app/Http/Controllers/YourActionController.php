@@ -206,8 +206,8 @@ class YourActionController extends Controller
                     // Comprehensive mapping for practice_area, service_type, and cover_type values
                     $classMap = [
                         // Practice Area values
-                        'general_practice' => 'General Practice',
-                        'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+                        'general_practice' => 'General Practitioner',
+                        'general_practice_with_specialized_procedures' => 'General Practitioner with Specialized Procedures',
                         'core_services' => 'Core Services',
                         'core_services_with_procedures' => 'Core Services with Procedures',
                         'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
@@ -225,7 +225,7 @@ class YourActionController extends Controller
                         'basic_coverage' => 'Basic Coverage',
                         'comprehensive_coverage' => 'Comprehensive Coverage',
                         'premium_coverage' => 'Premium Coverage',
-                        'general_dental_practitioners' => 'General Dentist Practice, practicing accredited specialised procedures',
+                        'general_dental_practitioners' => 'General Dentist Practitioner, practicing accredited specialised procedures',
                     ];
                     
                     $classDisplay = e($classMap[$classValue] ?? 'N/A');
@@ -480,11 +480,6 @@ class YourActionController extends Controller
                     $policyApplication->customer_status = 'pay_now';
                     $policyApplication->admin_status = 'not_paid';
                     $policyApplication->approved_at = now();
-                    
-                    // Generate sequential reference number when approved
-                    if (!$policyApplication->reference_number) {
-                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
-                    }
                     break;
 
                 case 'active':
@@ -495,17 +490,12 @@ class YourActionController extends Controller
                     $policyApplication->admin_status = 'active';
                     $policyApplication->activated_at = now();
                     
-                    // Generate reference number if not already generated (fallback)
-                    if (!$policyApplication->reference_number) {
-                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
-                    }
-                    
                     // Handle Certificate of Insurance (CI) document upload
                     if ($request->hasFile('certificate_document')) {
                         $file = $request->file('certificate_document');
                         
                         // Generate unique filename (sanitize reference number for URL safety)
-                        $sanitizedRef = str_replace('#', '_', $policyApplication->reference_number);
+                        $sanitizedRef = str_replace('#', '_', $policyApplication->reference_number ?? 'POLICY_' . $policyApplication->id);
                         $filename = 'CI_' . $sanitizedRef . '_' . time() . '.pdf';
                         
                         // Store file in public/certificates directory
@@ -529,9 +519,6 @@ class YourActionController extends Controller
                     $policyApplication->customer_status = 'processing';
                     $policyApplication->admin_status = 'sent_uw';
                     $policyApplication->sent_to_underwriter_at = now();
-                    if (!$policyApplication->reference_number) {
-                        $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
-                    }
                     
                     // Send email to underwriting with PDF attachment
                     try {
@@ -1140,6 +1127,11 @@ class YourActionController extends Controller
                 // Note: Card details will be submitted to Great Eastern for processing
             }
 
+            // Generate sequential reference number when payment is received
+            if (!$policyApplication->reference_number) {
+                $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
+            }
+            
             // Update policy application with payment status
             $policyApplication->customer_status = 'paid';
             $policyApplication->admin_status = 'paid';
@@ -1168,6 +1160,68 @@ class YourActionController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Failed to process payment. Please try again.');
+        }
+    }
+
+    /**
+     * Update reference number (Admin only)
+     */
+    public function updateReferenceNumber(Request $request, $id)
+    {
+        try {
+            $validator = \Validator::make($request->all(), [
+                'reference_number' => 'required|string|max:50|unique:policy_applications,reference_number,' . $id,
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first('reference_number'),
+                ], 422);
+            }
+
+            $policyApplication = PolicyApplication::findOrFail($id);
+            
+            // Only allow updating if reference number already exists (payment was made)
+            if (!$policyApplication->reference_number) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Reference number can only be edited after payment is received.'
+                ], 400);
+            }
+
+            $oldReference = $policyApplication->reference_number;
+            $policyApplication->reference_number = $request->input('reference_number');
+            $policyApplication->save();
+
+            Log::info('Reference number updated', [
+                'policy_id' => $id,
+                'old_reference' => $oldReference,
+                'new_reference' => $policyApplication->reference_number,
+                'updated_by' => auth()->id(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reference number updated successfully.',
+                'reference_number' => $policyApplication->reference_number,
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Policy application not found.',
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Failed to update reference number', [
+                'policy_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update reference number: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -1209,7 +1263,7 @@ class YourActionController extends Controller
     /**
      * Generate sequential reference number that resets annually based on policy year
      * Format: MRCM26-0001, MRCM26-0002, etc.
-     * Generated when admin approves the application
+     * Generated when payment is received (when client/admin pays)
      * Resets based on policy_start_date from policy_pricings table
      * 
      * @param PolicyApplication $policyApplication

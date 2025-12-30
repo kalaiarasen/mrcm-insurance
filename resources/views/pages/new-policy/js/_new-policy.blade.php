@@ -563,8 +563,8 @@
             'general_practitioner_with_obstetrics': '2000000',
             'cosmetic_aesthetic_non_invasive': '2000000',
             'cosmetic_aesthetic_non_surgical_invasive': '2000000',
-            'general_practice': '2000000', // Dental - General Practice
-            'general_practice_with_specialized_procedures': '2000000' // Dental - General Practice with Specialized Procedures
+            'general_practice': '2000000', // Dental - General Practitioner
+            'general_practice_with_specialized_procedures': '2000000' // Dental - General Practitioner with Specialized Procedures
         };
 
         // Low Risk Specialist services - all have 1M and 2M options
@@ -1201,21 +1201,21 @@
             }
         }
 
-        // Dental Practice - Locum Cover Only pricing (fixed liability of 2M)
+        // Dental Practitioner - Locum Cover Only pricing (fixed liability of 2M)
         const dentalLocumCoverRates = {
-            'general_practice': 700, // General Practice (Dental)
-            'general_practice_with_specialized_procedures': 1250 // General Practice with Specialized Procedures
+            'general_practice': 700, // General Practitioner (Dental)
+            'general_practice_with_specialized_procedures': 1250 // General Practitioner with Specialized Procedures
         };
 
         if (dentalLocumCoverRates[serviceType]) {
             return dentalLocumCoverRates[serviceType];
         }
 
-        // Dental Practice - General Cover pricing
+        // Dental Practitioner - General Cover pricing
         const dentalGeneralCoverRates = {
             'general_dental_practice': {
-                '1000000': 1200, // General Dentist Practice - 1M
-                '2000000': 1400 // General Dentist Practice - 2M
+                '1000000': 1200, // General Dentist Practitioner - 1M
+                '2000000': 1400 // General Dentist Practitioner - 2M
             },
             'general_dental_practitioners': {
                 '2500000': 1700 // General Dentist Practice with specialized procedures - 2.5M

@@ -571,8 +571,8 @@
                                     <select class="form-select" id="professionalIndemnityType"
                                         name="professional_indemnity_type" required>
                                         <option value="">Select Professional Indemnity Type</option>
-                                        <option value="medical_practice">Medical Practice</option>
-                                        <option value="dental_practice">Dental Practice</option>
+                                        <option value="medical_practice">Medical Practitioner</option>
+                                        <option value="dental_practice">Dental Practitioner</option>
                                         <option value="pharmacist">Pharmacist</option>
                                         {{-- <option value="specialist_practice">Specialist Practice</option>
                                         <option value="allied_health">Allied Health</option> --}}
@@ -592,7 +592,7 @@
                                     <p style="margin-bottom:2px">Specialty <span class="text-danger">*</span></p>
                                     <select class="form-select" id="specialtyArea" name="specialty_area">
                                         <option value="">Select Specialty</option>
-                                        <option value="general_practice">General Practice</option>
+                                        <option value="general_practice">General Practitioner</option>
                                         <option value="medical_officer">Medical Officer</option>
                                         <option value="specialist">Specialist</option>
                                         <option value="dental">Dental</option>
@@ -658,8 +658,8 @@
                                     <p style="margin-bottom:2px">Practice Area <span class="text-danger">*</span></p>
                                     <select class="form-select" id="practiceArea" name="practice_area">
                                         <option value="">Select Practice Area</option>
-                                        <option value="general_practice">General Practice</option>
-                                        <option value="general_practice_with_specialized_procedures">General Practice with
+                                        <option value="general_practice">General Practitioner</option>
+                                        <option value="general_practice_with_specialized_procedures">General Practitioner with
                                             Specialized Procedures</option>
                                         <option value="core_services">Core Services</option>
                                         <option value="core_services_with_procedures">Core Services with procedures

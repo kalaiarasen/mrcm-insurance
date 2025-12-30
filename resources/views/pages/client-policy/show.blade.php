@@ -861,8 +861,8 @@
                     // Comprehensive mapping for practice_area, service_type, and cover_type values
                     $classMap = [
                         // Practice Area values
-                        'general_practice' => 'General Practice',
-                        'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+                        'general_practice' => 'General Practitioner',
+                        'general_practice_with_specialized_procedures' => 'General Practitioner with Specialized Procedures',
                         'core_services' => 'Core Services',
                         'core_services_with_procedures' => 'Core Services with Procedures',
                         'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
@@ -898,8 +898,8 @@
                     // Special cases for proper display
                     $specialCases = [
                         'locum_cover_only' => 'Locum Cover Only',
-                        'dental_practice' => 'Dental Practice',
-                        'medical_practice' => 'Medical Practice',
+                        'dental_practice' => 'Dental Practitioner',
+                        'medical_practice' => 'Medical Practitioner',
                         'private_clinic' => 'Private Clinic',
                         'private_hospital' => 'Private Hospital',
                         'medical_specialist' => 'Medical Specialist',

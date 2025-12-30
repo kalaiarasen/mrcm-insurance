@@ -216,6 +216,11 @@ class DashboardController extends Controller
                 // Note: Card details will be submitted to Great Eastern for processing
             }
 
+            // Generate sequential reference number when payment is received
+            if (!$policyApplication->reference_number) {
+                $policyApplication->reference_number = $this->generateReferenceNumber($policyApplication);
+            }
+            
             // Update policy application with payment status
             $policyApplication->customer_status = 'paid';
             $policyApplication->admin_status = 'paid';
@@ -246,5 +251,44 @@ class DashboardController extends Controller
                 ->back()
                 ->with('error', 'Failed to process payment. Please try again.');
         }
+    }
+
+    /**
+     * Generate sequential reference number that resets annually based on policy year
+     * Format: MRCM26-0001, MRCM26-0002, etc.
+     * Generated when payment is received
+     * Resets based on policy_start_date from policy_pricings table
+     * 
+     * @param PolicyApplication $policyApplication
+     * @return string
+     */
+    private function generateReferenceNumber(PolicyApplication $policyApplication)
+    {
+        // Get policy start date from policy_pricings table
+        $policyPricing = $policyApplication->policyPricing;
+        
+        if (!$policyPricing || !$policyPricing->policy_start_date) {
+            // Fallback: use current year + 1 if policy_start_date not available
+            $policyYear = substr((string)(date('Y') + 1), -2);
+        } else {
+            // Extract year from policy_start_date and get last 2 digits
+            $startYear = date('Y', strtotime($policyPricing->policy_start_date));
+            $policyYear = substr((string)$startYear, -2);
+        }
+        
+        // Get the highest reference number for this policy year (e.g., MRCM26-XXXX)
+        // Query based on policy year in the reference number
+        $lastPolicy = PolicyApplication::whereNotNull('reference_number')
+            ->where('reference_number', 'LIKE', 'MRCM' . $policyYear . '-%')
+            ->orderByRaw('CAST(SUBSTRING_INDEX(reference_number, "-", -1) AS UNSIGNED) DESC')
+            ->first();
+        
+        if ($lastPolicy && preg_match('/MRCM(\d{2})-(\d{4})/', $lastPolicy->reference_number, $matches)) {
+            $nextNumber = intval($matches[2]) + 1;
+        } else {
+            $nextNumber = 1;
+        }
+        
+        return 'MRCM' . $policyYear . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
     }
 }

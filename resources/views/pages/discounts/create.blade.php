@@ -70,10 +70,10 @@
                                         <option value="pharmacist" {{ old('product') == 'pharmacist' ? 'selected' : '' }}>
                                             Pharmacist</option>
                                         <option value="medical_practice"
-                                            {{ old('product') == 'medical_practice' ? 'selected' : '' }}>Medical Practice
+                                            {{ old('product') == 'medical_practice' ? 'selected' : '' }}>Medical Practitioner
                                         </option>
                                         <option value="dental_practice"
-                                            {{ old('product') == 'dental_practice' ? 'selected' : '' }}>Dental Practice
+                                            {{ old('product') == 'dental_practice' ? 'selected' : '' }}>Dental Practitioner
                                         </option>
                                     </select>
                                     @error('product')

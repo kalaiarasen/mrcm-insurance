@@ -148,8 +148,8 @@
 
         // Comprehensive mapping
         $classMap = [
-            'general_practice' => 'General Practice',
-            'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+            'general_practice' => 'General Practitioner',
+            'general_practice_with_specialized_procedures' => 'General Practitioner with Specialized Procedures',
             'core_services' => 'Core Services',
             'core_services_with_procedures' => 'Core Services with Procedures',
             'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
@@ -165,8 +165,8 @@
             'basic_coverage' => 'Basic Coverage',
             'comprehensive_coverage' => 'Comprehensive Coverage',
             'premium_coverage' => 'Premium Coverage',
-            'general_dentist_practice' => 'General Dentist Practice',
-            'general_dentist_practice_practising_accredited_specialised_procedures' => 'General Dentist Practice, practising accredited specialised procedures',
+            'general_dentist_practice' => 'General Dentist Practitioner',
+            'general_dentist_practice_practising_accredited_specialised_procedures' => 'General Dentist Practitioner, practising accredited specialised procedures',
             'general_dental_practitioners' => 'General Dental Practitioners, practising accredited specialised procedures',
         ];
 

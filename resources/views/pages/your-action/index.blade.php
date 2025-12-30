@@ -332,8 +332,8 @@
                                         class="fa fa-briefcase-medical me-1"></i>Type of Professional Indemnity</label>
                                 <select class="form-select" id="policyTypeFilter">
                                     <option value="">All Types</option>
-                                    <option value="medical_practice">Medical Practice</option>
-                                    <option value="dental_practice">Dental Practice</option>
+                                    <option value="medical_practice">Medical Practitioner</option>
+                                    <option value="dental_practice">Dental Practitioner</option>
                                     <option value="pharmacist">Pharmacist</option>
                                 </select>
                             </div>
