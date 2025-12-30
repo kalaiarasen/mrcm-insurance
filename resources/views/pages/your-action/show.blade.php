@@ -1466,7 +1466,9 @@
             @if (
                 $policyApplication->payment_method != null ||
                     $policyApplication->customer_status === 'paid' ||
-                    $policyApplication->admin_status === 'paid')
+                    $policyApplication->admin_status === 'paid' ||
+                    $policyApplication->admin_status === 'sent_uw' ||
+                    $policyApplication->admin_status === 'active')
                 <div class="col-12">
                     <div class="card info-card mb-3">
                         <div class="card-body">

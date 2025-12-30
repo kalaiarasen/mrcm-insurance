@@ -359,7 +359,7 @@
         </tr>
         <tr>
             <td class="label">Medical Status</td>
-            <td>{{ $healthcare ? ucfirst(str_replace('_', ' ', $healthcare->professional_indemnity_type)) : 'N/A' }}
+            <td>{{ $healthcare && $healthcare->specialty_area ? ucwords(str_replace('_', ' ', $healthcare->specialty_area)) : 'N/A' }}
             </td>
         </tr>
         <tr>

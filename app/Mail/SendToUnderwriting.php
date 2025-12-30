@@ -119,8 +119,8 @@ class SendToUnderwriting extends Mailable
                 ->withMime('application/pdf'),
         ];
 
-        // Attach payment proof if payment method is 'proof' and payment_document exists
-        if ($this->policyApplication->payment_method === 'proof' && $this->policyApplication->payment_document) {
+        // Attach payment proof if payment_document exists
+        if ($this->policyApplication->payment_document) {
             $paymentProofPath = storage_path('app/public/' . $this->policyApplication->payment_document);
             
             if (file_exists($paymentProofPath)) {
