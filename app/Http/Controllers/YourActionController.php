@@ -94,34 +94,20 @@ class YourActionController extends Controller
             // Apply card filter (for clickable analytics cards)
             if ($request->filled('card_filter')) {
                 switch ($request->card_filter) {
-                    case 'active_last_30':
-                        $query->where('admin_status', 'active')
-                              ->where('activated_at', '>=', now()->subDays(30));
+                    case 'expired_previous_year':
+                        // Expired in previous year
+                        $previousYear = now()->subYear()->year;
+                        $query->whereHas('policyPricing', function($q) use ($previousYear) {
+                            $q->whereYear('policy_expiry_date', $previousYear)
+                              ->where('policy_expiry_date', '<', now()->startOfYear());
+                        });
                         break;
-                    case 'expiring_soon':
-                        // Only show policies expiring in next 3 months
-                        // EXCLUDE users who already have a policy (active OR submitted) for next year
-                        $query->where('admin_status', 'active')
-                              ->whereHas('policyPricing', function($q) {
-                                  $q->whereBetween('policy_expiry_date', [
-                                      now()->toDateString(),
-                                      now()->addMonths(3)->toDateString()
-                                  ]);
-                              })
-                              // Exclude users who have another policy expiring next year
-                              ->whereNotExists(function($subQuery) {
-                                  $subQuery->select(DB::raw(1))
-                                      ->from('policy_applications as pa2')
-                                      ->whereColumn('pa2.user_id', 'policy_applications.user_id')
-                                      ->whereColumn('pa2.id', '!=', 'policy_applications.id')
-                                      ->whereIn('pa2.admin_status', ['active', 'new_case', 'new_renewal', 'not_paid', 'paid', 'sent_uw'])
-                                      ->whereExists(function($pricingSubQuery) {
-                                          $pricingSubQuery->select(DB::raw(1))
-                                              ->from('policy_pricings')
-                                              ->whereColumn('policy_pricings.policy_application_id', 'pa2.id')
-                                              ->whereYear('policy_pricings.policy_expiry_date', now()->addYear()->year);
-                                      });
-                              });
+                    case 'expired_current_year':
+                        // Expiring in current year
+                        $currentYear = now()->year;
+                        $query->whereHas('policyPricing', function($q) use ($currentYear) {
+                            $q->whereYear('policy_expiry_date', $currentYear);
+                        });
                         break;
                     case 'pending_payment':
                         $query->where('admin_status', 'not_paid');
@@ -365,33 +351,20 @@ class YourActionController extends Controller
         }
         
         // Calculate statistics for new clickable analytics cards
-        $activeLast30Days = (clone $baseQuery)
-            ->where('admin_status', 'active')
-            ->where('activated_at', '>=', now()->subDays(30))
+        // Green Card: Expired Previous Year (expired in previous year)
+        $expiredPreviousYear = (clone $baseQuery)
+            ->whereHas('policyPricing', function($q) {
+                $previousYear = now()->subYear()->year;
+                $q->whereYear('policy_expiry_date', $previousYear)
+                  ->where('policy_expiry_date', '<', now()->startOfYear());
+            })
             ->count();
 
-        // Expiring in next 3 months (excluding users with next year policies)
-        $expiringNext3Months = (clone $baseQuery)
-            ->where('admin_status', 'active')
+        // Yellow Card: Expiring Current Year (all policies expiring in current year)
+        $expiredCurrentYear = (clone $baseQuery)
             ->whereHas('policyPricing', function($q) {
-                $q->whereBetween('policy_expiry_date', [
-                    now()->toDateString(),
-                    now()->addMonths(3)->toDateString()
-                ]);
-            })
-            // Exclude users who have another policy expiring next year
-            ->whereNotExists(function($subQuery) {
-                $subQuery->select(DB::raw(1))
-                    ->from('policy_applications as pa2')
-                    ->whereColumn('pa2.user_id', 'policy_applications.user_id')
-                    ->whereColumn('pa2.id', '!=', 'policy_applications.id')
-                    ->whereIn('pa2.admin_status', ['active', 'new_case', 'new_renewal', 'not_paid', 'paid', 'sent_uw'])
-                    ->whereExists(function($pricingSubQuery) {
-                        $pricingSubQuery->select(DB::raw(1))
-                            ->from('policy_pricings')
-                            ->whereColumn('policy_pricings.policy_application_id', 'pa2.id')
-                            ->whereYear('policy_pricings.policy_expiry_date', now()->addYear()->year);
-                    });
+                $currentYear = now()->year;
+                $q->whereYear('policy_expiry_date', $currentYear);
             })
             ->count();
 
@@ -404,8 +377,8 @@ class YourActionController extends Controller
             ->count();
 
         return view('pages.your-action.index', compact(
-            'activeLast30Days',
-            'expiringNext3Months',
+            'expiredPreviousYear',
+            'expiredCurrentYear',
             'pendingPayment',
             'sentToUnderwriting'
         ));

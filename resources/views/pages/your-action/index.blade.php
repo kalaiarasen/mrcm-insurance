@@ -212,9 +212,9 @@
     </div>
     <div class="container-fluid default-dashboard">
         <div class="row widget-grid">
-            <!-- Card 1: Active Policies (Last 30 Days) -->
+            <!-- Card 1: Expired Previous Year -->
             <div class="col-md-3">
-                <div class="card widget-1 clickable-card" data-card-filter="active_last_30" style="cursor: pointer;"
+                <div class="card widget-1 clickable-card" data-card-filter="expired_previous_year" style="cursor: pointer;"
                     title="Click to filter">
                     <div class="card-body">
                         <div class="widget-content">
@@ -228,20 +228,20 @@
                             </div>
                             <div>
                                 <h4><span class="counter"
-                                        data-target="{{ $activeLast30Days }}">{{ $activeLast30Days }}</span>
-                                </h4><span class="f-light">Active (Last 30 Days)</span>
+                                        data-target="{{ $expiredPreviousYear }}">{{ $expiredPreviousYear }}</span>
+                                </h4><span class="f-light">Expired Previous Year</span>
                             </div>
                         </div>
                         <div class="font-success f-w-500">
-                            <i class="bookmark-search me-1" data-feather="trending-up"></i>
+                            <i class="bookmark-search me-1" data-feather="calendar"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 2: Expiring Soon (Next 3 Months) -->
+            <!-- Card 2: Expired Current Year -->
             <div class="col-md-3">
-                <div class="card widget-1 clickable-card" data-card-filter="expiring_soon" style="cursor: pointer;"
+                <div class="card widget-1 clickable-card" data-card-filter="expired_current_year" style="cursor: pointer;"
                     title="Click to filter">
                     <div class="card-body">
                         <div class="widget-content">
@@ -254,11 +254,11 @@
                             </div>
                             <div>
                                 <h4><span class="counter"
-                                        data-target="{{ $expiringNext3Months }}">{{ $expiringNext3Months }}</span></h4>
-                                <span class="f-light">Expiring Soon (3 Months)</span>
+                                        data-target="{{ $expiredCurrentYear }}">{{ $expiredCurrentYear }}</span></h4>
+                                <span class="f-light">Expiring Current Year</span>
                             </div>
                         </div>
-                        <div class="font-warning f-w-500"><i class="bookmark-search me-1" data-feather="trending-down"></i>
+                        <div class="font-warning f-w-500"><i class="bookmark-search me-1" data-feather="alert-triangle"></i>
                         </div>
                     </div>
                 </div>
