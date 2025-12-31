@@ -385,7 +385,7 @@
             <td>RM{{ number_format($pricing->gross_premium ?? 0, 0) }}</td>
         </tr>
         <tr>
-            <td class="label">0% SST</td>
+            <td class="label">8% SST</td>
             <td>RM{{ number_format($pricing->sst ?? 0, 0) }}</td>
         </tr>
         <tr>
