@@ -346,10 +346,15 @@
         const today = new Date();
         let defaultStartDate;
         
-        // For renewals, always set start date to January 1st of next year
+        // For renewals, set start date to January 1st
+        // If renewal is after July 1st, use next year; otherwise use current year
         if (window.isRenewalMode) {
-            const nextYear = today.getFullYear() + 1;
-            defaultStartDate = new Date(nextYear, 0, 1); // January 1st of next year
+            const currentYear = today.getFullYear();
+            const julyFirst = new Date(currentYear, 6, 1); // July 1st of current year (month is 0-indexed)
+            
+            // If today is July 1st or later, use next year; otherwise use current year
+            const renewalYear = today >= julyFirst ? currentYear + 1 : currentYear;
+            defaultStartDate = new Date(renewalYear, 0, 1); // January 1st
             
             // Format date as YYYY-MM-DD using local date (avoid timezone conversion)
             const year = defaultStartDate.getFullYear();
