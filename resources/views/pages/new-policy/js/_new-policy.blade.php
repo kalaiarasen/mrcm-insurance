@@ -63,6 +63,12 @@
         Object.keys(data).forEach(name => {
             console.log(`[populateForm] Processing field: ${name} = ${data[name]}`);
 
+            // Skip policy_start_date in renewal mode - let renewal logic handle it
+            if (name === 'policy_start_date' && window.isRenewalMode) {
+                console.log(`[populateForm] Skipping policy_start_date in renewal mode`);
+                return;
+            }
+
             const elements = document.querySelectorAll(`[name="${name}"]`);
             console.log(`[populateForm] Found ${elements.length} elements with name="${name}"`);
 
@@ -336,19 +342,36 @@
         const locumExtension = document.getElementById('locumExtension');
         const toggleLocumExtensionBtn = document.getElementById('toggleLocumExtensionBtn');
 
-        if (!policyStartDate.value) {
-            const today = new Date();
-            let defaultStartDate;
+        // Set default start date
+        const today = new Date();
+        let defaultStartDate;
+        
+        // For renewals, always set start date to January 1st of next year
+        if (window.isRenewalMode) {
+            const nextYear = today.getFullYear() + 1;
+            defaultStartDate = new Date(nextYear, 0, 1); // January 1st of next year
             
-            // For renewals, set start date to January 1st of next year
-            if (window.isRenewalMode) {
-                const nextYear = today.getFullYear() + 1;
-                defaultStartDate = new Date(nextYear, 0, 1); // January 1st of next year
-            } else {
-                defaultStartDate = today;
-            }
+            // Format date as YYYY-MM-DD using local date (avoid timezone conversion)
+            const year = defaultStartDate.getFullYear();
+            const month = String(defaultStartDate.getMonth() + 1).padStart(2, '0');
+            const day = String(defaultStartDate.getDate()).padStart(2, '0');
+            const renewalDateString = `${year}-${month}-${day}`;
             
-            policyStartDate.value = defaultStartDate.toISOString().split('T')[0];
+            policyStartDate.value = renewalDateString;
+            
+            // Update saved data with renewal date
+            const step3Data = loadFormData(3);
+            step3Data.policy_start_date = policyStartDate.value;
+            saveFormData(3, step3Data);
+            console.log('Renewal mode: Policy start date set to:', policyStartDate.value);
+            
+            updateExpiryDate();
+        } else if (!policyStartDate.value) {
+            defaultStartDate = today;
+            const year = defaultStartDate.getFullYear();
+            const month = String(defaultStartDate.getMonth() + 1).padStart(2, '0');
+            const day = String(defaultStartDate.getDate()).padStart(2, '0');
+            policyStartDate.value = `${year}-${month}-${day}`;
             updateExpiryDate();
         }
 
