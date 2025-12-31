@@ -460,10 +460,14 @@
         const coverType = step2Data.cover_type || '';
         const specialtyArea = step2Data.specialty_area || '';
 
+        console.log('updateLocumExtensionVisibility - step2Data:', step2Data);
+        console.log('updateLocumExtensionVisibility - serviceType:', serviceType, 'coverType:', coverType, 'specialtyArea:', specialtyArea);
+
         const locumExtensionButtonSection = document.getElementById('locumExtensionButtonSection');
 
         // If element doesn't exist, return early (not on step 3 yet)
         if (!locumExtensionButtonSection) {
+            console.log('locumExtensionButtonSection not found, returning');
             return;
         }
 
@@ -485,6 +489,8 @@
         const shouldShowLocum = (coverType === 'general_cover' && servicesWithLocum.includes(serviceType)) ||
             servicesWithLocum.includes(coverType) ||
             (specialtyArea === 'general_practitioner' && servicesWithLocum.includes(serviceType));
+
+        console.log('updateLocumExtensionVisibility - shouldShowLocum:', shouldShowLocum);
 
         if (shouldShowLocum) {
             locumExtensionButtonSection.style.display = 'block';
@@ -1360,6 +1366,25 @@
             }
         }
 
+        // Private Dental Practitioner - Locum Extension rates based on cover type
+        const professionalType = step2Data.professional_indemnity_type || '';
+        if (professionalType === 'dental_practice') {
+            if (coverType === 'general_dental_practice') {
+                // General Dental Practice
+                if (liabilityLimit === '1000000') {
+                    return 350; // 1M liability: RM 1,200 base + RM 350 locum = RM 1,550
+                } else if (liabilityLimit === '2000000') {
+                    return 450; // 2M liability: RM 1,400 base + RM 450 locum = RM 1,850
+                }
+            }
+            if (coverType === 'general_dental_practitioners') {
+                // General Dental Practitioners, practising accredited specialised procedures
+                if (liabilityLimit === '2500000') {
+                    return 500; // 2.5M liability: RM 1,700 base + RM 500 locum = RM 2,200
+                }
+            }
+        }
+
         // Premium rates for General Cover service types with Locum Extension
         const generalCoverRates = {
             'core_services': {
@@ -1630,8 +1655,11 @@
                     initSignatureCanvas();
                 }, 50);
             }
-            // For step 3, calculate expiry date on first load
+            // For step 3, set up pricing and calculate on first load
             if (step === 3) {
+                // First populate the pricing summary (sets up event listeners)
+                populatePricingSummary();
+                
                 setTimeout(() => {
                     const step2Data = loadFormData(2);
                     // Check service_type OR cover_type for liability limit setting

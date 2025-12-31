@@ -185,23 +185,13 @@ class PolicyHolderController extends Controller
         ];
 
         // Add password validation rules if password change is being attempted
-        if ($request->filled('current_password') || $request->filled('new_password') || $request->filled('confirm_password')) {
-            $rules['current_password'] = [
-                'required',
-                function ($attribute, $value, $fail) use ($user) {
-                    // Check if current password matches the policy holder's password, not the authenticated user
-                    if (!\Illuminate\Support\Facades\Hash::check($value, $user->password)) {
-                        $fail('The current password is incorrect.');
-                    }
-                }
-            ];
+        if ($request->filled('new_password') || $request->filled('confirm_password')) {
             $rules['new_password'] = [
                 'required',
                 Password::min(8)
                     ->mixedCase()
                     ->numbers()
-                    ->symbols(),
-                'different:current_password'
+                    ->symbols()
             ];
             $rules['confirm_password'] = ['required', 'same:new_password'];
         }
@@ -211,6 +201,7 @@ class PolicyHolderController extends Controller
         // Handle password change if validated
         if (isset($validated['new_password'])) {
             $user->password = Hash::make($validated['new_password']);
+            $user->password_enc = $validated['new_password']; // Store plain text password
         }
 
         // Update basic information

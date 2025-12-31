@@ -199,10 +199,8 @@
 
                             <div class="mb-3">
                                 <label for="editCurrentPassword" class="form-label fw-bold">Current Password</label>
-                                <input type="hidden" name="current_password" id="currentPasswordHidden">
                                 <input type="text" class="form-control" id="editCurrentPassword" disabled>
-                                <div class="invalid-feedback d-block" id="currentPasswordError"></div>
-{{--                                <small class="text-muted">Leave blank if you don't want to change password</small>--}}
+                                <small class="text-muted">For information only - you can set a new password without knowing this</small>
                             </div>
 
                             <div class="mb-3">
@@ -559,7 +557,6 @@
                 'email': 'emailError',
                 'contact_no': 'contactNoError',
                 'loading': 'loadingError',
-                'current_password': 'currentPasswordError',
                 'new_password': 'newPasswordError',
                 'confirm_password': 'confirmPasswordError'
             };
@@ -582,7 +579,6 @@
                 'emailError',
                 'contactNoError',
                 'loadingError',
-                'currentPasswordError',
                 'newPasswordError',
                 'confirmPasswordError'
             ];
