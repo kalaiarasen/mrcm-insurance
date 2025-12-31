@@ -22,6 +22,7 @@ class SidebarComposer
             $activeProfessionalIndemnityPolicy = PolicyApplication::with(['policyPricing'])
                 ->where('user_id', Auth::id())
                 ->whereIn('customer_status', ['active', 'paid', 'approved', 'processing'])
+                ->latest()
                 ->first();
 
             $hasActiveProfessionalIndemnity = $activeProfessionalIndemnityPolicy !== null;

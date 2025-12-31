@@ -66,6 +66,7 @@ class DashboardController extends Controller
             $activeProfessionalIndemnityPolicy = PolicyApplication::with(['policyPricing'])
                 ->where('user_id', auth()->id())
                 ->whereIn('customer_status', ['active', 'paid', 'approved', 'processing'])
+                ->latest()
                 ->first();
 
             $hasActiveProfessionalIndemnity = $activeProfessionalIndemnityPolicy !== null;
