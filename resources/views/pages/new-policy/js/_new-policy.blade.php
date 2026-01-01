@@ -2441,7 +2441,17 @@
         // Check Step 2 (service_type is optional)
         const step2Data = loadFormData(2);
         console.log('[Validation] Step 2 Data:', step2Data);
+        
+        // For pharmacist, skip employment_status, specialty_area, and cover_type validation
+        const isPharmacist = step2Data.professional_indemnity_type === 'pharmacist';
+        
         step2Fields.forEach(field => {
+            // Skip these fields for pharmacist
+            if (isPharmacist && ['employment_status', 'specialty_area', 'cover_type'].includes(field)) {
+                console.log(`[Validation] Skipping ${field} validation for pharmacist`);
+                return;
+            }
+            
             const value = step2Data[field];
             if (!value || value === '') {
                 isValid = false;

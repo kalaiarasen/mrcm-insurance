@@ -57,9 +57,7 @@ class HealthcareHelper
 
         // Pharmacist mappings
         if ($coverType === 'pharmacist') {
-            if ($employmentStatus === 'private') {
-                return 'Pharmacist';
-            }
+            return 'Pharmacist';
         }
 
         return 'N/A';
