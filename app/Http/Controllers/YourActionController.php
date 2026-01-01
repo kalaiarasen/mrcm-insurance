@@ -10,6 +10,7 @@ use App\Mail\PolicyActiveMail;
 use App\Mail\PolicyRejectedMail;
 use App\Mail\PolicyCancelledMail;
 use App\Exports\PolicyApplicationsExport;
+use App\Helpers\HealthcareHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -159,7 +160,7 @@ class YourActionController extends Controller
                         'Send UW', 'Sent UW' => 'bg-warning',
                         'Cancelled' => 'bg-secondary',
                         'New', 'New Case' => 'bg-secondary',
-                        'Paid' => 'bg-success',
+                        'Paid' => 'bg-primary',
                         'New Renewal' => 'bg-info',
                         default => 'bg-secondary'
                     };
@@ -184,44 +185,15 @@ class YourActionController extends Controller
                     $healthcareService = $policy->user?->healthcareService;
                     $pricing = $policy->policyPricing;
                     
-                    // Try practice_area first, fallback to service_type, then cover_type
-                    $classValue = $healthcareService?->practice_area 
-                               ?? $healthcareService?->service_type 
-                               ?? $healthcareService?->cover_type;
-                    
-                    // Comprehensive mapping for practice_area, service_type, and cover_type values
-                    $classMap = [
-                        // Practice Area values
-                        'general_practice' => 'General Practitioner',
-                        'general_practice_with_specialized_procedures' => 'General Practitioner with Specialized Procedures',
-                        'core_services' => 'Core Services',
-                        'core_services_with_procedures' => 'Core Services with Procedures',
-                        'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
-                        'cosmetic_aesthetic_non_invasive' => 'Cosmetic & Aesthetic – Non-Invasive',
-                        'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic & Aesthetic – Non-Surgical Invasive',
-                        'office_clinical_orthopaedics' => 'Office / Clinical Orthopaedics',
-                        'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A.)',
-                        'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic (Surgical, Invasive)',
-                        'general_dental_practice' => 'General Dental Practitioner',
-                        'general_dental_practitioners_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
-                        // Service Type values (fallback)
-                        'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
-                        'general_practitioner_private_hospital_emergency' => 'General Practitioner in Private Hospital – Emergency Department',
-                        // Cover Type values (third fallback)
-                        'basic_coverage' => 'Basic Coverage',
-                        'comprehensive_coverage' => 'Comprehensive Coverage',
-                        'premium_coverage' => 'Premium Coverage',
-                        'general_dental_practitioners' => 'General Dentist Practitioner, practicing accredited specialised procedures',
-                    ];
-                    
-                    $classDisplay = e($classMap[$classValue] ?? 'N/A');
+                    // Use HealthcareHelper for consistent class logic
+                    $classDisplay = HealthcareHelper::getClassValue($healthcareService);
                     
                     // Add locum extension indicator
                     if ($pricing && $pricing->locum_extension) {
                         $classDisplay .= ' (with locum extension)';
                     }
                     
-                    return $classDisplay;
+                    return e($classDisplay);
                 })
                 ->addColumn('amount', function ($policy) {
                     $amount = $policy->policyPricing?->total_payable;

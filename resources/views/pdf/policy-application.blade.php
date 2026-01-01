@@ -134,44 +134,7 @@
 </head>
 
 @php
-    // Helper function to get Class value (following YourActionController logic)
-    function getClassValue($healthcareService)
-    {
-        if (!$healthcareService) {
-            return 'N/A';
-        }
-
-        // Try practice_area first, fallback to service_type, then cover_type
-        $classValue = $healthcareService->practice_area 
-                   ?? $healthcareService->service_type 
-                   ?? $healthcareService->cover_type;
-
-        // Comprehensive mapping
-        $classMap = [
-            'general_practice' => 'General Practitioner',
-            'general_practice_with_specialized_procedures' => 'General Practitioner with Specialized Procedures',
-            'core_services' => 'Core Services',
-            'core_services_with_procedures' => 'Core Services with Procedures',
-            'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
-            'cosmetic_aesthetic_non_invasive' => 'Cosmetic & Aesthetic – Non-Invasive',
-            'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic & Aesthetic – Non-Surgical Invasive',
-            'office_clinical_orthopaedics' => 'Office / Clinical Orthopaedics',
-            'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A.)',
-            'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic (Surgical, Invasive)',
-            'general_dental_practice' => 'General Dental Practitioner',
-            'general_dental_practitioners_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
-            'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
-            'general_practitioner_private_hospital_emergency' => 'General Practitioner in Private Hospital – Emergency Department',
-            'basic_coverage' => 'Basic Coverage',
-            'comprehensive_coverage' => 'Comprehensive Coverage',
-            'premium_coverage' => 'Premium Coverage',
-            'general_dentist_practice' => 'General Dentist Practitioner',
-            'general_dentist_practice_practising_accredited_specialised_procedures' => 'General Dentist Practitioner, practising accredited specialised procedures',
-            'general_dental_practitioners' => 'General Dental Practitioners, practising accredited specialised procedures',
-        ];
-
-        return $classMap[$classValue] ?? 'N/A';
-    }
+    use App\Helpers\HealthcareHelper;
 
     // Helper function to format relationship display
     function formatRelationship($relationship)
@@ -359,12 +322,11 @@
         </tr>
         <tr>
             <td class="label">Medical Status</td>
-            <td>{{ $healthcare && $healthcare->specialty_area ? ucwords(str_replace('_', ' ', $healthcare->specialty_area)) : 'N/A' }}
-            </td>
+            <td>{{ HealthcareHelper::getSpecialtyStatus($healthcare) }}</td>
         </tr>
         <tr>
             <td class="label">Class</td>
-            <td>{{ getClassValue($healthcare) }}@if($pricing && $pricing->locum_extension) (with locum extension)@endif</td>
+            <td>{{ HealthcareHelper::getClassValue($healthcare) }}@if($pricing && $pricing->locum_extension) (with locum extension)@endif</td>
         </tr>
         <tr>
             <td class="label">Liability Limit</td>

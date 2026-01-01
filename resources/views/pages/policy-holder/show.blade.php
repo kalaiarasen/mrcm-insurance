@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@php
+    use App\Helpers\HealthcareHelper;
+@endphp
+
 @section('title', 'Policy Holder Details')
 
 @section('css')
@@ -278,12 +282,8 @@
                                                             Class:
                                                             @php
                                                                 $healthcareService = $application->healthcareService;
-                                                                $classValue =
-                                                                    $healthcareService->practice_area ??
-                                                                    ($healthcareService->service_type ??
-                                                                        ($healthcareService->cover_type ?? null));
                                                             @endphp
-                                                            {{ $classValue ? ucfirst(str_replace('_', ' ', $classValue)) : 'N/A' }}
+                                                            {{ HealthcareHelper::getClassValue($healthcareService) }}
                                                         </span>
 
                                                         @if ($application->policyPricing)

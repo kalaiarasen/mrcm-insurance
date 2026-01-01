@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@php
+    use App\Helpers\HealthcareHelper;
+@endphp
+
 @section('title', 'Dashboard')
 
 @section('css')
@@ -312,12 +316,8 @@
                                                             Class:
                                                             @php
                                                                 $healthcareService = $policy->user->healthcareService;
-                                                                $classValue =
-                                                                    $healthcareService->practice_area ??
-                                                                    ($healthcareService->service_type ??
-                                                                        ($healthcareService->cover_type ?? null));
                                                             @endphp
-                                                            {{ $classValue ? ucfirst(str_replace('_', ' ', $classValue)) : 'N/A' }}
+                                                            {{ HealthcareHelper::getClassValue($healthcareService) }}
                                                         </span>
 
                                                         @if ($policy->policyPricing)
@@ -611,12 +611,8 @@
                                             {{ $policy->reference_number }} -
                                             @php
                                                 $healthcareService = $policy->user->healthcareService;
-                                                $classValue =
-                                                    $healthcareService->practice_area ??
-                                                    ($healthcareService->service_type ??
-                                                        ($healthcareService->cover_type ?? null));
                                             @endphp
-                                            {{ $classValue ? ucfirst(str_replace('_', ' ', $classValue)) : 'N/A' }}
+                                            {{ HealthcareHelper::getClassValue($healthcareService) }}
                                         </option>
                                     @endforeach
                                 </select>
