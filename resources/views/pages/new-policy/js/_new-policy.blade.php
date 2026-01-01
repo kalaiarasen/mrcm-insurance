@@ -2445,10 +2445,20 @@
         // For pharmacist, skip employment_status, specialty_area, and cover_type validation
         const isPharmacist = step2Data.professional_indemnity_type === 'pharmacist';
         
+        // For lecturer/trainee with non-practicing status, skip cover_type validation
+        const isLecturerTrainee = step2Data.employment_status === 'non_practicing' && 
+                                   step2Data.specialty_area === 'lecturer_trainee';
+        
         step2Fields.forEach(field => {
             // Skip these fields for pharmacist
             if (isPharmacist && ['employment_status', 'specialty_area', 'cover_type'].includes(field)) {
                 console.log(`[Validation] Skipping ${field} validation for pharmacist`);
+                return;
+            }
+            
+            // Skip cover_type for lecturer/trainee with non-practicing status
+            if (isLecturerTrainee && field === 'cover_type') {
+                console.log(`[Validation] Skipping cover_type validation for lecturer/trainee non-practicing`);
                 return;
             }
             
