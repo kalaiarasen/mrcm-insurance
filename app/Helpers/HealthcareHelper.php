@@ -89,7 +89,7 @@ class HealthcareHelper
             }
         }
 
-        if($coverType == 'medium_risk_specialist') {
+        if($coverType == 'medium_risk_specialist' || $coverType == 'lorum_cover') {
             $serviceTypeMap = [
                 'clinic_based_non_general_anaesthetic' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Clinic Based',
                 'hospital_based_full_fledged_omfs' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Hospital Based',
