@@ -23,7 +23,7 @@ class HealthcareHelper
                 return 'Government Dental Practitioner - Locum Only';
             }
             if ($employmentStatus === 'private') {
-                if ($specialtyArea === 'general_dental_practitioner' || $specialtyArea === 'general_dentist') {
+                if ($specialtyArea === 'general_dental_practitioner' || $specialtyArea === 'general_dentist' || $specialtyArea === 'dental') {
                     return 'General Dental Practitioner';
                 }
                 if ($specialtyArea === 'government_private_dental_specialists' || $specialtyArea == 'dentist_specialist') {
@@ -40,7 +40,7 @@ class HealthcareHelper
                 }
             }
             if ($employmentStatus === 'private') {
-                if ($specialtyArea === 'general_practitioner') {
+                if ($specialtyArea === 'general_practitioner' || $specialtyArea === 'general_practice') {
                     return 'General Practitioner';
                 }
                 if ($specialtyArea === 'medical_specialist' || $specialtyArea === 'government_private_medical_specialists') {
@@ -89,7 +89,7 @@ class HealthcareHelper
             }
         }
 
-        if($specialtyArea == 'general_practitioner' || $specialtyArea == 'general_dentist') {
+        if($specialtyArea == 'general_practitioner' || $specialtyArea == 'general_dentist' || $specialtyArea === 'dentist_specialist') {
             $coverTypeMap = [
                 'general_dental_practitioners' => 'General Dental Practice',
                 'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
@@ -138,6 +138,16 @@ class HealthcareHelper
                 'nuclear_medicine' => 'Nuclear medicine',
                 'nephrology' => 'Nephrology',
                 'immunology' => 'Immunology',
+                'ophthalmology_office_procedures' => 'Ophthalmology/Office procedures',
+                'office_ent_clinic_based' => 'Office ENT (Clinic based)',
+                'ent_surgeries_non_ga' => 'ENT Surgeries (Non G.A)',
+                'radiology_interventional' => 'Radiology - Interventional',
+                'gastroenterology' => 'Gastroentrology',
+                'office_clinical_orthopaedics' => 'Office/Clinical Orthopaedics',
+                'office_clinical_gynaecology' => 'Office/Clinical Gynaecology',
+                'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic and Aesthetic - Non-surgical Invasive elective topical enhancement',
+                'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic - Surgical, Invasive',
+                'dental_specialist_oral_maxillofacial_surgery' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Hospital Based',
             ];
 
             if (isset($coverTypeMap[$coverType])) {
@@ -149,6 +159,7 @@ class HealthcareHelper
         if ($practiceArea) {
             $practiceAreaMap = [
                 // Dental Practice Areas
+                'general_dental_practitioners_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
                 'lecturer_trainee' => 'Lecturer/Trainee',
                 'general_practice' => 'General Practice',
                 'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
@@ -194,6 +205,17 @@ class HealthcareHelper
                 'nuclear_medicine' => 'Nuclear medicine',
                 'nephrology' => 'Nephrology',
                 'immunology' => 'Immunology',
+                'ophthalmology_office_procedures' => 'Ophthalmology/Office procedures',
+                'office_ent_clinic_based' => 'Office ENT (Clinic based)',
+                'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A)',
+                'ent_surgeries_non_ga' => 'ENT Surgeries (Non G.A)',
+                'radiology_interventional' => 'Radiology - Interventional',
+                'gastroenterology' => 'Gastroentrology',
+                'office_clinical_orthopaedics' => 'Office/Clinical Orthopaedics',
+                'office_clinical_gynaecology' => 'Office/Clinical Gynaecology',
+                'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic and Aesthetic - Non-surgical Invasive elective topical enhancement',
+                'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic - Surgical, Invasive',
+                'dental_specialist_oral_maxillofacial_surgery' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Hospital Based',
             ];
 
             if (isset($practiceAreaMap[$practiceArea])) {
@@ -319,6 +341,16 @@ class HealthcareHelper
                 'nuclear_medicine' => 'Nuclear medicine',
                 'nephrology' => 'Nephrology',
                 'immunology' => 'Immunology',
+                'ophthalmology_office_procedures' => 'Ophthalmology/Office procedures',
+                'office_ent_clinic_based' => 'Office ENT (Clinic based)',
+                'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A)',
+                'ent_surgeries_non_ga' => 'ENT Surgeries (Non G.A)',
+                'radiology_interventional' => 'Radiology - Interventional',
+                'gastroenterology' => 'Gastroentrology',
+                'office_clinical_orthopaedics' => 'Office/Clinical Orthopaedics',
+                'office_clinical_gynaecology' => 'Office/Clinical Gynaecology',
+                'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic and Aesthetic - Non-surgical Invasive elective topical enhancement',
+                'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic -Surgical, Invasive',
             ];
 
             if (isset($specialtyAreaMap[$specialtyArea])) {

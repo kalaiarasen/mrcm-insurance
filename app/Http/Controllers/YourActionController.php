@@ -11,6 +11,7 @@ use App\Mail\PolicyRejectedMail;
 use App\Mail\PolicyCancelledMail;
 use App\Exports\PolicyApplicationsExport;
 use App\Helpers\HealthcareHelper;
+use App\Models\HealthcareService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -725,7 +726,9 @@ class YourActionController extends Controller
 
             // Update Healthcare Service
             if ($user->healthcareService) {
-                $user->healthcareService->update([
+                HealthcareService::where('user_id', $user->id)->delete();
+                $user->healthcareService->create([
+                    'user_id' => $user->id,
                     'professional_indemnity_type' => $data['professional_indemnity_type'] ?? $user->healthcareService->professional_indemnity_type,
                     'employment_status' => $data['employment_status'] ?? $user->healthcareService->employment_status,
                     'specialty_area' => $data['specialty_area'] ?? $user->healthcareService->specialty_area,
