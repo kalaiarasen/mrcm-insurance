@@ -191,10 +191,10 @@ class YourActionController extends Controller
                     
                     // Add locum extension indicator
                     if ($pricing && $pricing->locum_extension) {
-                        $classDisplay .= ' <small class="text-muted">(with locum extension)</small>';
+                        $classDisplay .= ' (with locum extension)';
                     }
                     
-                    return $classDisplay;
+                    return e($classDisplay);
                 })
                 ->addColumn('amount', function ($policy) {
                     $amount = $policy->policyPricing?->total_payable;
