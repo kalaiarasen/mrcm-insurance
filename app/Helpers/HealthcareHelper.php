@@ -93,6 +93,7 @@ class HealthcareHelper
 
         if($specialtyArea == 'general_practitioner' || $specialtyArea == 'general_dentist') {
             $coverTypeMap = [
+                'general_dental_practitioners' => 'General Dental Practice',
                 'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
                 'general_practitioner_private_hospital_emergency' => 'General Practitioner in Private Hospital – Emergency Department',
                 'general_practice' => 'General Practice',
