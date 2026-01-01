@@ -89,6 +89,74 @@ class HealthcareHelper
             }
         }
 
+        if($coverType == 'medium_risk_specialist') {
+            $serviceTypeMap = [
+                'clinic_based_non_general_anaesthetic' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Clinic Based',
+                'hospital_based_full_fledged_omfs' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Hospital Based',
+                'lecturer_trainee' => 'Lecturer/Trainee',
+                'general_practitioner_private_hospital_outpatient' => 'General Practitioner in Private Hospital - Outpatient Services',
+                'general_practitioner_private_hospital_emergency' => 'General Practitioner in Private Hospital – Emergency Department',
+                'general_practice' => 'General Practice',
+                'general_practice_with_specialized_procedures' => 'General Practice with Specialized Procedures',
+                'general_dental_practice' => 'General Dental Practice',
+                'general_dental_practice_with_locum_extension' => 'General Dental Practice (with locum extension)',
+                'general_dental_practitioners_practising_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
+                'general_dental_practitioners_practising_accredited_specialised_procedures_with_locum_extension' => 'General Dental Practitioners, practising accredited specialised procedures(with locum extension)',
+                
+                // Medical Practice Areas - General Practitioner
+                'core_services' => 'Core Services',
+                'core_services_with_locum_extension' => 'Core Services (with locum extension)',
+                'core_services_with_procedures' => 'Core Services with Procedures',
+                'outpatient_service' => 'Outpatient Service',
+                'emergency_department' => 'Emergency Department',
+                'general_practitioner_with_obstetrics' => 'General Practitioner with Obstetrics',
+                'general_practitioner_with_obstetrics_with_locum_extension' => 'General Practitioner with Obstetrics (with locum extension)',
+                'cosmetic_aesthetic_non_invasive' => 'Cosmetic & Aesthetic - Non-Invasive Elective Topical Enhancement',
+                'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic & Aesthetic - Non-Surgical Invasive Elective Topical Enhancement (with locum extension)',
+                'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic & Aesthetic - Non - Surgical Invasive Elective Topical Enhancement',
+                
+                // Medical Practice Areas - Medical Specialists
+                'occupational_health_physicians' => 'Occupational Health Physicians/ Family Physicians',
+                'general_physicians' => 'General Physicians',
+                'dermatology_cosmetic' => 'Dermatology - cosmetic',
+                'infectious_diseases' => 'Infectious Diseases',
+                'pathology' => 'Pathology',
+                'psychiatry' => 'Psychiatry',
+                'endocrinology' => 'Endocrinology',
+                'rehab_medicine' => 'Rehab, medicine',
+                'paediatrics_non_neonatal' => 'Paediatrics (Non Neonatal)',
+                'paediatrics_non_neonatal_with_locum_extension' => 'Paediatrics (Non Neonatal) (with locum extension)',
+                'geriatrics' => 'Geriatrics',
+                'haematology' => 'Haematology',
+                'neurology' => 'Neurology',
+                'radiology_non_interventional' => 'Radiology (Non Interventional)',
+                'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A)',
+                'ent_surgeries_non_ga' => 'ENT Surgeries (Non G.A)',
+                'radiology_interventional' => 'Radiology - Interventional',
+                'gastroenterology' => 'Gastroenterology',
+                'office_clinical_gynaecology' => 'Office/Clinical Gynaecology',
+                'office_clinical_gynaecology_with_locum_extension' => 'Office/Clinical Gynaecology (with locum extension)',
+                'office_clinical_orthopaedics' => 'Office / Clinical Orthopaedics',
+                'nuclear_medicine' => 'Nuclear medicine',
+                'nephrology' => 'Nephrology',
+                'immunology' => 'Immunology',
+                'ophthalmology_office_procedures' => 'Ophthalmology/Office procedures',
+                'office_ent_clinic_based' => 'Office ENT (Clinic based)',
+                'ophthalmology_surgeries_non_ga' => 'Ophthalmology Surgeries (Non G.A)',
+                'ent_surgeries_non_ga' => 'ENT Surgeries (Non G.A)',
+                'radiology_interventional' => 'Radiology - Interventional',
+                'gastroenterology' => 'Gastroentrology',
+                'office_clinical_orthopaedics' => 'Office/Clinical Orthopaedics',
+                'office_clinical_gynaecology' => 'Office/Clinical Gynaecology',
+                'cosmetic_aesthetic_non_surgical_invasive' => 'Cosmetic and Aesthetic - Non-surgical Invasive elective topical enhancement',
+                'cosmetic_aesthetic_surgical_invasive' => 'Cosmetic and Aesthetic -Surgical, Invasive',
+            ];
+
+            if (isset($serviceTypeMap[$serviceType])) {
+                return $serviceTypeMap[$serviceType];
+            }
+        }
+
         if($specialtyArea == 'general_practitioner' || $specialtyArea == 'general_dentist' || $specialtyArea === 'dentist_specialist') {
             $coverTypeMap = [
                 'general_dental_practitioners' => 'General Dental Practice',
