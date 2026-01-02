@@ -152,7 +152,7 @@
 
         <div class="footer">
             <p>This is an automated email. Please do not reply directly to this email.</p>
-            <p>Malaysian Retired Consultants & Medics (MRCM)<br>
+            <p>MRCM<br>
             Email: insurance@mrcm.com.my</p>
         </div>
     </div>
