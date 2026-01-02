@@ -80,6 +80,7 @@ class HealthcareHelper
         $professionalIndemnityType = $healthcareService->professional_indemnity_type;
         $locumPracticeLocation = $healthcareService->locum_practice_location;
 
+
         if($professionalIndemnityType === 'pharmacist') {
             return 'Pharmacist';
         }
@@ -90,8 +91,9 @@ class HealthcareHelper
             }
         }
 
-        if($coverType == 'medium_risk_specialist' || $locumPracticeLocation == 'private_hospital' || $locumPracticeLocation == 'private_clinic') {
+        if($coverType == 'medium_risk_specialist' || $locumPracticeLocation == 'private_hospital' || $locumPracticeLocation == 'private_clinic' || $coverType == 'low_risk_specialist') {
             $serviceTypeMap = [
+                'dermatology_non_cosmetic' => 'Dermatology - Non Cosmetic',
                 'clinic_based_non_general_anaesthetic' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Clinic Based',
                 'hospital_based_full_fledged_omfs' => 'Dental Specialists practising Oral and Maxillofacial Surgery (OMFS)- Hospital Based',
                 'lecturer_trainee' => 'Lecturer/Trainee',
