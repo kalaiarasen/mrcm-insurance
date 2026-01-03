@@ -13,13 +13,17 @@ class HealthcareHelper
             return 'N/A';
         }
 
-        $coverType = $healthcareService->professional_indemnity_type;
+        $professionalIndemnityType = $healthcareService->professional_indemnity_type;
+        $coverType = $healthcareService->cover_type;
         $employmentStatus = $healthcareService->employment_status;
         $specialtyArea = $healthcareService->specialty_area;
 
         // Dental Practitioner mappings
-        if ($coverType === 'dental_practice') {
-            if ($employmentStatus === 'government') {
+        if ($professionalIndemnityType === 'dental_practice') {
+            if ($employmentStatus === 'government' && $coverType == 'general_cover') {
+                return 'General Dental Practitioner';
+            }
+            if ($employmentStatus === 'government' && $coverType == 'locum_cover_only') {
                 return 'Government Dental Practitioner - Locum Only';
             }
             if ($employmentStatus === 'private') {
@@ -30,17 +34,37 @@ class HealthcareHelper
                     return 'Government / Private Dental Specialists';
                 }
             }
+
+            if ($employmentStatus === 'government') {
+                if ($specialtyArea === 'general_dental_practitioner' || $specialtyArea === 'general_dentist' || $specialtyArea === 'dental') {
+                    return 'General Dental Practitioner';
+                }
+                if ($specialtyArea === 'government_private_dental_specialists' || $specialtyArea == 'dentist_specialist') {
+                    return 'Government / Private Dental Specialists';
+                }
+            }
         }
 
         // Medical Practitioner mappings
-        if ($coverType === 'medical_practice') {
+        if ($professionalIndemnityType === 'medical_practice') {
             if ($employmentStatus === 'government') {
-                if ($specialtyArea === 'medical_officer' || $specialtyArea === 'government_medical_officers_locum_only') {
+                if ($specialtyArea === 'government_medical_officers_locum_only' || $coverType === 'locum_cover') {
                     return 'Government Medical Officers - Locum only';
                 }
             }
             if ($employmentStatus === 'private') {
                 if ($specialtyArea === 'general_practitioner' || $specialtyArea === 'general_practice') {
+                    return 'General Practitioner';
+                }
+                if ($specialtyArea === 'medical_specialist' || $specialtyArea === 'government_private_medical_specialists') {
+                    return 'Government / Private Medical Specialists';
+                }
+                if ($specialtyArea === 'non_practicing_doctor') {
+                    return 'Non-Practicing Doctor';
+                }
+            }
+            if ($employmentStatus === 'government') {
+                if ($specialtyArea === 'general_practitioner' || $specialtyArea === 'general_practice' || $specialtyArea == 'medical_officer') {
                     return 'General Practitioner';
                 }
                 if ($specialtyArea === 'medical_specialist' || $specialtyArea === 'government_private_medical_specialists') {
@@ -56,7 +80,7 @@ class HealthcareHelper
         }
 
         // Pharmacist mappings
-        if ($coverType === 'pharmacist') {
+        if ($professionalIndemnityType === 'pharmacist') {
             return 'Pharmacist';
         }
 
@@ -91,7 +115,13 @@ class HealthcareHelper
             }
         }
 
-        if($coverType == 'medium_risk_specialist' || $locumPracticeLocation == 'private_hospital' || $locumPracticeLocation == 'private_clinic' || $coverType == 'low_risk_specialist') {
+        if ($coverType === 'dental_specialists' && $employmentStatus === 'government') {
+            if ($specialtyArea === 'government_private_dental_specialists' || $specialtyArea == 'dentist_specialist') {
+                return 'Government / Private Dental Specialists';
+            }
+        }
+
+        if($coverType == 'medium_risk_specialist' || $locumPracticeLocation == 'private_hospital' || $locumPracticeLocation == 'private_clinic' || $coverType == 'low_risk_specialist' || $coverType == 'dental_specialists') {
             $serviceTypeMap = [
                 'infections_diseases' => 'Infectious Diseases',
                 'haemotology' => 'Haematology',
