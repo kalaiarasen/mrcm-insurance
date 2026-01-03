@@ -121,7 +121,7 @@ class HealthcareHelper
             }
         }
 
-        if($coverType == 'medium_risk_specialist' || $locumPracticeLocation == 'private_hospital' || $locumPracticeLocation == 'private_clinic' || $coverType == 'low_risk_specialist' || $coverType == 'dental_specialists') {
+        if($coverType == 'medium_risk_specialist' || $locumPracticeLocation == 'private_hospital' || $locumPracticeLocation == 'private_clinic' || $coverType == 'low_risk_specialist' || $coverType == 'dental_specialists' || $specialtyArea == 'general_dentist') {
             $serviceTypeMap = [
                 'infections_diseases' => 'Infectious Diseases',
                 'haemotology' => 'Haematology',
@@ -136,6 +136,7 @@ class HealthcareHelper
                 'general_dental_practice' => 'General Dental Practice',
                 'general_dental_practice_with_locum_extension' => 'General Dental Practice (with locum extension)',
                 'general_dental_practitioners_practising_accredited_specialised_procedures' => 'General Dental Practitioners, practising accredited specialised procedures',
+                'general_dental_practitioners' => 'General Dental Practitioners, practising accredited specialised procedures',
                 'general_dental_practitioners_practising_accredited_specialised_procedures_with_locum_extension' => 'General Dental Practitioners, practising accredited specialised procedures(with locum extension)',
                 
                 // Medical Practice Areas - General Practitioner
