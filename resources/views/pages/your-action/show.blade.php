@@ -808,18 +808,20 @@
                                 <div class="info-value">{{ $profile ? ucfirst($profile->gender) : 'N/A' }}</div>
                             </div>
                         </div>
-
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="info-label">NRIC Number</div>
-                                <div class="info-value">
-                                    {{ $profile && $profile->nric_number ? $profile->nric_number : 'N/A' }}</div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-label">Passport Number</div>
-                                <div class="info-value">
-                                    {{ $profile && $profile->passport_number ? $profile->passport_number : 'N/A' }}</div>
-                            </div>
+                            @if($profile->nationality_status == 'non_malaysian')
+                                <div class="col-md-6">
+                                    <div class="info-label">Passport Number</div>
+                                    <div class="info-value">
+                                        {{ $profile && $profile->passport_number ? $profile->passport_number : 'N/A' }}</div>
+                                </div>
+                            @else
+                                <div class="col-md-6">
+                                    <div class="info-label">NRIC Number</div>
+                                    <div class="info-value">
+                                        {{ $profile && $profile->nric_number ? $profile->nric_number : 'N/A' }}</div>
+                                </div>
+                            @endif
                         </div>
 
                         <div class="row">

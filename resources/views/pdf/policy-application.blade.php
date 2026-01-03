@@ -142,11 +142,11 @@
         if (!$relationship) {
             return 'Self(01)';
         }
-        
+
         if (is_array($relationship)) {
             return implode(', ', array_map('ucfirst', str_replace('_', ' ', $relationship)));
         }
-        
+
         return ucfirst(str_replace('_', ' ', $relationship));
     }
 @endphp
@@ -176,11 +176,18 @@
             <td class="label">1.1 Name</td>
             <td>{{ strtoupper($policyApplication->user->name ?? 'N/A') }}</td>
         </tr>
-        <tr>
-            <td class="label">1.2 NRIC</td>
-            <td>{{ $profile && $profile->nric_number ? $profile->nric_number : ($profile && $profile->passport_number ? $profile->passport_number : 'N/A') }}
-            </td>
-        </tr>
+        @if ($profile->nationality_status === 'non_malaysian')
+            <tr>
+                <td class="label">1.2 Passport Number</td>
+                <td>{{ $profile && $profile->passport_number ? $profile->passport_number : 'N/A' }}</td>
+            </tr>
+        @else
+            <tr>
+                <td class="label">1.2 NRIC</td>
+                <td>{{ $profile && $profile->nric_number ? $profile->nric_number : ($profile && $profile->passport_number ? $profile->passport_number : 'N/A') }}
+                </td>
+            </tr>
+        @endif
         <tr>
             <td class="label">1.3 Gender</td>
             <td>{{ $profile ? ucfirst($profile->gender) : 'N/A' }}</td>
@@ -326,7 +333,10 @@
         </tr>
         <tr>
             <td class="label">Class</td>
-            <td>{{ HealthcareHelper::getClassValue($healthcare) }}@if($pricing && $pricing->locum_extension) (with locum extension)@endif</td>
+            <td>{{ HealthcareHelper::getClassValue($healthcare) }}@if ($pricing && $pricing->locum_extension)
+                    (with locum extension)
+                @endif
+            </td>
         </tr>
         <tr>
             <td class="label">Liability Limit</td>
@@ -402,6 +412,16 @@
                 <td>{{ $policyApplication->card_issuing_bank ?? '' }}</td>
             </tr>
             <tr>
+                <td class="label">Card Expiry</td>
+                <td>
+                    @if ($policyApplication->expiry_month && $policyApplication->expiry_year)
+                        {{ $policyApplication->expiry_month }}/{{ substr($policyApplication->expiry_year, -2) }}
+                    @else
+                        N/A
+                    @endif
+                </td>
+            </tr>
+            <tr>
                 <td class="label">Relationship To policy holders</td>
                 <td>{{ formatRelationship($policyApplication->relationship) }}</td>
             </tr>
@@ -410,7 +430,9 @@
             in all respects. I have read and understood the terms & conditions contained in this form and I hereby
             agreed that the company may process the manner as stated in GEGM's Easi-pay Service Form (A copy can be
             obtained upon request).</p>
-    @elseif (($policyApplication->payment_method === 'proof' || $policyApplication->payment_document) && !$policyApplication->card_no)
+    @elseif (
+        ($policyApplication->payment_method === 'proof' || $policyApplication->payment_document) &&
+            !$policyApplication->card_no)
         {{-- Online Transfer Payment --}}
         <div class="section-title">2. (A) Payment Details</div>
         <p style="font-size: 9px; margin: 5px 0;">I hereby authorise Great Eastern General Insurance (Malaysia) Berhad
